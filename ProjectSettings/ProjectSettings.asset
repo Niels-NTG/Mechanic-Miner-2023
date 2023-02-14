@@ -12,7 +12,7 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
+  companyName: Niels-NTG
   productName: Mechanic Miner 2023
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}

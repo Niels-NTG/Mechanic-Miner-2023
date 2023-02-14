@@ -5,14 +5,12 @@ public class PlayerController : MonoBehaviour
     // Part of this is based on https://gist.github.com/bendux/5fab0c176855d4e37bf6a38bb071b4a4
     
     private float horizontal;
-    private float speed = 8f;
-    private float jumpingPower = 16f;
+    [SerializeField] private float speed = 8f;
+    [SerializeField] private float jumpingPower = 8f;
 
     [SerializeField] private Rigidbody2D rigidBody;
-    [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
-    
-    public LevelGenerator levelGenerator;
+    [SerializeField] private EdgeCollider2D groundCollider;
 
     // Update is called once per frame
     void Update()
@@ -23,11 +21,6 @@ public class PlayerController : MonoBehaviour
         {
             rigidBody.velocity = new Vector2(rigidBody.velocity.x, jumpingPower);
         }
-
-        if (Input.GetButtonDown("Jump") && rigidBody.velocity.y > 0f)
-        {
-            rigidBody.velocity = new Vector2(rigidBody.velocity.x, rigidBody.velocity.y * 0.5f);
-        }
     }
 
     private void FixedUpdate()
@@ -37,6 +30,6 @@ public class PlayerController : MonoBehaviour
 
     private bool IsGrounded()
     {
-        return Physics2D.OverlapBox(groundCheck.position, new Vector2(0.2f, 0.2f), groundLayer);
+        return Physics2D.IsTouchingLayers(groundCollider, groundLayer);
     }
 }
