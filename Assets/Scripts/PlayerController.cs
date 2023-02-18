@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private Rigidbody2D rigidBody;
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask exitLayer;
     [SerializeField] private EdgeCollider2D groundCollider;
 
     // Update is called once per frame

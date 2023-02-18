@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Random = System.Random;
@@ -6,23 +8,28 @@ public class LevelGenerator : MonoBehaviour
 {
     private const int MIN_ELEMENT_COUNT = 2;
     private const int MAX_ELEMENT_COUNT = 20;
-    
+    private const int MIN_BOX_SIZE = 3;
+    private const int MIN_LINE_SIZE = 2;
+
     // Inner rect of the level measured in units of tiles.
-    private RectInt levelSize = new RectInt(1, 1, 18, 13);
-    
-    [SerializeField] private Tilemap impassableTilemap;
-    [SerializeField] private Tile impassableTile;
-    [SerializeField] private Tilemap spikesTilemap;
-    [SerializeField] private Tile spikeTile;
-    [SerializeField] private Tilemap entryTilemap;
-    [SerializeField] private Tile entryTile;
-    [SerializeField] private Tilemap exitTilemap;
-    [SerializeField] private Tile exitTile;
+    private static readonly RectInt levelSize = new RectInt(1, 1, 18, 13);
+
+    public Tilemap impassableTilemap;
+    public Tile impassableTile;
+    public Tilemap spikesTilemap;
+    public Tile spikeTile;
+    public Tilemap entryTilemap;
+    public Tile entryTile;
+    public Tilemap exitTilemap;
+    public Tile exitTile;
 
     [SerializeField] private GameObject player;
     
     [SerializeField] private int seed = 1289897231;
     private Random rng;
+
+    public List<LineElement> lineElements = new List<LineElement>();
+    public List<BoxElement> boxElements = new List<BoxElement>();
 
     [ContextMenu("Generate")]
     private void Generate()
@@ -38,13 +45,27 @@ public class LevelGenerator : MonoBehaviour
         {
             if (RandomState())
             {
-                PlaceBox();
+                BoxElement boxElement = CreateBoxElement();
+                boxElement.Place();
+                boxElements.Add(boxElement);
             }
             else
             {
-                PlaceLine();
+                LineElement lineElement = CreateLineElement();
+                lineElement.Place();
+                lineElements.Add(lineElement);
             }
         }
+    }
+
+    private BoxElement CreateBoxElement()
+    {
+        return new BoxElement(rng, impassableTilemap, impassableTile);
+    }
+
+    private LineElement CreateLineElement()
+    {
+        return new LineElement(rng, impassableTilemap, impassableTile, spikesTilemap, spikeTile);
     }
 
     private void PlaceEntryAndExit()
@@ -62,65 +83,23 @@ public class LevelGenerator : MonoBehaviour
         player.transform.position = entryLocation + new Vector3(0.5f, 0.5f);
     }
 
-    private void PlaceBox()
-    {
-        Vector3Int aa;
-        Vector3Int bb;
-        do
-        {
-            aa = randomLocation();
-            bb = randomLocation();
-            aa = Vector3Int.Min(aa, bb);
-            bb = Vector3Int.Max(aa, bb);
-        } while (bb.x - aa.x < 3 || bb.y - aa.y < 3);
-
-        bool isOutline = RandomState();
-
-        RectInt box = new RectInt((Vector2Int)aa, (Vector2Int)(bb - aa));
-        foreach (Vector3Int point in box.allPositionsWithin)
-        {
-            if (isOutline)
-            {
-                if (point.x == box.xMin || point.y == box.yMin || point.x == box.xMax - 1 || point.y == box.yMax - 1)
-                {
-                    impassableTilemap.SetTile(point, impassableTile);        
-                }
-                continue;
-            }
-            impassableTilemap.SetTile(point, impassableTile);            
-        }
-    }
-
-    private void PlaceLine()
-    {
-        bool isVertical = RandomState();
-        Vector3Int aa = randomLocation();
-        int lineLength = isVertical
-            ? RandomInt(levelSize.yMin + 1, levelSize.yMax)
-            : RandomInt(levelSize.xMin + 1, levelSize.xMax);
-        bool isSpike = RandomState();
-
-        for (int i = isVertical ? aa.y : aa.x; i < lineLength; i++)
-        {
-            Vector3Int point = isVertical ? new Vector3Int(aa.x, i) : new Vector3Int(i, aa.y);
-            if (isSpike)
-            {
-                spikesTilemap.SetTile(point, spikeTile);
-            }
-            else
-            {
-                impassableTilemap.SetTile(point, impassableTile);
-            }
-        }
-    }
-
     private bool RandomState()
     {
-        return RandomInt(0, 2) == 1;
+        return RandomState(rng);
+    }
+
+    private static bool RandomState(Random _rng)
+    {
+        return RandomInt(_rng, 0, 2) == 1;
     }
     private int RandomInt(int min, int max)
     {
-        return rng.Next(min, max);
+        return RandomInt(rng, min, max);
+    }
+
+    private static int RandomInt(Random _rng, int min, int max)
+    {
+        return _rng.Next(min, max);
     }
     
     private Vector3Int randomLocation()
@@ -143,5 +122,196 @@ public class LevelGenerator : MonoBehaviour
     private void Awake()
     {
         Generate();
+    }
+
+    // TODO implement abstract class to share between BoxElement and LineElement
+    
+    public class BoxElement
+    {
+        
+        private Vector2Int boxSize = new Vector2Int(MIN_BOX_SIZE, MIN_BOX_SIZE);
+        public Vector2Int BoxSize
+        {
+            get
+            {
+                return boxSize;
+            }
+            set
+            {
+                boxSize = new Vector2Int(
+                    Math.Clamp(value.x, MIN_BOX_SIZE, levelSize.width),
+                    Math.Clamp(value.y, MIN_BOX_SIZE, levelSize.height)
+                );
+            }
+        }
+
+        private Vector2Int boxOrigin = new Vector2Int(levelSize.xMin, levelSize.yMin);
+        public Vector2Int BoxOrigin
+        {
+            get
+            {
+                return boxOrigin;
+            }
+            set
+            {
+                boxOrigin = new Vector2Int(
+                    Math.Clamp(value.x, levelSize.xMin, levelSize.xMax - MIN_BOX_SIZE),
+                    Math.Clamp(value.y, levelSize.yMin, levelSize.yMax - MIN_BOX_SIZE)
+                );
+            }
+        }
+
+        public bool IsOutline
+        {
+            get;
+            set;
+        }
+
+        private Tilemap tilemap;
+        private Tile tile;
+
+        public BoxElement(Random _rng, Tilemap tilemap, Tile tile)
+        {
+            BoxOrigin = new Vector2Int(
+                RandomInt(_rng, levelSize.xMin, levelSize.xMax),
+                RandomInt(_rng, levelSize.xMin, levelSize.xMax)
+            );
+            BoxSize = new Vector2Int(
+                RandomInt(_rng, MIN_BOX_SIZE, levelSize.width),
+                RandomInt(_rng, MIN_BOX_SIZE, levelSize.height)
+            );
+            IsOutline = RandomState(_rng);
+            this.tilemap = tilemap;
+            this.tile = tile;
+        }
+
+        private RectInt CreateRect()
+        {
+            return new RectInt(BoxOrigin, BoxSize);
+        }
+
+        public bool Contains(Vector2Int point)
+        {
+            return CreateRect().Contains(point);
+        }
+
+        public void Place()
+        {
+            RectInt box = CreateRect();
+            box.SetMinMax(box.min, Vector2Int.Min(levelSize.max, box.max));
+            foreach (Vector3Int point in box.allPositionsWithin)
+            {
+                if (IsOutline)
+                {
+                    if (point.x == box.xMin || point.y == box.yMin || point.x == box.xMax - 1 || point.y == box.yMax - 1)
+                    {
+                        tilemap.SetTile(point, tile);        
+                    }
+                    continue;
+                }
+                tilemap.SetTile(point, tile);
+            }
+        }
+    }
+
+    public class LineElement
+    {
+        private int lineSize = MIN_LINE_SIZE;
+        public int LineSize
+        {
+            get
+            {
+                return lineSize;
+            }
+            set
+            {
+                lineSize = Math.Clamp(value, MIN_LINE_SIZE, Math.Max(levelSize.width, levelSize.height));
+            }
+        }
+
+        private Vector2Int lineOrigin = new Vector2Int(levelSize.xMin, levelSize.yMin);
+        public Vector2Int LineOrigin
+        {
+            get
+            {
+                return lineOrigin;
+            }
+            set
+            {
+                lineOrigin = new Vector2Int(
+                    Math.Clamp(value.x, levelSize.xMin, levelSize.xMax),
+                    Math.Clamp(value.y, levelSize.yMin, levelSize.yMax)
+                );
+            }
+        }
+
+        public bool IsVertical
+        {
+            get;
+            set;
+        }
+
+        public bool IsSpike
+        {
+            get;
+            set;
+        }
+
+        private Tilemap tilemap;
+        private Tile tile;
+        private Tilemap spikeTilemap;
+        private Tile spikeTile;
+
+        public LineElement(Random _rng, Tilemap tilemap, Tile tile, Tilemap spikeTilemap, Tile spikeTile)
+        {
+            LineSize = RandomInt(_rng, MIN_LINE_SIZE, Math.Max(levelSize.width, levelSize.height));
+            LineOrigin = new Vector2Int(
+                RandomInt(_rng, levelSize.xMin, levelSize.xMax),
+                RandomInt(_rng, levelSize.xMin, levelSize.xMax)
+            );
+            IsVertical = RandomState(_rng);
+            IsSpike = RandomState(_rng);
+            this.tilemap = tilemap;
+            this.tile = tile;
+            this.spikeTilemap = spikeTilemap;
+            this.spikeTile = spikeTile;
+        }
+
+        private RectInt CreateRect()
+        {
+            return new RectInt(
+                LineOrigin,
+                IsVertical
+                    ? new Vector2Int(1, LineSize)
+                    : new Vector2Int(LineSize, 1)
+            );
+        }
+
+        public bool Contains(Vector2Int point)
+        {
+            return CreateRect().Contains(point);
+        }
+
+        public void Place()
+        {
+            RectInt lineRect = CreateRect();
+            foreach (Vector2Int point in lineRect.allPositionsWithin)
+            {
+                if (levelSize.Contains(point) == false)
+                {
+                    continue;
+                }
+                
+                Vector3Int tilePoint = (Vector3Int) point;
+                if (IsSpike)
+                {
+                    spikeTilemap.SetTile(tilePoint, spikeTile);
+                }
+                else
+                {
+                    tilemap.SetTile(tilePoint, tile);
+                }
+            }
+        }
     }
 }
