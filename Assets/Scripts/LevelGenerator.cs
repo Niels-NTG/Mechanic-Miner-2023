@@ -12,7 +12,7 @@ public class LevelGenerator : MonoBehaviour
     private const int MIN_LINE_SIZE = 2;
 
     // Inner rect of the level measured in units of tiles.
-    private static readonly RectInt levelSize = new RectInt(1, 1, 18, 13);
+    private static RectInt levelSize = new RectInt(1, 1, 18, 13);
 
     public Tilemap impassableTilemap;
     public Tile impassableTile;
@@ -27,9 +27,8 @@ public class LevelGenerator : MonoBehaviour
     
     [SerializeField] private int seed = 1289897231;
     private Random rng;
-
-    public List<LineElement> lineElements = new List<LineElement>();
-    public List<BoxElement> boxElements = new List<BoxElement>();
+    
+    public List<LevelElement> LevelElements = new List<LevelElement>();
 
     [ContextMenu("Generate")]
     private void Generate()
@@ -37,25 +36,25 @@ public class LevelGenerator : MonoBehaviour
         Clear();
 
         rng = new Random(seed);
-        
-        PlaceEntryAndExit();
 
         int numberOfElements = RandomInt(MIN_ELEMENT_COUNT, MAX_ELEMENT_COUNT + 1);
         for (int elementIndex = 0; elementIndex < numberOfElements; elementIndex++)
         {
             if (RandomState())
             {
-                BoxElement boxElement = CreateBoxElement();
-                boxElement.Place();
-                boxElements.Add(boxElement);
+                LevelElements.Add(CreateBoxElement());
             }
             else
             {
-                LineElement lineElement = CreateLineElement();
-                lineElement.Place();
-                lineElements.Add(lineElement);
+                LevelElements.Add(CreateLineElement());
             }
         }
+
+        foreach (LevelElement element in LevelElements)
+        {
+            element.Place();
+        }
+        PlaceEntryAndExit();
     }
 
     private BoxElement CreateBoxElement()
@@ -70,17 +69,23 @@ public class LevelGenerator : MonoBehaviour
 
     private void PlaceEntryAndExit()
     {
-        Vector3Int entryLocation;
-        Vector3Int exitLocation;
+        Vector2Int entryLocation;
+        Vector2Int exitLocation;
         do
         {
             entryLocation = randomLocation();
             exitLocation = randomLocation();
-        } while (entryLocation == exitLocation);
-        entryTilemap.SetTile(entryLocation, entryTile);
-        exitTilemap.SetTile(exitLocation, exitTile);
+        } while (
+            entryLocation == exitLocation || 
+            LevelElements.Exists(el => el.Contains(entryLocation)) ||
+            LevelElements.Exists(el => el.Contains(exitLocation))
+        );
+        
+        exitTilemap.SetTile((Vector3Int)exitLocation, exitTile);
 
-        player.transform.position = entryLocation + new Vector3(0.5f, 0.5f);
+        Vector3Int entryTileLocation = (Vector3Int) entryLocation;
+        entryTilemap.SetTile(entryTileLocation, entryTile);
+        player.transform.position = entryTileLocation + new Vector3(0.5f, 0.5f);
     }
 
     private bool RandomState()
@@ -102,9 +107,9 @@ public class LevelGenerator : MonoBehaviour
         return _rng.Next(min, max);
     }
     
-    private Vector3Int randomLocation()
+    private Vector2Int randomLocation()
     {
-        return new Vector3Int(
+        return new Vector2Int(
             RandomInt(levelSize.xMin, levelSize.xMax),
             RandomInt(levelSize.yMin, levelSize.yMax)
         );
@@ -123,10 +128,22 @@ public class LevelGenerator : MonoBehaviour
     {
         Generate();
     }
-
-    // TODO implement abstract class to share between BoxElement and LineElement
     
-    public class BoxElement
+    public interface LevelElement
+    {
+        public bool Contains(Vector2Int point)
+        {
+            return false;
+        }
+
+        public void Place()
+        {
+            
+        }
+    }
+    
+    
+    public class BoxElement : LevelElement
     {
         
         private Vector2Int boxSize = new Vector2Int(MIN_BOX_SIZE, MIN_BOX_SIZE);
@@ -192,7 +209,16 @@ public class LevelGenerator : MonoBehaviour
 
         public bool Contains(Vector2Int point)
         {
-            return CreateRect().Contains(point);
+            RectInt rect = CreateRect();
+            if (
+                IsOutline &&
+                Vector2Int.Max(point, rect.min + 2 * Vector2Int.one) == point &&
+                Vector2Int.Min(point, rect.max - 2 * Vector2Int.one) == point
+            )
+            {
+                return false;
+            }
+            return rect.Contains(point);
         }
 
         public void Place()
@@ -214,7 +240,7 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    public class LineElement
+    public class LineElement : LevelElement
     {
         private int lineSize = MIN_LINE_SIZE;
         public int LineSize
