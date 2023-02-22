@@ -34,12 +34,12 @@ public class PlayerController : MonoBehaviour
 
     public void MoveLeft()
     {
-        horizontal = -1f;
+        rigidBody.MovePosition((Vector2)transform.position + Vector2.left);
     }
     
     public void MoveRight()
     {
-        horizontal = 1f;
+        rigidBody.MovePosition((Vector2)transform.position + Vector2.right);
     }
 
     private void FixedUpdate()
