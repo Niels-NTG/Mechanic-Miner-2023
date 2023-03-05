@@ -390,8 +390,8 @@ GameObject:
   - component: {fileID: 1250208730}
   - component: {fileID: 1250208729}
   - component: {fileID: 1250208733}
-  - component: {fileID: 1250208732}
   - component: {fileID: 1250208734}
+  - component: {fileID: 1250208732}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -514,6 +514,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   groundCollider: {fileID: 1250208734}
+  componentsWithToggleableProperties:
+  - {fileID: 1250208733}
+  - {fileID: 1250208729}
+  - {fileID: 1250208734}
 --- !u!50 &1250208733
 Rigidbody2D:
   serializedVersion: 4

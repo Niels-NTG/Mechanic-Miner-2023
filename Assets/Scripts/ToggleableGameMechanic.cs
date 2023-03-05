@@ -15,7 +15,7 @@ public class ToggleableGameMechanic
 
     private bool isActive;
 
-    ToggleableGameMechanic(Component component, String fieldName, Random rng)
+    public ToggleableGameMechanic(Component component, String fieldName, Random rng)
     {
         Type componentType = component.GetType();
         componentFieldInfo = componentType.GetField(fieldName);
@@ -85,5 +85,27 @@ public class ToggleableGameMechanic
     {
         SetValue(newState ? modifierValue : defaultValue);
         isActive = newState;
+    }
+
+    public static Component SelectComponent(PlayerController player, Random rng)
+    {
+        return player.componentsWithToggleableProperties[rng.Next(player.componentsWithToggleableProperties.Length)];
+    }
+
+    public static String SelectComponentField(Component component, Random rng)
+    {
+        Type componentType = component.GetType();
+        FieldInfo[] componentFields = componentType.GetFields();
+        FieldInfo selectedField;
+        do
+        {
+            selectedField = componentFields[rng.Next(componentFields.Length)];
+        } while (
+            selectedField.GetValue(component) is not float ||
+            selectedField.GetValue(component) is not int ||
+            selectedField.GetValue(component) is not bool
+        );
+
+        return selectedField.Name;
     }
 }

@@ -13,16 +13,7 @@ public class PlayerController : MonoBehaviour
     public LayerMask exitLayer;
     public EdgeCollider2D groundCollider;
 
-    // Update is called once per frame
-    void Update()
-    {
-        horizontal = Input.GetAxisRaw("Horizontal");
-
-        if (Input.GetButtonDown("Jump"))
-        {
-            Jump();
-        }
-    }
+    public Component[] componentsWithToggleableProperties;
 
     public void Jump()
     {
@@ -41,14 +32,23 @@ public class PlayerController : MonoBehaviour
     {
         rigidBody.MovePosition((Vector2)transform.position + Vector2.right);
     }
-
-    private void FixedUpdate()
-    {
-        rigidBody.velocity = new Vector2(horizontal * speed, rigidBody.velocity.y);
-    }
-
+    
     private bool IsGrounded()
     {
         return Physics2D.IsTouchingLayers(groundCollider, groundLayer);
+    }
+    
+    void Update()
+    {
+        horizontal = Input.GetAxisRaw("Horizontal");
+        if (Input.GetButtonDown("Jump"))
+        {
+            Jump();
+        }
+    }
+    
+    private void FixedUpdate()
+    {
+        rigidBody.velocity = new Vector2(horizontal * speed, rigidBody.velocity.y);
     }
 }
