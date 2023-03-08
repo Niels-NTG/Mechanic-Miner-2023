@@ -6,7 +6,7 @@ using Random = System.Random;
 public class ToggleableGameMechanic
 {
     private readonly Component component;
-    private readonly FieldInfo componentFieldInfo;
+    private readonly PropertyInfo componentPropertyInfo;
 
     public readonly object defaultValue;
     public readonly object modifierValue;
@@ -17,11 +17,11 @@ public class ToggleableGameMechanic
 
     public ToggleableGameMechanic(Component component, String fieldName, Random rng)
     {
+        this.component = component;
         Type componentType = component.GetType();
-        componentFieldInfo = componentType.GetField(fieldName);
+        componentPropertyInfo = componentType.GetProperty(fieldName);
 
         defaultValue = GetValue();
-        Debug.Log(defaultValue);
 
         String[] operatorTypes = { "double", "half", "invert" };
         if (GetValue() is float)
@@ -59,21 +59,18 @@ public class ToggleableGameMechanic
             operatorType = "invert";
             modifierValue = !(bool)defaultValue;
         }
-        else
-        {
-            Debug.Log("Given field is not an int, float or bool type");
-            // TODO maybe throw an error here?   
-        }
+        
+        Debug.Log(componentType.Name + " " + fieldName + " : " + defaultValue + " / " + modifierValue + " (" + operatorType + ")");
     }
 
     public object GetValue()
     {
-        return componentFieldInfo.GetValue(component);
+        return componentPropertyInfo.GetValue(component);
     }
 
     public void SetValue(object value)
     {
-        componentFieldInfo.SetValue(component, value);
+        componentPropertyInfo.SetValue(component, value);
     }
 
     public void Toggle()
@@ -87,25 +84,57 @@ public class ToggleableGameMechanic
         isActive = newState;
     }
 
+    public float Evaluate()
+    {
+        return 0f;
+    }
+
     public static Component SelectComponent(PlayerController player, Random rng)
     {
         return player.componentsWithToggleableProperties[rng.Next(player.componentsWithToggleableProperties.Length)];
     }
 
-    public static String SelectComponentField(Component component, Random rng)
+    public static String SelectComponentProperty(Component component, Random rng)
     {
         Type componentType = component.GetType();
-        FieldInfo[] componentFields = componentType.GetFields();
-        FieldInfo selectedField;
+        // IEnumerable<PropertyInfo> componentProperties = componentType.GetRuntimeProperties();
+        PropertyInfo[] componentProperties = componentType.GetProperties();
+
+        bool[] sampleFlags = new bool[componentProperties.Length];
+        Array.Fill(sampleFlags, false);
+        
+        PropertyInfo selectedProperty = null;
         do
         {
-            selectedField = componentFields[rng.Next(componentFields.Length)];
+            int nextRandomIndex = rng.Next(componentProperties.Length);
+            if (sampleFlags[nextRandomIndex]) continue;
+            sampleFlags[nextRandomIndex] = true;
+
+            bool isEditableMechanic;
+            PropertyInfo candidateProperty = componentProperties[nextRandomIndex];
+            try
+            {
+                isEditableMechanic =
+                    candidateProperty.GetValue(component) is float ||
+                    candidateProperty.GetValue(component) is int ||
+                    candidateProperty.GetValue(component) is bool;
+            }
+            catch (NotSupportedException)
+            {
+                continue;
+            }
+            catch (TargetInvocationException)
+            {
+                continue;
+            }
+
+            if (!isEditableMechanic) continue;
+            selectedProperty = candidateProperty;
         } while (
-            selectedField.GetValue(component) is not float ||
-            selectedField.GetValue(component) is not int ||
-            selectedField.GetValue(component) is not bool
+            selectedProperty == null ||
+            Array.TrueForAll(sampleFlags, b => b) == false
         );
 
-        return selectedField.Name;
+        return selectedProperty.Name;
     }
 }

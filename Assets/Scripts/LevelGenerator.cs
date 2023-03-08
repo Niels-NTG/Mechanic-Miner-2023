@@ -23,15 +23,16 @@ public class LevelGenerator : MonoBehaviour
     public Tilemap exitTilemap;
     public Tile exitTile;
 
-    [SerializeField] private GameObject player;
-    
     [SerializeField] private int seed = 1289897231;
     private Random rng;
-    
-    public List<LevelElement> LevelElements = new List<LevelElement>();
+
+    private readonly List<LevelElement> LevelElements = new List<LevelElement>();
+
+    public Vector2Int entryLocation;
+    public Vector2Int exitLocation;
 
     [ContextMenu("Generate")]
-    private void Generate()
+    public void Generate()
     {
         Clear();
 
@@ -69,23 +70,23 @@ public class LevelGenerator : MonoBehaviour
 
     private void PlaceEntryAndExit()
     {
-        Vector2Int entryLocation;
-        Vector2Int exitLocation;
+        Vector2Int candiateEntryLocation;
+        Vector2Int candidateExitLocation;
         do
         {
-            entryLocation = randomLocation();
-            exitLocation = randomLocation();
+            candiateEntryLocation = randomLocation();
+            candidateExitLocation = randomLocation();
         } while (
-            entryLocation == exitLocation || 
-            LevelElements.Exists(el => el.Contains(entryLocation)) ||
-            LevelElements.Exists(el => el.Contains(exitLocation))
+            candiateEntryLocation == candidateExitLocation || 
+            LevelElements.Exists(el => el.Contains(candiateEntryLocation)) ||
+            LevelElements.Exists(el => el.Contains(candidateExitLocation))
         );
-        
-        exitTilemap.SetTile((Vector3Int)exitLocation, exitTile);
 
-        Vector3Int entryTileLocation = (Vector3Int) entryLocation;
-        entryTilemap.SetTile(entryTileLocation, entryTile);
-        player.transform.position = entryTileLocation + new Vector3(0.5f, 0.5f);
+        entryLocation = candiateEntryLocation;
+        exitLocation = candidateExitLocation;
+        
+        entryTilemap.SetTile((Vector3Int) candiateEntryLocation, entryTile);
+        exitTilemap.SetTile((Vector3Int)candidateExitLocation, exitTile);
     }
 
     private bool RandomState()
@@ -124,12 +125,7 @@ public class LevelGenerator : MonoBehaviour
         exitTilemap.ClearAllTiles();
     }
 
-    private void Awake()
-    {
-        Generate();
-    }
-    
-    public interface LevelElement
+    private interface LevelElement
     {
         public bool Contains(Vector2Int point)
         {
@@ -141,13 +137,14 @@ public class LevelGenerator : MonoBehaviour
             
         }
     }
-    
-    
-    public class BoxElement : LevelElement
+
+
+    private class BoxElement : LevelElement
     {
         
         private Vector2Int boxSize = new Vector2Int(MIN_BOX_SIZE, MIN_BOX_SIZE);
-        public Vector2Int BoxSize
+
+        private Vector2Int BoxSize
         {
             get
             {
@@ -163,7 +160,8 @@ public class LevelGenerator : MonoBehaviour
         }
 
         private Vector2Int boxOrigin = new Vector2Int(levelSize.xMin, levelSize.yMin);
-        public Vector2Int BoxOrigin
+
+        private Vector2Int BoxOrigin
         {
             get
             {
@@ -178,14 +176,14 @@ public class LevelGenerator : MonoBehaviour
             }
         }
 
-        public bool IsOutline
+        private bool IsOutline
         {
             get;
             set;
         }
 
-        private Tilemap tilemap;
-        private Tile tile;
+        private readonly Tilemap tilemap;
+        private readonly Tile tile;
 
         public BoxElement(Random _rng, Tilemap tilemap, Tile tile)
         {
@@ -240,10 +238,11 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    public class LineElement : LevelElement
+    private class LineElement : LevelElement
     {
         private int lineSize = MIN_LINE_SIZE;
-        public int LineSize
+
+        private int LineSize
         {
             get
             {
@@ -256,7 +255,8 @@ public class LevelGenerator : MonoBehaviour
         }
 
         private Vector2Int lineOrigin = new Vector2Int(levelSize.xMin, levelSize.yMin);
-        public Vector2Int LineOrigin
+
+        private Vector2Int LineOrigin
         {
             get
             {
@@ -271,22 +271,22 @@ public class LevelGenerator : MonoBehaviour
             }
         }
 
-        public bool IsVertical
+        private bool IsVertical
         {
             get;
             set;
         }
 
-        public bool IsSpike
+        private bool IsSpike
         {
             get;
             set;
         }
 
-        private Tilemap tilemap;
-        private Tile tile;
-        private Tilemap spikeTilemap;
-        private Tile spikeTile;
+        private readonly Tilemap tilemap;
+        private readonly Tile tile;
+        private readonly Tilemap spikeTilemap;
+        private readonly Tile spikeTile;
 
         public LineElement(Random _rng, Tilemap tilemap, Tile tile, Tilemap spikeTilemap, Tile spikeTile)
         {

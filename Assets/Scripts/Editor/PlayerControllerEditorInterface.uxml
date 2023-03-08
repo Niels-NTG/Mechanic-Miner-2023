@@ -2,5 +2,6 @@
     <ui:Button text="MoveLeft" display-tooltip-when-elided="true" binding-path="MoveLeft" enable-rich-text="false" name="MoveLeft" />
     <ui:Button text="MoveRight" display-tooltip-when-elided="true" binding-path="MoveRight" enable-rich-text="false" name="MoveRight" />
     <ui:Button text="Jump" display-tooltip-when-elided="true" binding-path="Jump" enable-rich-text="false" name="Jump" />
+    <ui:Button text="Special" display-tooltip-when-elided="true" binding-path="Special" enable-rich-text="false" name="Special" />
     <ui:Foldout text="Default Inspector" name="Default_Inspector" />
 </ui:UXML>

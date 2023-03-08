@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     public EdgeCollider2D groundCollider;
 
     public Component[] componentsWithToggleableProperties;
+    public ToggleableGameMechanic toggleableGameMechanic;
 
     public void Jump()
     {
@@ -32,6 +33,11 @@ public class PlayerController : MonoBehaviour
     {
         rigidBody.MovePosition((Vector2)transform.position + Vector2.right);
     }
+
+    public void ToggleSpecial()
+    {
+        toggleableGameMechanic.Toggle();
+    }
     
     private bool IsGrounded()
     {
@@ -44,6 +50,11 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("Jump"))
         {
             Jump();
+        }
+
+        if (Input.GetButtonDown("Special"))
+        {
+            ToggleSpecial();
         }
     }
     

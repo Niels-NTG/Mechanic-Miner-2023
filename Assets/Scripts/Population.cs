@@ -1,31 +1,32 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using Random = System.Random;
 
-public class Population
+public class Population : MonoBehaviour
 {
     private List<ToggleableGameMechanic> population;
-    public readonly int populationSize;
+    [SerializeField] private int seed = 38387298;
 
-    Population(int populationSize, PlayerController player)
+    public void CreatePopulation(int populationSize, GameObject playerAgentPrefab, Vector2Int playerEntryLocation, TilemapCollider2D exitCollider)
     {
-        this.populationSize = populationSize;
+        Random rng = new Random(seed);
 
-        Random rng = new Random();
-        
         population = new List<ToggleableGameMechanic>();
         for (int i = 0; i < populationSize; i++)
         {
-            Component selectedComponent = ToggleableGameMechanic.SelectComponent(player, rng);
-            String selectedComponentField = ToggleableGameMechanic.SelectComponentField(selectedComponent, rng);
-            population.Add(
-                new ToggleableGameMechanic(
-                    selectedComponent,
-                    selectedComponentField,
-                    rng
-                )
+            GameObject newPlayerAgent = Instantiate(playerAgentPrefab, new Vector3(playerEntryLocation.x, playerEntryLocation.y, 0), Quaternion.identity);
+            PlayerController playerController = newPlayerAgent.GetComponent<PlayerController>();
+            Component selectedComponent = ToggleableGameMechanic.SelectComponent(playerController, rng);
+            String selectedComponentField = ToggleableGameMechanic.SelectComponentProperty(selectedComponent, rng);
+            ToggleableGameMechanic toggleableGameMechanic = new ToggleableGameMechanic(
+                selectedComponent,
+                selectedComponentField,
+                rng
             );
+            playerController.toggleableGameMechanic = toggleableGameMechanic;
+            population.Add(toggleableGameMechanic);
         }
     }
 }

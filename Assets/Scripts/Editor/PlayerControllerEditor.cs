@@ -18,21 +18,27 @@ public class PlayerControllerEditor : Editor
         PlayerController playerController = (PlayerController) target;
 
         VisualElement inspectorMoveLeft = inspector.Query("MoveLeft");
-        inspectorMoveLeft.RegisterCallback<ClickEvent>(evt =>
+        inspectorMoveLeft.RegisterCallback<ClickEvent>(_ =>
         {
             playerController.MoveLeft();
         });
 
         VisualElement inspectorMoveRight = inspector.Query("MoveRight");
-        inspectorMoveRight.RegisterCallback<ClickEvent>(evt =>
+        inspectorMoveRight.RegisterCallback<ClickEvent>(_ =>
         {
             playerController.MoveRight();
         });
 
         VisualElement inspectorJump = inspector.Query("Jump");
-        inspectorJump.RegisterCallback<ClickEvent>(evt =>
+        inspectorJump.RegisterCallback<ClickEvent>(_ =>
         {
             playerController.Jump();
+        });
+        
+        VisualElement inspectorSpecial = inspector.Query("Special");
+        inspectorSpecial.RegisterCallback<ClickEvent>(_ =>
+        {
+            playerController.ToggleSpecial();
         });
 
         return inspector;
