@@ -58,6 +58,21 @@ public class ToggleableGameMechanic
         {
             operatorType = "invert";
             modifierValue = !(bool)defaultValue;
+        } else if (GetValue() is Vector2)
+        {
+            operatorType = operatorTypes[rng.Next(operatorTypes.Length)];
+            switch (operatorType)
+            {
+                case "double":
+                    modifierValue = (Vector2)defaultValue * 2f;
+                    break;
+                case "half":
+                    modifierValue = (Vector2)defaultValue / 2f;
+                    break;
+                case "invert":
+                    modifierValue = (Vector2)defaultValue * -1f;
+                    break;
+            }
         }
         
         Debug.Log(componentType.Name + " " + fieldName + " : " + defaultValue + " / " + modifierValue + " (" + operatorType + ")");
@@ -97,7 +112,6 @@ public class ToggleableGameMechanic
     public static String SelectComponentProperty(Component component, Random rng)
     {
         Type componentType = component.GetType();
-        // IEnumerable<PropertyInfo> componentProperties = componentType.GetRuntimeProperties();
         PropertyInfo[] componentProperties = componentType.GetProperties();
 
         bool[] sampleFlags = new bool[componentProperties.Length];
@@ -117,7 +131,8 @@ public class ToggleableGameMechanic
                 isEditableMechanic =
                     candidateProperty.GetValue(component) is float ||
                     candidateProperty.GetValue(component) is int ||
-                    candidateProperty.GetValue(component) is bool;
+                    candidateProperty.GetValue(component) is bool ||
+                    candidateProperty.GetValue(component) is Vector2;
             }
             catch (NotSupportedException)
             {
