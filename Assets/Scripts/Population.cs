@@ -6,6 +6,8 @@ using Random = System.Random;
 
 public class Population : MonoBehaviour
 {
+    public Component[] componentsWithToggleableProperties;
+    
     private List<ToggleableGameMechanic> population;
     [SerializeField] private int seed = 38387298;
 
@@ -18,8 +20,9 @@ public class Population : MonoBehaviour
         {
             GameObject newPlayerAgent = Instantiate(playerAgentPrefab, new Vector3(playerEntryLocation.x, playerEntryLocation.y, 0), Quaternion.identity);
             PlayerController playerController = newPlayerAgent.GetComponent<PlayerController>();
-            Component selectedComponent = ToggleableGameMechanic.SelectComponent(playerController, rng);
+            Component selectedComponent = ToggleableGameMechanic.SelectComponent(componentsWithToggleableProperties, rng);
             String selectedComponentField = ToggleableGameMechanic.SelectComponentProperty(selectedComponent, rng);
+            // TODO read paper on if TGMs come in sets or one at the time.
             ToggleableGameMechanic toggleableGameMechanic = new ToggleableGameMechanic(
                 selectedComponent,
                 selectedComponentField,

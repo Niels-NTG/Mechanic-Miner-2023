@@ -12,8 +12,7 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
     public LayerMask exitLayer;
     public EdgeCollider2D groundCollider;
-
-    public Component[] componentsWithToggleableProperties;
+    
     public ToggleableGameMechanic toggleableGameMechanic;
 
     public void Jump()

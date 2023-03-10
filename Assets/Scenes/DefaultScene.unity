@@ -405,7 +405,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf58b8b47bc84349ad9aef3a61526b8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  seed: 34088393
+  componentsWithToggleableProperties:
+  - {fileID: 9119302039059648108, guid: e705898192c6b47b3b49ee0aa63c7d7f, type: 3}
+  - {fileID: 9119302039059648104, guid: e705898192c6b47b3b49ee0aa63c7d7f, type: 3}
+  - {fileID: 9119302039059648107, guid: e705898192c6b47b3b49ee0aa63c7d7f, type: 3}
+  - {fileID: 9119302039059648105, guid: e705898192c6b47b3b49ee0aa63c7d7f, type: 3}
+  - {fileID: 1865743377}
+  - {fileID: 1865743376}
+  - {fileID: 2008652543}
+  - {fileID: 2008652542}
+  - {fileID: 1728020723}
+  - {fileID: 361953514}
+  seed: 31548569
 --- !u!1 &1645575967
 GameObject:
   m_ObjectHideFlags: 0

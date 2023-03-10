@@ -75,7 +75,7 @@ public class ToggleableGameMechanic
             }
         }
         
-        Debug.Log(componentType.Name + " " + fieldName + " : " + defaultValue + " / " + modifierValue + " (" + operatorType + ")");
+        Debug.Log( component.name + " " + componentType.Name + " " + fieldName + " : " + defaultValue + " / " + modifierValue + " (" + operatorType + ")");
     }
 
     public object GetValue()
@@ -99,14 +99,9 @@ public class ToggleableGameMechanic
         isActive = newState;
     }
 
-    public float Evaluate()
+    public static Component SelectComponent(Component[] componentsWithToggleableProperties, Random rng)
     {
-        return 0f;
-    }
-
-    public static Component SelectComponent(PlayerController player, Random rng)
-    {
-        return player.componentsWithToggleableProperties[rng.Next(player.componentsWithToggleableProperties.Length)];
+        return componentsWithToggleableProperties[rng.Next(componentsWithToggleableProperties.Length)];
     }
 
     public static String SelectComponentProperty(Component component, Random rng)
@@ -142,6 +137,7 @@ public class ToggleableGameMechanic
             {
                 continue;
             }
+            // TODO ignore properties that do not have a set method
 
             if (!isEditableMechanic) continue;
             selectedProperty = candidateProperty;
