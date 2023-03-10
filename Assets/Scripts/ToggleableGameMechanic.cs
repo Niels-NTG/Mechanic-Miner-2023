@@ -10,11 +10,12 @@ public class ToggleableGameMechanic
     private readonly PropertyInfo componentPropertyInfo;
 
     public readonly object defaultValue;
-    public readonly object modifierValue;
 
     public readonly String operatorType;
 
     private bool isActive;
+    
+    private readonly String[] operatorTypes = { "double", "half", "invert" };
 
     public ToggleableGameMechanic(List<Component> componentsWithToggleableProperties, Random rng)
     {
@@ -25,59 +26,9 @@ public class ToggleableGameMechanic
         
         defaultValue = GetValue();
 
-        String[] operatorTypes = { "double", "half", "invert" };
-        if (GetValue() is float)
-        {
-            operatorType = operatorTypes[rng.Next(operatorTypes.Length)];
-            switch (operatorType)
-            {
-                case "double":
-                    modifierValue = (float)defaultValue * 2f;
-                    break;
-                case "half":
-                    modifierValue = (float)defaultValue / 2f;
-                    break;
-                case "invert":
-                    modifierValue = (float)defaultValue * -1f;
-                    break;
-            }
-        } else if (GetValue() is int)
-        {
-            operatorType = operatorTypes[rng.Next(operatorTypes.Length)];
-            switch (operatorType)
-            {
-                case "double":
-                    modifierValue = (int)defaultValue * 2f;
-                    break;
-                case "half":
-                    modifierValue = (int)defaultValue / 2f;
-                    break;
-                case "invert":
-                    modifierValue = (int)defaultValue * -1f;
-                    break;
-            }
-        } else if (GetValue() is bool)
-        {
-            operatorType = "invert";
-            modifierValue = !(bool)defaultValue;
-        } else if (GetValue() is Vector2)
-        {
-            operatorType = operatorTypes[rng.Next(operatorTypes.Length)];
-            switch (operatorType)
-            {
-                case "double":
-                    modifierValue = (Vector2)defaultValue * 2f;
-                    break;
-                case "half":
-                    modifierValue = (Vector2)defaultValue / 2f;
-                    break;
-                case "invert":
-                    modifierValue = (Vector2)defaultValue * -1f;
-                    break;
-            }
-        }
-        
-        Debug.Log( component.name + " " + componentType.Name + " " + fieldName + " : " + defaultValue + " / " + modifierValue + " (" + operatorType + ")");
+        operatorType = SetModifier(rng);
+
+        Debug.Log( component.name + " " + componentType.Name + " " + fieldName + " : " + defaultValue + " / " + ApplyModifier(defaultValue) + " (" + operatorType + ")");
     }
 
     public object GetValue()
@@ -97,18 +48,85 @@ public class ToggleableGameMechanic
 
     public void Toggle(bool newState)
     {
+        object modifierValue = ApplyModifier(defaultValue);
+        
         SetValue(newState ? modifierValue : defaultValue);
         isActive = newState;
     }
 
-    public static Component SelectComponent(List<Component> componentsWithToggleableProperties, Random rng)
+    private object ApplyModifier(object inputValue)
+    {
+        if (operatorType == "double")
+        {
+            switch (inputValue)
+            {
+                case float value:
+                    return value * 2f;
+                case int value:
+                    return value * 2;
+                case Vector2 value:
+                    return value * 2f;
+                case Vector3 value:
+                    return value * 2f;
+                case Vector4 value:
+                    return value * 2f;
+                case Vector2Int value:
+                    return value * 2;
+                case Vector3Int value:
+                    return value * 2;
+            }
+        } else if (operatorType == "half")
+        {
+            switch (inputValue)
+            {
+                case float value:
+                    return value / 2f;
+                case int value:
+                    return value / 2;
+                case Vector2 value:
+                    return value / 2f;
+                case Vector3 value:
+                    return value / 2f;
+                case Vector4 value:
+                    return value / 2f;
+                case Vector2Int value:
+                    return value / 2;
+                case Vector3Int value:
+                    return value / 2;
+            }
+        } else if (operatorType == "invert")
+        {
+            switch (inputValue)
+            {
+                case bool value:
+                    return !value;
+                case float value:
+                    return value * -1f;
+                case int value:
+                    return value * -1;
+                case Vector2 value:
+                    return value * -1f;
+                case Vector3 value:
+                    return value * -1f;
+                case Vector4 value:
+                    return value * -1f;
+                case Vector2Int value:
+                    return value * -1;
+                case Vector3Int value:
+                    return value * -1;
+            }
+        }
+        return inputValue;
+    }
+
+    public Component SelectComponent(List<Component> componentsWithToggleableProperties, Random rng)
     {
         return componentsWithToggleableProperties[rng.Next(componentsWithToggleableProperties.Count)];
     }
 
-    public static PropertyInfo SelectComponentProperty(Component component, Random rng)
+    public PropertyInfo SelectComponentProperty(Component selectedComponent, Random rng)
     {
-        Type componentType = component.GetType();
+        Type componentType = selectedComponent.GetType();
         PropertyInfo[] componentProperties = componentType.GetProperties();
 
         bool[] sampleFlags = new bool[componentProperties.Length];
@@ -125,12 +143,17 @@ public class ToggleableGameMechanic
             PropertyInfo candidateProperty = componentProperties[nextRandomIndex];
             try
             {
+                object outputValue = candidateProperty.GetValue(selectedComponent);
                 isEditableMechanic =
                     candidateProperty.SetMethod != null && (
-                        candidateProperty.GetValue(component) is float ||
-                        candidateProperty.GetValue(component) is int ||
-                        candidateProperty.GetValue(component) is bool ||
-                        candidateProperty.GetValue(component) is Vector2
+                        outputValue is float ||
+                        outputValue is int ||
+                        outputValue is bool ||
+                        outputValue is Vector2 ||
+                        outputValue is Vector3 ||
+                        outputValue is Vector4 ||
+                        outputValue is Vector2Int ||
+                        outputValue is Vector3Int
                     );
             }
             catch (NotSupportedException)
@@ -151,5 +174,24 @@ public class ToggleableGameMechanic
         );
 
         return selectedProperty;
+    }
+
+    public String SetModifier(Random rng)
+    {
+        switch (defaultValue)
+        {
+            case float:
+            case int:
+            case Vector2:
+            case Vector3:
+            case Vector4:
+            case Vector2Int:
+            case Vector3Int:
+                return operatorTypes[rng.Next(operatorTypes.Length)];
+            case bool:
+                return "invert";
+            default:
+                return "invert";
+        }
     }
 }
