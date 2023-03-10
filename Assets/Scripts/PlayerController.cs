@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -14,6 +15,7 @@ public class PlayerController : MonoBehaviour
     public EdgeCollider2D groundCollider;
     
     public ToggleableGameMechanic toggleableGameMechanic;
+    public List<Component> componentsWithToggleableProperties;
 
     public void Jump()
     {

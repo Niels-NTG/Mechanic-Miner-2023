@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using System.Reflection;
 using Random = System.Random;
@@ -15,12 +16,13 @@ public class ToggleableGameMechanic
 
     private bool isActive;
 
-    public ToggleableGameMechanic(Component component, String fieldName, Random rng)
+    public ToggleableGameMechanic(List<Component> componentsWithToggleableProperties, Random rng)
     {
-        this.component = component;
+        component = SelectComponent(componentsWithToggleableProperties, rng);
+        componentPropertyInfo = SelectComponentProperty(component, rng);
         Type componentType = component.GetType();
-        componentPropertyInfo = componentType.GetProperty(fieldName);
-
+        String fieldName = componentPropertyInfo.Name;
+        
         defaultValue = GetValue();
 
         String[] operatorTypes = { "double", "half", "invert" };
@@ -99,12 +101,12 @@ public class ToggleableGameMechanic
         isActive = newState;
     }
 
-    public static Component SelectComponent(Component[] componentsWithToggleableProperties, Random rng)
+    public static Component SelectComponent(List<Component> componentsWithToggleableProperties, Random rng)
     {
-        return componentsWithToggleableProperties[rng.Next(componentsWithToggleableProperties.Length)];
+        return componentsWithToggleableProperties[rng.Next(componentsWithToggleableProperties.Count)];
     }
 
-    public static String SelectComponentProperty(Component component, Random rng)
+    public static PropertyInfo SelectComponentProperty(Component component, Random rng)
     {
         Type componentType = component.GetType();
         PropertyInfo[] componentProperties = componentType.GetProperties();
@@ -148,6 +150,6 @@ public class ToggleableGameMechanic
             Array.TrueForAll(sampleFlags, b => b) == false
         );
 
-        return selectedProperty.Name;
+        return selectedProperty;
     }
 }

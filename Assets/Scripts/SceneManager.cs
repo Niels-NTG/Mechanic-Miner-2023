@@ -16,6 +16,7 @@ public class SceneManager : MonoBehaviour
         population.CreatePopulation(
             initialPopulationSize, 
             playerAgentPrefab,
+            levelGenerator,
             levelGenerator.entryLocation,
             levelGenerator.exitTilemap.GetComponent<TilemapCollider2D>()
         );

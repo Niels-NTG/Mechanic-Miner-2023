@@ -30,6 +30,8 @@ public class LevelGenerator : MonoBehaviour
 
     public Vector2Int entryLocation;
     public Vector2Int exitLocation;
+    
+    public List<Component> componentsWithToggleableProperties;
 
     [ContextMenu("Generate")]
     public void Generate()
@@ -70,22 +72,22 @@ public class LevelGenerator : MonoBehaviour
 
     private void PlaceEntryAndExit()
     {
-        Vector2Int candiateEntryLocation;
+        Vector2Int candidateEntryLocation;
         Vector2Int candidateExitLocation;
         do
         {
-            candiateEntryLocation = randomLocation();
+            candidateEntryLocation = randomLocation();
             candidateExitLocation = randomLocation();
         } while (
-            candiateEntryLocation == candidateExitLocation || 
-            LevelElements.Exists(el => el.Contains(candiateEntryLocation)) ||
+            candidateEntryLocation == candidateExitLocation || 
+            LevelElements.Exists(el => el.Contains(candidateEntryLocation)) ||
             LevelElements.Exists(el => el.Contains(candidateExitLocation))
         );
 
-        entryLocation = candiateEntryLocation;
+        entryLocation = candidateEntryLocation;
         exitLocation = candidateExitLocation;
         
-        entryTilemap.SetTile((Vector3Int) candiateEntryLocation, entryTile);
+        entryTilemap.SetTile((Vector3Int) candidateEntryLocation, entryTile);
         exitTilemap.SetTile((Vector3Int)candidateExitLocation, exitTile);
     }
 
