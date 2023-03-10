@@ -124,10 +124,12 @@ public class ToggleableGameMechanic
             try
             {
                 isEditableMechanic =
-                    candidateProperty.GetValue(component) is float ||
-                    candidateProperty.GetValue(component) is int ||
-                    candidateProperty.GetValue(component) is bool ||
-                    candidateProperty.GetValue(component) is Vector2;
+                    candidateProperty.SetMethod != null && (
+                        candidateProperty.GetValue(component) is float ||
+                        candidateProperty.GetValue(component) is int ||
+                        candidateProperty.GetValue(component) is bool ||
+                        candidateProperty.GetValue(component) is Vector2
+                    );
             }
             catch (NotSupportedException)
             {
@@ -137,10 +139,10 @@ public class ToggleableGameMechanic
             {
                 continue;
             }
-            // TODO ignore properties that do not have a set method
-
-            if (!isEditableMechanic) continue;
-            selectedProperty = candidateProperty;
+            if (isEditableMechanic)
+            {
+                selectedProperty = candidateProperty;    
+            }
         } while (
             selectedProperty == null ||
             Array.TrueForAll(sampleFlags, b => b) == false

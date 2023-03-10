@@ -179,7 +179,3 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   groundCollider: {fileID: 9119302039059648107}
-  componentsWithToggleableProperties:
-  - {fileID: 9119302039059648104}
-  - {fileID: 9119302039059648108}
-  - {fileID: 9119302039059648107}
