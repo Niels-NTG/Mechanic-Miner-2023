@@ -64,6 +64,16 @@ public class ToggleableGameMechanic
                     return value * 2f;
                 case int value:
                     return value * 2;
+                case sbyte value:
+                    return value * 2;
+                case short value:
+                    return value * 2;
+                case long value:
+                    return value * 2;
+                case double value:
+                    return value * 2d;
+                case decimal value:
+                    return value * 2m;
                 case Vector2 value:
                     return value * 2f;
                 case Vector3 value:
@@ -83,6 +93,16 @@ public class ToggleableGameMechanic
                     return value / 2f;
                 case int value:
                     return value / 2;
+                case sbyte value:
+                    return value / 2;
+                case short value:
+                    return value / 2;
+                case long value:
+                    return value / 2;
+                case double value:
+                    return value / 2d;
+                case decimal value:
+                    return value / 2m;
                 case Vector2 value:
                     return value / 2f;
                 case Vector3 value:
@@ -104,6 +124,16 @@ public class ToggleableGameMechanic
                     return value * -1f;
                 case int value:
                     return value * -1;
+                case sbyte value:
+                    return value * -1;
+                case short value:
+                    return value * -1;
+                case long value:
+                    return value * -1;
+                case double value:
+                    return value * -1d;
+                case decimal value:
+                    return value * -1m;
                 case Vector2 value:
                     return value * -1f;
                 case Vector3 value:
@@ -149,6 +179,11 @@ public class ToggleableGameMechanic
                         outputValue is float ||
                         outputValue is int ||
                         outputValue is bool ||
+                        outputValue is sbyte ||
+                        outputValue is short ||
+                        outputValue is long ||
+                        outputValue is double ||
+                        outputValue is decimal ||
                         outputValue is Vector2 ||
                         outputValue is Vector3 ||
                         outputValue is Vector4 ||
@@ -182,6 +217,11 @@ public class ToggleableGameMechanic
         {
             case float:
             case int:
+            case sbyte:
+            case short:
+            case long:
+            case double:
+            case decimal:
             case Vector2:
             case Vector3:
             case Vector4:
