@@ -144,6 +144,8 @@ public class ToggleableGameMechanic
                     return value * -1;
                 case Vector3Int value:
                     return value * -1;
+                case Quaternion value:
+                    return Quaternion.Inverse(value);
             }
         }
         return inputValue;
@@ -188,7 +190,8 @@ public class ToggleableGameMechanic
                         outputValue is Vector3 ||
                         outputValue is Vector4 ||
                         outputValue is Vector2Int ||
-                        outputValue is Vector3Int
+                        outputValue is Vector3Int ||
+                        outputValue is Quaternion
                     );
             }
             catch (NotSupportedException)
@@ -229,6 +232,7 @@ public class ToggleableGameMechanic
             case Vector3Int:
                 return operatorTypes[rng.Next(operatorTypes.Length)];
             case bool:
+            case Quaternion:
                 return "invert";
             default:
                 return "invert";
