@@ -6,39 +6,43 @@ using Random = System.Random;
 
 public class ToggleableGameMechanic
 {
-    private readonly Component component;
-    private readonly PropertyInfo componentPropertyInfo;
+    private readonly List<Component> componentsWithToggleableProperties;
+    private readonly Random rng;
 
-    public readonly object defaultValue;
+    public Component component;
+    public PropertyInfo componentProperty;
 
-    public readonly String operatorType;
+    private object defaultValue;
+
+    public String modifier;
+    private readonly String[] modifierTypes = { "double", "half", "invert" };
 
     private bool isActive;
-    
-    private readonly String[] operatorTypes = { "double", "half", "invert" };
 
     public ToggleableGameMechanic(List<Component> componentsWithToggleableProperties, Random rng)
     {
-        component = SelectComponent(componentsWithToggleableProperties, rng);
-        componentPropertyInfo = SelectComponentProperty(component, rng);
-        Type componentType = component.GetType();
-        String fieldName = componentPropertyInfo.Name;
+        this.componentsWithToggleableProperties = componentsWithToggleableProperties;
+        this.rng = rng;
         
-        defaultValue = GetValue();
+        SelectComponent();
+        SelectComponentProperty();
 
-        operatorType = SetModifier(rng);
+        SelectModifier();
+        
+        Type componentType = component.GetType();
+        String fieldName = componentProperty.Name;
 
-        Debug.Log( component.name + " " + componentType.Name + " " + fieldName + " : " + defaultValue + " / " + ApplyModifier(defaultValue) + " (" + operatorType + ")");
+        Debug.Log( component.name + " " + componentType.Name + " " + fieldName + " : " + defaultValue + " / " + ApplyModifier(defaultValue) + " (" + modifier + ")");
     }
 
-    public object GetValue()
+    private object GetValue()
     {
-        return componentPropertyInfo.GetValue(component);
+        return componentProperty.GetValue(component);
     }
 
-    public void SetValue(object value)
+    private void SetValue(object value)
     {
-        componentPropertyInfo.SetValue(component, value);
+        componentProperty.SetValue(component, value);
     }
 
     public void Toggle()
@@ -46,7 +50,7 @@ public class ToggleableGameMechanic
         Toggle(isActive = !isActive);
     }
 
-    public void Toggle(bool newState)
+    private void Toggle(bool newState)
     {
         object modifierValue = ApplyModifier(defaultValue);
         
@@ -56,109 +60,123 @@ public class ToggleableGameMechanic
 
     private object ApplyModifier(object inputValue)
     {
-        if (operatorType == "double")
+        switch (modifier)
         {
-            switch (inputValue)
-            {
-                case float value:
-                    return value * 2f;
-                case int value:
-                    return value * 2;
-                case sbyte value:
-                    return value * 2;
-                case short value:
-                    return value * 2;
-                case long value:
-                    return value * 2;
-                case double value:
-                    return value * 2d;
-                case decimal value:
-                    return value * 2m;
-                case Vector2 value:
-                    return value * 2f;
-                case Vector3 value:
-                    return value * 2f;
-                case Vector4 value:
-                    return value * 2f;
-                case Vector2Int value:
-                    return value * 2;
-                case Vector3Int value:
-                    return value * 2;
-            }
-        } else if (operatorType == "half")
-        {
-            switch (inputValue)
-            {
-                case float value:
-                    return value / 2f;
-                case int value:
-                    return value / 2;
-                case sbyte value:
-                    return value / 2;
-                case short value:
-                    return value / 2;
-                case long value:
-                    return value / 2;
-                case double value:
-                    return value / 2d;
-                case decimal value:
-                    return value / 2m;
-                case Vector2 value:
-                    return value / 2f;
-                case Vector3 value:
-                    return value / 2f;
-                case Vector4 value:
-                    return value / 2f;
-                case Vector2Int value:
-                    return value / 2;
-                case Vector3Int value:
-                    return value / 2;
-            }
-        } else if (operatorType == "invert")
-        {
-            switch (inputValue)
-            {
-                case bool value:
-                    return !value;
-                case float value:
-                    return value * -1f;
-                case int value:
-                    return value * -1;
-                case sbyte value:
-                    return value * -1;
-                case short value:
-                    return value * -1;
-                case long value:
-                    return value * -1;
-                case double value:
-                    return value * -1d;
-                case decimal value:
-                    return value * -1m;
-                case Vector2 value:
-                    return value * -1f;
-                case Vector3 value:
-                    return value * -1f;
-                case Vector4 value:
-                    return value * -1f;
-                case Vector2Int value:
-                    return value * -1;
-                case Vector3Int value:
-                    return value * -1;
-                case Quaternion value:
-                    return Quaternion.Inverse(value);
-            }
+            case "double":
+                switch (inputValue)
+                {
+                    case bool value:
+                        return !value;
+                    case float value:
+                        return value * 2f;
+                    case int value:
+                        return value * 2;
+                    case sbyte value:
+                        return value * 2;
+                    case short value:
+                        return value * 2;
+                    case long value:
+                        return value * 2;
+                    case double value:
+                        return value * 2d;
+                    case decimal value:
+                        return value * 2m;
+                    case Vector2 value:
+                        return value * 2f;
+                    case Vector3 value:
+                        return value * 2f;
+                    case Vector4 value:
+                        return value * 2f;
+                    case Vector2Int value:
+                        return value * 2;
+                    case Vector3Int value:
+                        return value * 2;
+                    case Quaternion value:
+                        return Quaternion.Inverse(value);
+                }
+                break;
+            case "half":
+                switch (inputValue)
+                {
+                    case bool value:
+                        return !value;
+                    case float value:
+                        return value / 2f;
+                    case int value:
+                        return value / 2;
+                    case sbyte value:
+                        return value / 2;
+                    case short value:
+                        return value / 2;
+                    case long value:
+                        return value / 2;
+                    case double value:
+                        return value / 2d;
+                    case decimal value:
+                        return value / 2m;
+                    case Vector2 value:
+                        return value / 2f;
+                    case Vector3 value:
+                        return value / 2f;
+                    case Vector4 value:
+                        return value / 2f;
+                    case Vector2Int value:
+                        return value / 2;
+                    case Vector3Int value:
+                        return value / 2;
+                    case Quaternion value:
+                        return Quaternion.Inverse(value);
+                }
+                break;
+            case "invert":
+                switch (inputValue)
+                {
+                    case bool value:
+                        return !value;
+                    case float value:
+                        return value * -1f;
+                    case int value:
+                        return value * -1;
+                    case sbyte value:
+                        return value * -1;
+                    case short value:
+                        return value * -1;
+                    case long value:
+                        return value * -1;
+                    case double value:
+                        return value * -1d;
+                    case decimal value:
+                        return value * -1m;
+                    case Vector2 value:
+                        return value * -1f;
+                    case Vector3 value:
+                        return value * -1f;
+                    case Vector4 value:
+                        return value * -1f;
+                    case Vector2Int value:
+                        return value * -1;
+                    case Vector3Int value:
+                        return value * -1;
+                    case Quaternion value:
+                        return Quaternion.Inverse(value);
+                }
+                break;
         }
         return inputValue;
     }
 
-    public Component SelectComponent(List<Component> componentsWithToggleableProperties, Random rng)
+    public void SelectComponent()
     {
-        return componentsWithToggleableProperties[rng.Next(componentsWithToggleableProperties.Count)];
+        Component newComponent = componentsWithToggleableProperties[rng.Next(componentsWithToggleableProperties.Count)];
+        if (newComponent != component)
+        {
+            component = newComponent;
+        } 
     }
 
-    public PropertyInfo SelectComponentProperty(Component selectedComponent, Random rng)
+    public void SelectComponentProperty()
     {
-        Type componentType = selectedComponent.GetType();
+        Type componentType = component.GetType();
         PropertyInfo[] componentProperties = componentType.GetProperties();
 
         bool[] sampleFlags = new bool[componentProperties.Length];
@@ -170,12 +188,14 @@ public class ToggleableGameMechanic
             int nextRandomIndex = rng.Next(componentProperties.Length);
             if (sampleFlags[nextRandomIndex]) continue;
             sampleFlags[nextRandomIndex] = true;
-
+            // TODO only select field to which the same type of modifier can be applied,
+            //      otherwise we risk applying an invalid modifier.
+            
             bool isEditableMechanic;
             PropertyInfo candidateProperty = componentProperties[nextRandomIndex];
             try
             {
-                object outputValue = candidateProperty.GetValue(selectedComponent);
+                object outputValue = candidateProperty.GetValue(component);
                 isEditableMechanic =
                     candidateProperty.SetMethod != null && (
                         outputValue is float ||
@@ -211,10 +231,16 @@ public class ToggleableGameMechanic
             Array.TrueForAll(sampleFlags, b => b) == false
         );
 
-        return selectedProperty;
+        componentProperty = selectedProperty;
+        defaultValue = GetValue();
+    }
+    
+    public void SelectModifier()
+    {
+        modifier = _SelectModifier();
     }
 
-    public String SetModifier(Random rng)
+    private String _SelectModifier()
     {
         switch (defaultValue)
         {
@@ -230,7 +256,7 @@ public class ToggleableGameMechanic
             case Vector4:
             case Vector2Int:
             case Vector3Int:
-                return operatorTypes[rng.Next(operatorTypes.Length)];
+                return modifierTypes[rng.Next(modifierTypes.Length)];
             case bool:
             case Quaternion:
                 return "invert";

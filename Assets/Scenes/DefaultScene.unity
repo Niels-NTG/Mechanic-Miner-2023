@@ -389,8 +389,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c7860f0ca705293cbef67c8095c3774, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  population: {fileID: 1425837268}
-  initialPopulationSize: 1
   playerAgentPrefab: {fileID: 6543401833008967047, guid: e705898192c6b47b3b49ee0aa63c7d7f, type: 3}
   levelGenerator: {fileID: 2066900811}
 --- !u!114 &1425837268
