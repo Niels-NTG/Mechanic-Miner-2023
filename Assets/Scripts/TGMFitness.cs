@@ -9,7 +9,7 @@ public class TGMFitness : IFitness
     {
         // TODO implement game playing agent for evaluation
         
-        // This is a nonesensicale dummy fitness function. To be replaced with a real one.
+        // This is a nonsensical dummy fitness function. To be replaced with a real one.
         Gene gene = chromosome.GetGene(0);
         ToggleableGameMechanic geneValue = (ToggleableGameMechanic)gene.Value;
         String tgmModifier = geneValue.modifier;

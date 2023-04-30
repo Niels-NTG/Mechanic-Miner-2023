@@ -22,8 +22,7 @@ public class LevelGenerator : MonoBehaviour
     public Tile entryTile;
     public Tilemap exitTilemap;
     public Tile exitTile;
-
-    [SerializeField] private int seed = 1289897231;
+    
     private Random rng;
 
     private readonly List<LevelElement> LevelElements = new List<LevelElement>();
@@ -38,7 +37,10 @@ public class LevelGenerator : MonoBehaviour
     {
         Clear();
 
-        rng = new Random(seed);
+        if (rng == null)
+        {
+            rng = new Random();
+        }
 
         int numberOfElements = RandomInt(MIN_ELEMENT_COUNT, MAX_ELEMENT_COUNT + 1);
         for (int elementIndex = 0; elementIndex < numberOfElements; elementIndex++)
@@ -58,6 +60,12 @@ public class LevelGenerator : MonoBehaviour
             element.Place();
         }
         PlaceEntryAndExit();
+    }
+
+    public void Generate(Random inputRng)
+    {
+        this.rng = inputRng;
+        Generate();
     }
 
     private BoxElement CreateBoxElement()

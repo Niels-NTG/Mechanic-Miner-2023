@@ -9,8 +9,8 @@ public class ToggleableGameMechanic
     private readonly List<Component> componentsWithToggleableProperties;
     private readonly Random rng;
 
-    public Component component;
-    public PropertyInfo componentProperty;
+    private Component component;
+    private PropertyInfo componentProperty;
 
     private object defaultValue;
 
@@ -24,15 +24,20 @@ public class ToggleableGameMechanic
         this.componentsWithToggleableProperties = componentsWithToggleableProperties;
         this.rng = rng;
         
-        SelectComponent();
-        SelectComponentProperty();
-
-        SelectModifier();
+        GenerateTGM();
         
         Type componentType = component.GetType();
         String fieldName = componentProperty.Name;
 
         Debug.Log( component.name + " " + componentType.Name + " " + fieldName + " : " + defaultValue + " / " + ApplyModifier(defaultValue) + " (" + modifier + ")");
+    }
+
+    private void GenerateTGM()
+    {
+        SelectComponent();
+        SelectComponentProperty();
+
+        SelectModifier();
     }
 
     private object GetValue()
@@ -165,13 +170,9 @@ public class ToggleableGameMechanic
         return inputValue;
     }
 
-    public void SelectComponent()
+    private void SelectComponent()
     {
-        Component newComponent = componentsWithToggleableProperties[rng.Next(componentsWithToggleableProperties.Count)];
-        if (newComponent != component)
-        {
-            component = newComponent;
-        } 
+        component = componentsWithToggleableProperties[rng.Next(componentsWithToggleableProperties.Count)];
     }
 
     public void SelectComponentProperty()
