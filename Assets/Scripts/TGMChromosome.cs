@@ -4,13 +4,11 @@ using GeneticSharp.Domain.Chromosomes;
 public sealed class TGMChromosome : ChromosomeBase
 {
     
-    private readonly ToggleableGameMechanic tgm;
-    private readonly SimulationInstanceConstructor simulationInstance;
+    private readonly SimulationInstance simulationInstance;
     
     public TGMChromosome() : base(3)
     {
-        simulationInstance = new SimulationInstanceConstructor(ID);
-        tgm = simulationInstance.tgm;
+        simulationInstance = new SimulationInstance(ID);
         CreateGenes();
     }
 
@@ -20,12 +18,12 @@ public sealed class TGMChromosome : ChromosomeBase
     {
         if (geneIndex == 0)
         {
-            tgm.SelectComponentProperty();
+            simulationInstance.tgm.SelectComponentProperty();
         } else if (geneIndex == 1) 
         {
-            tgm.SelectModifier();
+            simulationInstance.tgm.SelectModifier();
         }
-        return new Gene(tgm);
+        return new Gene(simulationInstance);
     }
 
     public override IChromosome CreateNew()

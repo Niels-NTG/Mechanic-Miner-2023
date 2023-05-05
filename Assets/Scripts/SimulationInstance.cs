@@ -5,12 +5,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = System.Random;
 
-public class SimulationInstanceConstructor
+public class SimulationInstance
 {
     public readonly ToggleableGameMechanic tgm;
     private readonly Scene newScene;
 
-    public SimulationInstanceConstructor(String ID)
+    public SimulationInstance(String ID)
     {
         // Create new scene
         CreateSceneParameters createSceneParameters = new CreateSceneParameters(LocalPhysicsMode.Physics2D);

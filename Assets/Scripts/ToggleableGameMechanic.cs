@@ -189,9 +189,7 @@ public class ToggleableGameMechanic
             int nextRandomIndex = rng.Next(componentProperties.Length);
             if (sampleFlags[nextRandomIndex]) continue;
             sampleFlags[nextRandomIndex] = true;
-            // TODO only select field to which the same type of modifier can be applied,
-            //      otherwise we risk applying an invalid modifier.
-            
+
             bool isEditableMechanic;
             PropertyInfo candidateProperty = componentProperties[nextRandomIndex];
             try
