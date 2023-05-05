@@ -170,7 +170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 8
-  jumpingPower: 8
+  jumpingPower: 6.6
   rigidBody: {fileID: 9119302039059648104}
   groundLayer:
     serializedVersion: 2

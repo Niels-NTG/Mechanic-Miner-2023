@@ -7,7 +7,8 @@ public class PlayerController : MonoBehaviour
     
     private float horizontal;
     public float speed = 8f;
-    public float jumpingPower = 8f;
+    // Default value of 6.6 is just enough to jump over 2 blocks.
+    public float jumpingPower = 6.6f;
 
     public Rigidbody2D rigidBody;
     public LayerMask groundLayer;
