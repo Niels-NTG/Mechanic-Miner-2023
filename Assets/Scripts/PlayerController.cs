@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     // Part of this is based on https://gist.github.com/bendux/5fab0c176855d4e37bf6a38bb071b4a4
-    
+
     private float horizontal;
     public float speed = 8f;
     // Default value of 6.6 is just enough to jump over 2 blocks.
@@ -18,22 +18,25 @@ public class PlayerController : MonoBehaviour
     public ToggleableGameMechanic toggleableGameMechanic;
     public List<Component> componentsWithToggleableProperties;
 
-    public void Jump()
+    public Vector2 Jump()
     {
         if (IsGrounded())
         {
-            rigidBody.velocity = new Vector2(rigidBody.velocity.x, jumpingPower);
+            Vector2 jumpVector = new Vector2(rigidBody.velocity.x, jumpingPower);
+            rigidBody.velocity = jumpVector;
+            return jumpVector;
         }
+        return Vector2.zero;
     }
 
-    public void MoveLeft()
+    public Vector2 MoveLeft()
     {
-        rigidBody.MovePosition((Vector2)transform.position + Vector2.left);
+        return Vector2.left * speed;
     }
-    
-    public void MoveRight()
+
+    public Vector2 MoveRight()
     {
-        rigidBody.MovePosition((Vector2)transform.position + Vector2.right);
+        return Vector2.right * speed;
     }
 
     public void ToggleSpecial()

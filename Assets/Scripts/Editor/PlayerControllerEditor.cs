@@ -7,6 +7,8 @@ public class PlayerControllerEditor : Editor
 {
     public VisualTreeAsset inspectorXML;
     
+    private PlayerController playerController;
+    
     public override VisualElement CreateInspectorGUI()
     {
         VisualElement inspector = new VisualElement();
@@ -14,25 +16,37 @@ public class PlayerControllerEditor : Editor
 
         VisualElement inspectorFoldout = inspector.Q("Default_Inspector");
         InspectorElement.FillDefaultInspector(inspectorFoldout, serializedObject, this);
-
-        PlayerController playerController = (PlayerController) target;
+        
+        playerController = (PlayerController) target;
 
         VisualElement inspectorMoveLeft = inspector.Query("MoveLeft");
         inspectorMoveLeft.RegisterCallback<ClickEvent>(_ =>
         {
-            playerController.MoveLeft();
+            for (int i = 0; i < 120; i++)
+            {
+                playerController.rigidBody.AddForce(
+                    playerController.MoveLeft()
+                );    
+            }
         });
 
         VisualElement inspectorMoveRight = inspector.Query("MoveRight");
         inspectorMoveRight.RegisterCallback<ClickEvent>(_ =>
         {
-            playerController.MoveRight();
+            for (int i = 0; i < 120; i++)
+            {
+                playerController.rigidBody.AddForce(
+                    playerController.MoveRight()
+                );    
+            }
         });
 
         VisualElement inspectorJump = inspector.Query("Jump");
         inspectorJump.RegisterCallback<ClickEvent>(_ =>
         {
-            playerController.Jump();
+            playerController.rigidBody.AddForce(
+                playerController.Jump()
+            );
         });
         
         VisualElement inspectorSpecial = inspector.Query("Special");
