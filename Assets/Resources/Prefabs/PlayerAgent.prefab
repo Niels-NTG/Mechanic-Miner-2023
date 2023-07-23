@@ -177,7 +177,10 @@ MonoBehaviour:
     m_Bits: 64
   exitLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
+  killLayer:
+    serializedVersion: 2
+    m_Bits: 128
   groundCollider: {fileID: 9119302039059648107}
   componentsWithToggleableProperties:
   - {fileID: 9119302039059648108}

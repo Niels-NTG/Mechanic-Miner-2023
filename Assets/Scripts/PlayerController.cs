@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,10 +14,16 @@ public class PlayerController : MonoBehaviour
     public Rigidbody2D rigidBody;
     public LayerMask groundLayer;
     public LayerMask exitLayer;
+    public LayerMask killLayer;
     public EdgeCollider2D groundCollider;
     
     public ToggleableGameMechanic toggleableGameMechanic;
     public List<Component> componentsWithToggleableProperties;
+
+    [NonSerialized]
+    public bool hasTouchedExit;
+    [NonSerialized]
+    public bool hasTouchedSpikes;
 
     public Vector2 Jump()
     {
@@ -66,5 +73,16 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         rigidBody.velocity = new Vector2(horizontal * speed, rigidBody.velocity.y);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        Debug.Log(other.gameObject.layer);
+        hasTouchedExit = ((1 << other.gameObject.layer) & exitLayer) != 0;
+        hasTouchedSpikes = ((1 << other.gameObject.layer) & killLayer) != 0;
+        if (hasTouchedExit || hasTouchedSpikes)
+        {
+            gameObject.SetActive(false);
+        }
     }
 }
