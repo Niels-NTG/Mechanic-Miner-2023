@@ -7,7 +7,7 @@ public class SimulationInstanceController : MonoBehaviour
 
     private PhysicsScene2D physicsScene;
     public float physicsTimeScale = 1f;
-    
+
     private void Start()
     {
         Physics2D.simulationMode = SimulationMode2D.Script;
