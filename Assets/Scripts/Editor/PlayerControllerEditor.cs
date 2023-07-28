@@ -22,7 +22,7 @@ public class PlayerControllerEditor : Editor
         VisualElement inspectorMoveLeft = inspector.Query("MoveLeft");
         inspectorMoveLeft.RegisterCallback<ClickEvent>(_ =>
         {
-            for (int i = 0; i < 120; i++)
+            for (int i = 0; i < 320; i++)
             {
                 playerController.rigidBody.AddForce(
                     playerController.MoveLeft()
@@ -33,7 +33,7 @@ public class PlayerControllerEditor : Editor
         VisualElement inspectorMoveRight = inspector.Query("MoveRight");
         inspectorMoveRight.RegisterCallback<ClickEvent>(_ =>
         {
-            for (int i = 0; i < 120; i++)
+            for (int i = 0; i < 320; i++)
             {
                 playerController.rigidBody.AddForce(
                     playerController.MoveRight()
