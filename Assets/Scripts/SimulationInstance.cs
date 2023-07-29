@@ -20,7 +20,7 @@ public class SimulationInstance
 
     // Player
     private readonly PlayerController playerController;
-    private readonly int horizontalRepetitionLimit = 20;
+    private readonly int inputDuration = 20;
 
     // Move left, move right, jump, special, nothing
     public readonly int[] actionSpace =
@@ -149,7 +149,7 @@ public class SimulationInstance
         int horizontalMovementInputs = 0;
         while (
             currentGridSpace.x == levelGrid.WorldToCell(playerController.transform.position).x ||
-            horizontalMovementInputs < horizontalRepetitionLimit
+            horizontalMovementInputs < inputDuration
         )
         {
             playerController.rigidBody.AddForce(
@@ -166,7 +166,7 @@ public class SimulationInstance
         int horizontalMovementInputs = 0;
         while (
             currentGridSpace.x == levelGrid.WorldToCell(playerController.transform.position).x ||
-            horizontalMovementInputs < horizontalRepetitionLimit
+            horizontalMovementInputs < inputDuration
         )
         {
             playerController.rigidBody.AddForce(
@@ -179,10 +179,10 @@ public class SimulationInstance
 
     private async Task Jump()
     {
-        Vector2Int currentGridSpace = CurrentGridSpace();
         playerController.rigidBody.AddForce(
             playerController.Jump()
         );
+        await Task.Delay(200);
         await Task.Yield();
     }
 
