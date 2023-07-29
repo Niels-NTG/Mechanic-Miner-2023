@@ -20,8 +20,7 @@ public class SimulationInstance
 
     // Player
     private readonly PlayerController playerController;
-    private readonly int horizontalRepetitionLimit = 400;
-    private readonly int simulationSteps = 120;
+    private readonly int horizontalRepetitionLimit = 20;
 
     // Move left, move right, jump, special, nothing
     public readonly int[] actionSpace =
@@ -147,9 +146,9 @@ public class SimulationInstance
     private async Task MoveLeft()
     {
         Vector2Int currentGridSpace = CurrentGridSpace();
-        Vector2Int desiredGridSpace = currentGridSpace + Vector2Int.left;
         int horizontalMovementInputs = 0;
-            desiredGridSpace.x == levelGrid.WorldToCell(playerController.transform.position).x || 
+        while (
+            currentGridSpace.x == levelGrid.WorldToCell(playerController.transform.position).x ||
             horizontalMovementInputs < horizontalRepetitionLimit
         )
         {
@@ -164,10 +163,9 @@ public class SimulationInstance
     private async Task MoveRight()
     {
         Vector2Int currentGridSpace = CurrentGridSpace();
-        Vector2Int desiredGridSpace = currentGridSpace + Vector2Int.right;
         int horizontalMovementInputs = 0;
         while (
-            desiredGridSpace.x == levelGrid.WorldToCell(playerController.transform.position).x || 
+            currentGridSpace.x == levelGrid.WorldToCell(playerController.transform.position).x ||
             horizontalMovementInputs < horizontalRepetitionLimit
         )
         {
