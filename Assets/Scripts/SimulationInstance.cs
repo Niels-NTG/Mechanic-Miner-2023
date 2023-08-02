@@ -130,7 +130,7 @@ public class SimulationInstance
 
     private bool IsTerminal()
     {
-        if (playerController.hasTouchedExit || playerController.hasTouchedSpikes)
+        if (!playerController.gameObject.activeSelf)
         {
             return true;
         }
@@ -145,10 +145,10 @@ public class SimulationInstance
 
     private async Task MoveLeft()
     {
-        Vector2Int currentGridSpace = CurrentGridSpace();
+        Vector2Int startGridSpace = CurrentGridSpace();
         int horizontalMovementInputs = 0;
         while (
-            currentGridSpace.x == levelGrid.WorldToCell(playerController.transform.position).x ||
+            startGridSpace == CurrentGridSpace() ||
             horizontalMovementInputs < inputDuration
         )
         {
@@ -162,10 +162,10 @@ public class SimulationInstance
 
     private async Task MoveRight()
     {
-        Vector2Int currentGridSpace = CurrentGridSpace();
+        Vector2Int startGridSpace = CurrentGridSpace();
         int horizontalMovementInputs = 0;
         while (
-            currentGridSpace.x == levelGrid.WorldToCell(playerController.transform.position).x ||
+            startGridSpace == CurrentGridSpace() ||
             horizontalMovementInputs < inputDuration
         )
         {
@@ -179,11 +179,19 @@ public class SimulationInstance
 
     private async Task Jump()
     {
+        Vector2Int startGridSpace = CurrentGridSpace();
+        int jumpWaitTimer = 0;
         playerController.rigidBody.AddForce(
             playerController.Jump()
         );
-        await Task.Delay(200);
-        await Task.Yield();
+        while (
+            startGridSpace == CurrentGridSpace() ||
+            jumpWaitTimer < inputDuration
+        )
+        {
+            jumpWaitTimer++;
+            await Task.Yield();
+        }
     }
 
     private async Task ToggleSpecial()
@@ -194,6 +202,9 @@ public class SimulationInstance
 
     private async Task DoNothing()
     {
-        await Task.Yield();
+        for (int i = 0; i < inputDuration; i++)
+        {
+            await Task.Yield();
+        }
     }
 }
