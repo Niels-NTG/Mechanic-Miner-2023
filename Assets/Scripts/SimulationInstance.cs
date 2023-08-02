@@ -11,7 +11,6 @@ public class SimulationInstance
     private readonly String ID;
     public readonly ToggleableGameMechanic tgm;
     private readonly Scene scene;
-    private readonly SimulationInstanceController simulationInstanceController;
 
     // Level
     private readonly Grid levelGrid;
@@ -25,14 +24,14 @@ public class SimulationInstance
     // Move left, move right, jump, special, nothing
     public readonly int[] actionSpace =
     {
-        0, 
-        1, 
+        0,
+        1,
         2,
-        // 3, // DEBUG temp disable toggle TGM
+        3,
         4
     };
 
-    private readonly int debugSeed = 329184;
+    private readonly int debugSeed = 83982;
 
     public SimulationInstance(String ID)
     {
@@ -41,27 +40,26 @@ public class SimulationInstance
         // Create new scene
         CreateSceneParameters createSceneParameters = new CreateSceneParameters(LocalPhysicsMode.Physics2D);
         scene = SceneManager.CreateScene(ID, createSceneParameters);
-        
+
         // Add scene controller to scene
         GameObject sceneControllerPrefab = Resources.Load<GameObject>("Prefabs/SimulationSceneController");
-        var sceneController = (GameObject) PrefabUtility.InstantiatePrefab(sceneControllerPrefab, scene);
+        GameObject sceneController = (GameObject) PrefabUtility.InstantiatePrefab(sceneControllerPrefab, scene);
 
         // Get instance controller component
-        simulationInstanceController = sceneController.GetComponent<SimulationInstanceController>();
-        
+        SimulationInstanceController simulationInstanceController = sceneController.GetComponent<SimulationInstanceController>();
+
         // Generate level
         LevelGenerator levelGenerator = simulationInstanceController.levelGenerator;
         levelGenerator.Generate(new Random(debugSeed));
-        
+
         // Get level properties relevant for running the simulation
         levelGrid = levelGenerator.GetComponent<Grid>();
         entryLocation = levelGenerator.entryLocation;
         exitLocation = levelGenerator.exitLocation;
-        
+
         // Instantiate player agent and place at level entry position.
         playerController = simulationInstanceController.playerAgent.GetComponent<PlayerController>();
-        playerController.transform.position =
-            new Vector3(entryLocation.x, entryLocation.y, 0) + new Vector3(0.5f, 0.5f, 0);
+        ResetPlayer();
 
         // Create TGM from toggleable properties on level generator and player instance.
         List<Component> componentsWithToggleableProperties = new List<Component>();
@@ -70,13 +68,21 @@ public class SimulationInstance
         tgm = new ToggleableGameMechanic(componentsWithToggleableProperties, new Random(debugSeed));
 
         playerController.toggleableGameMechanic = tgm;
-        
+
     }
 
     public void UnloadScene()
     {
         SceneManager.UnloadSceneAsync(scene);
     }
+
+    public void ResetPlayer()
+    {
+        playerController.gameObject.SetActive(true);
+        playerController.transform.position =
+            new Vector3(entryLocation.x, entryLocation.y, 0) + new Vector3(0.5f, 0.5f, 0);
+    }
+
     public async Task<StepResult> Step(int action)
     {
         Task actionTask = null;
@@ -120,6 +126,11 @@ public class SimulationInstance
         }
 
         public override String ToString() => $"player grid space: {playerGridPosition}, action: {actionTaken}, frame: {frameNumber}, reward: {reward}, isTerminal: {isTerminal}";
+
+        public override int GetHashCode()
+        {
+            return playerGridPosition.GetHashCode() + (int) reward + actionTaken;
+        }
     }
 
     private Vector2Int CurrentGridSpace()

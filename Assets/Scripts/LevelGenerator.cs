@@ -12,7 +12,7 @@ public class LevelGenerator : MonoBehaviour
     private const int MIN_LINE_SIZE = 2;
 
     // Inner rect of the level measured in units of tiles.
-    public static RectInt levelSize = new RectInt(1, 1, 18, 13);
+    private static RectInt levelSize = new RectInt(1, 1, 18, 13);
 
     public Tilemap impassableTilemap;
     public Tile impassableTile;
@@ -22,14 +22,14 @@ public class LevelGenerator : MonoBehaviour
     public Tile entryTile;
     public Tilemap exitTilemap;
     public Tile exitTile;
-    
+
     private Random rng;
 
     private readonly List<LevelElement> LevelElements = new List<LevelElement>();
 
     public Vector2Int entryLocation;
     public Vector2Int exitLocation;
-    
+
     public List<Component> componentsWithToggleableProperties;
 
     [ContextMenu("Generate")]
@@ -64,7 +64,7 @@ public class LevelGenerator : MonoBehaviour
 
     public void Generate(Random inputRng)
     {
-        this.rng = inputRng;
+        rng = inputRng;
         Generate();
     }
 
@@ -87,14 +87,14 @@ public class LevelGenerator : MonoBehaviour
             candidateEntryLocation = randomLocation();
             candidateExitLocation = randomLocation();
         } while (
-            candidateEntryLocation == candidateExitLocation || 
+            candidateEntryLocation == candidateExitLocation ||
             LevelElements.Exists(el => el.Contains(candidateEntryLocation)) ||
             LevelElements.Exists(el => el.Contains(candidateExitLocation))
         );
 
         entryLocation = candidateEntryLocation;
         exitLocation = candidateExitLocation;
-        
+
         entryTilemap.SetTile((Vector3Int) candidateEntryLocation, entryTile);
         exitTilemap.SetTile((Vector3Int)candidateExitLocation, exitTile);
     }
@@ -117,7 +117,7 @@ public class LevelGenerator : MonoBehaviour
     {
         return _rng.Next(min, max);
     }
-    
+
     private Vector2Int randomLocation()
     {
         return new Vector2Int(
@@ -144,14 +144,14 @@ public class LevelGenerator : MonoBehaviour
 
         public void Place()
         {
-            
+
         }
     }
 
 
     private class BoxElement : LevelElement
     {
-        
+
         private Vector2Int boxSize = new Vector2Int(MIN_BOX_SIZE, MIN_BOX_SIZE);
 
         private Vector2Int BoxSize
@@ -239,7 +239,7 @@ public class LevelGenerator : MonoBehaviour
                 {
                     if (point.x == box.xMin || point.y == box.yMin || point.x == box.xMax - 1 || point.y == box.yMax - 1)
                     {
-                        tilemap.SetTile(point, tile);        
+                        tilemap.SetTile(point, tile);
                     }
                     continue;
                 }
@@ -337,7 +337,7 @@ public class LevelGenerator : MonoBehaviour
                 {
                     continue;
                 }
-                
+
                 Vector3Int tilePoint = (Vector3Int) point;
                 if (IsSpike)
                 {
