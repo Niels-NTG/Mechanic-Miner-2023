@@ -19,7 +19,7 @@ public class SimulationInstance
 
     // Player
     private readonly PlayerController playerController;
-    private readonly int inputDuration = 20;
+    private readonly int maxInputDuration = 60;
 
     // Move left, move right, jump, special, nothing
     public readonly int[] actionSpace =
@@ -80,6 +80,7 @@ public class SimulationInstance
     {
         TeleportPlayer(new Vector3(entryLocation.x, entryLocation.y, 0) + new Vector3(0.5f, 0.5f, 0));
     }
+
     public void TeleportPlayer(Vector2Int pos)
     {
         TeleportPlayer(new Vector3(pos.x, pos.y, 0));
@@ -117,7 +118,7 @@ public class SimulationInstance
 
         return new StepResult(CurrentGridSpace(), action, Time.frameCount, RewardDistanceToExit(), IsTerminal());
     }
-    
+
     public readonly struct StepResult
     {
         public readonly Vector2Int playerGridPosition;
@@ -165,34 +166,28 @@ public class SimulationInstance
     {
         Vector2Int startGridSpace = CurrentGridSpace();
         int horizontalMovementInputs = 0;
-        while (
-            startGridSpace == CurrentGridSpace() ||
-            horizontalMovementInputs < inputDuration
-        )
+        do
         {
             playerController.rigidBody.AddForce(
                 playerController.MoveLeft()
             );
             horizontalMovementInputs++;
             await Task.Yield();
-        }
+        } while (startGridSpace == CurrentGridSpace() && horizontalMovementInputs < maxInputDuration);
     }
 
     private async Task MoveRight()
     {
         Vector2Int startGridSpace = CurrentGridSpace();
         int horizontalMovementInputs = 0;
-        while (
-            startGridSpace == CurrentGridSpace() ||
-            horizontalMovementInputs < inputDuration
-        )
+        do
         {
             playerController.rigidBody.AddForce(
                 playerController.MoveRight()
             );
             horizontalMovementInputs++;
             await Task.Yield();
-        }
+        } while (startGridSpace == CurrentGridSpace() && horizontalMovementInputs < maxInputDuration);
     }
 
     private async Task Jump()
@@ -202,14 +197,11 @@ public class SimulationInstance
         playerController.rigidBody.AddForce(
             playerController.Jump()
         );
-        while (
-            startGridSpace == CurrentGridSpace() ||
-            jumpWaitTimer < inputDuration
-        )
+        do
         {
             jumpWaitTimer++;
             await Task.Yield();
-        }
+        } while (startGridSpace == CurrentGridSpace() && jumpWaitTimer < maxInputDuration);
     }
 
     private async Task ToggleSpecial()
@@ -220,7 +212,7 @@ public class SimulationInstance
 
     private async Task DoNothing()
     {
-        for (int i = 0; i < inputDuration; i++)
+        for (int i = 0; i < maxInputDuration; i++)
         {
             await Task.Yield();
         }
