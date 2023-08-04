@@ -16,10 +16,7 @@ public class MechanicMiner : MonoBehaviour
         if (debugLevelMode)
         {
             GoExplore goExplore = new GoExplore(new SimulationInstance("test1"));
-            for (int i = 0; i < 100; i++)
-            {
-                goExplore.Run();
-            }
+            goExplore.Run();
         }
         else
         {

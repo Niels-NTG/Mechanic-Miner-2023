@@ -12,7 +12,7 @@ public class LevelGenerator : MonoBehaviour
     private const int MIN_LINE_SIZE = 2;
 
     // Inner rect of the level measured in units of tiles.
-    private static RectInt levelSize = new RectInt(1, 1, 18, 13);
+    public static RectInt levelSize = new RectInt(1, 1, 18, 13);
 
     public Tilemap impassableTilemap;
     public Tile impassableTile;

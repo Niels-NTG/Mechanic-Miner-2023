@@ -78,9 +78,17 @@ public class SimulationInstance
 
     public void ResetPlayer()
     {
+        TeleportPlayer(new Vector3(entryLocation.x, entryLocation.y, 0) + new Vector3(0.5f, 0.5f, 0));
+    }
+    public void TeleportPlayer(Vector2Int pos)
+    {
+        TeleportPlayer(new Vector3(pos.x, pos.y, 0));
+    }
+
+    public void TeleportPlayer(Vector3 pos)
+    {
         playerController.gameObject.SetActive(true);
-        playerController.transform.position =
-            new Vector3(entryLocation.x, entryLocation.y, 0) + new Vector3(0.5f, 0.5f, 0);
+        playerController.transform.position = pos;
     }
 
     public async Task<StepResult> Step(int action)
@@ -106,7 +114,8 @@ public class SimulationInstance
         }
 
         await actionTask;
-        return new StepResult(CurrentGridSpace(), action, Time.frameCount, DistanceToExit(), IsTerminal());
+
+        return new StepResult(CurrentGridSpace(), action, Time.frameCount, RewardDistanceToExit(), IsTerminal());
     }
     
     public readonly struct StepResult
@@ -127,10 +136,7 @@ public class SimulationInstance
 
         public override String ToString() => $"player grid space: {playerGridPosition}, action: {actionTaken}, frame: {frameNumber}, reward: {reward}, isTerminal: {isTerminal}";
 
-        public override int GetHashCode()
-        {
-            return playerGridPosition.GetHashCode() + (int) reward + actionTaken;
-        }
+        public override int GetHashCode() => playerGridPosition.GetHashCode() + (int) reward + actionTaken;
     }
 
     private Vector2Int CurrentGridSpace()
@@ -149,9 +155,10 @@ public class SimulationInstance
         return false;
     }
 
-    private float DistanceToExit()
+    private float RewardDistanceToExit()
     {
-        return 0 - Vector2Int.Distance(CurrentGridSpace(), exitLocation);
+        return Vector2Int.Distance(Vector2Int.zero, LevelGenerator.levelSize.size) -
+               Vector2Int.Distance(exitLocation, CurrentGridSpace());
     }
 
     private async Task MoveLeft()
