@@ -31,7 +31,7 @@ public class SimulationInstance
         4
     };
 
-    private readonly int debugSeed = 83982;
+    private readonly int debugSeed = 292921;
 
     public SimulationInstance(String ID)
     {

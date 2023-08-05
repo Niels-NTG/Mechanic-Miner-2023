@@ -14,7 +14,6 @@ public class GoExplore
     private static readonly double e1 = 0.001;
     private static readonly double e2 = 0.00001;
 
-    private int frameCount;
     private int iterations;
     private double highScore;
     private double score;
@@ -44,23 +43,28 @@ public class GoExplore
     {
         for (int i = 0; i < maxRolloutAttempts; i++)
         {
-            await RolloutAction();
-            Debug.Log("iteration " + iterations);
+            bool isTerminal = await RolloutAction();
+            Debug.Log($"iteration {iterations}");
+            if (isTerminal)
+            {
+                break;
+            }
         }
+        Debug.Log($"Finished running GoExplore after {iterations} iterations");
     }
 
-    private async Task RolloutAction()
+    private async Task<bool> RolloutAction()
     {
         int lastActionHash = 0;
         for (int i = 0; i < maxTrajectoryRolloutLength; i++)
         {
             SimulationInstance.StepResult result = await env.Step(action);
+
             Debug.Log(result);
 
             trajectory.Add(action);
 
             score += result.reward;
-            frameCount += result.frameNumber;
 
             if (score > highScore)
             {
@@ -69,7 +73,7 @@ public class GoExplore
 
             if (result.isTerminal)
             {
-                break;
+                return true;
             }
 
             Cell cell = new Cell(result.playerGridPosition);
@@ -110,6 +114,7 @@ public class GoExplore
         }
 
         iterations++;
+        return false;
     }
 
     private class Cell
@@ -213,10 +218,9 @@ public class GoExplore
         }
 
         double cellSummedScores = CellSummedScores(cellList);
-        List<Cell> shuffledList = cellList.OrderBy(_ => rng.Next()).ToList();
         double value = rng.NextDouble();
         double cumulative = 0.0;
-        foreach (Cell cell in shuffledList)
+        foreach (Cell cell in cellList)
         {
             double cellProbability = cell.CellScore() / cellSummedScores;
             cumulative += cellProbability;
