@@ -14,7 +14,7 @@ public class GoExplore
     private static readonly double e1 = 0.001;
     private static readonly double e2 = 0.00001;
 
-    private int iterations;
+    private int iteration;
     private double highScore;
     private double score;
     private int action;
@@ -41,16 +41,20 @@ public class GoExplore
 
     public async void Run()
     {
+        bool isTerminal = false;
         for (int i = 0; i < maxRolloutAttempts; i++)
         {
-            bool isTerminal = await RolloutAction();
-            Debug.Log($"iteration {iterations}");
+            isTerminal = await RolloutAction();
+            Debug.Log($"iteration {iteration}");
             if (isTerminal)
             {
                 break;
             }
         }
-        Debug.Log($"Finished running GoExplore after {iterations} iterations");
+
+        Debug.Log(isTerminal
+            ? $"Ended running GoExplore by finding level exit after {iteration} iterations"
+            : $"Ended running GoExplore without finding level exit after {iteration} iterations");
     }
 
     private async Task<bool> RolloutAction()
@@ -58,7 +62,9 @@ public class GoExplore
         int lastActionHash = 0;
         for (int i = 0; i < maxTrajectoryRolloutLength; i++)
         {
-            SimulationInstance.StepResult result = await env.Step(action);
+            iteration++;
+
+            SimulationInstance.StepResult result = await env.Step(action, iteration);
 
             Debug.Log(result);
 
@@ -101,7 +107,7 @@ public class GoExplore
         restoreCell = SelectCellToRestore(archive, rng);
         if (restoreCell != null)
         {
-            Debug.Log("Restore state to cell " + restoreCell);
+            Debug.Log($"Restore state. Cell: {restoreCell}");
             restoreCell.Choose();
             trajectory = restoreCell.trajectory;
             score = restoreCell.reward;
@@ -109,11 +115,10 @@ public class GoExplore
             // Replay all actions in trajectory in order.
             foreach (int trajectoryAction in trajectory)
             {
-                await env.Step(trajectoryAction);
+                await env.Step(trajectoryAction, iteration);
             }
         }
 
-        iterations++;
         return false;
     }
 

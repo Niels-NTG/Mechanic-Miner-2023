@@ -92,7 +92,7 @@ public class SimulationInstance
         playerController.transform.position = pos;
     }
 
-    public async Task<StepResult> Step(int action)
+    public async Task<StepResult> Step(int action, int iteration)
     {
         Task actionTask = null;
         switch (action)
@@ -116,26 +116,27 @@ public class SimulationInstance
 
         await actionTask;
 
-        return new StepResult(CurrentGridSpace(), action, Time.frameCount, RewardDistanceToExit(), IsTerminal());
+
+        return new StepResult(CurrentGridSpace(), action, iteration, RewardDistanceToExit(), IsTerminal());
     }
 
     public readonly struct StepResult
     {
         public readonly Vector2Int playerGridPosition;
-        public readonly int frameNumber;
+        private readonly int iteration;
         public readonly float reward;
         public readonly bool isTerminal;
         private readonly int actionTaken;
-        public StepResult(Vector2Int playerGridPosition, int action, int frameNumber, float reward, bool isTerminal)
+        public StepResult(Vector2Int playerGridPosition, int action, int iteration, float reward, bool isTerminal)
         {
             this.playerGridPosition = playerGridPosition;
-            this.frameNumber = frameNumber;
+            this.iteration = iteration;
             this.reward = reward;
             this.isTerminal = isTerminal;
             actionTaken = action;
         }
 
-        public override String ToString() => $"player grid space: {playerGridPosition}, action: {actionTaken}, frame: {frameNumber}, reward: {reward}, isTerminal: {isTerminal}";
+        public override String ToString() => $"player grid space: {playerGridPosition}, action: {actionTaken}, iteration: {iteration}, reward: {reward}, isTerminal: {isTerminal}";
 
         public override int GetHashCode() => playerGridPosition.GetHashCode() + (int) reward + actionTaken;
     }
