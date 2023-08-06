@@ -24,13 +24,12 @@ public class GoExplore
     private readonly int maxTrajectoryRolloutLength = 20;
     private readonly int maxRolloutAttempts = 100;
 
-    private readonly int debugSeed = 383823008;
     private readonly Random rng;
 
     public GoExplore(SimulationInstance env)
     {
         this.env = env;
-        rng = new Random(debugSeed);
+        rng = new Random();
         action = SelectRandomAction();
     }
 
