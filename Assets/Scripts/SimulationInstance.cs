@@ -19,7 +19,7 @@ public class SimulationInstance
 
     // Player
     private readonly PlayerController playerController;
-    private readonly int maxInputDuration = 60;
+    private readonly int maxInputDuration = 240;
 
     // Move left, move right, jump, special, nothing
     public readonly int[] actionSpace =
