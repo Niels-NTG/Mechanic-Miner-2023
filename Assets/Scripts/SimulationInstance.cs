@@ -94,6 +94,8 @@ public class SimulationInstance
 
     public async Task<StepResult> Step(int action, int iteration)
     {
+        Vector2Int startGridSpace = CurrentGridSpace();
+
         Task actionTask = null;
         switch (action)
         {
@@ -115,9 +117,15 @@ public class SimulationInstance
         }
 
         await actionTask;
+        Vector2Int resultGridSpace = CurrentGridSpace();
+        float reward = RewardDistanceToExit();
+        if (resultGridSpace == startGridSpace)
+        {
+            reward = 0f;
+        }
 
 
-        return new StepResult(CurrentGridSpace(), action, iteration, RewardDistanceToExit(), IsTerminal());
+        return new StepResult(CurrentGridSpace(), action, iteration, reward, IsTerminal());
     }
 
     public readonly struct StepResult
