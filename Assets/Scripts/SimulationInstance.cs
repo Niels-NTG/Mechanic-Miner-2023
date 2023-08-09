@@ -21,14 +21,13 @@ public class SimulationInstance
     private readonly PlayerController playerController;
     private readonly int maxInputDuration = 240;
 
-    // Move left, move right, jump, special, nothing
+    // Move left, move right, jump, special
     public readonly int[] actionSpace =
     {
         0,
         1,
         2,
-        3,
-        4
+        3
     };
 
     private readonly int debugSeed = 292921;
