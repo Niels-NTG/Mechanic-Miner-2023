@@ -15,7 +15,7 @@ public class ToggleableGameMechanic
     private object defaultValue;
 
     public String modifier;
-    private readonly String[] modifierTypes = { "double", "half", "invert" };
+    private static readonly String[] modifierTypes = { "double", "half", "invert" };
 
     private bool isActive;
 
@@ -23,9 +23,9 @@ public class ToggleableGameMechanic
     {
         this.componentsWithToggleableProperties = componentsWithToggleableProperties;
         this.rng = rng;
-        
+
         GenerateTGM();
-        
+
         Type componentType = component.GetType();
         String fieldName = componentProperty.Name;
 
@@ -58,12 +58,17 @@ public class ToggleableGameMechanic
     private void Toggle(bool newState)
     {
         object modifierValue = ApplyModifier(defaultValue);
-        
+
         SetValue(newState ? modifierValue : defaultValue);
         isActive = newState;
     }
 
     private object ApplyModifier(object inputValue)
+    {
+        return ApplyModifier(inputValue, modifier);
+    }
+
+    private static object ApplyModifier(object inputValue, String modifier)
     {
         switch (modifier)
         {
@@ -182,12 +187,16 @@ public class ToggleableGameMechanic
 
         bool[] sampleFlags = new bool[componentProperties.Length];
         Array.Fill(sampleFlags, false);
-        
+
         PropertyInfo selectedProperty = null;
         do
         {
             int nextRandomIndex = rng.Next(componentProperties.Length);
-            if (sampleFlags[nextRandomIndex]) continue;
+            if (sampleFlags[nextRandomIndex])
+            {
+                continue;
+            }
+
             sampleFlags[nextRandomIndex] = true;
 
             bool isEditableMechanic;
@@ -197,21 +206,24 @@ public class ToggleableGameMechanic
                 object outputValue = candidateProperty.GetValue(component);
                 isEditableMechanic =
                     candidateProperty.SetMethod != null && (
-                        outputValue is float ||
-                        outputValue is int ||
-                        outputValue is bool ||
-                        outputValue is sbyte ||
-                        outputValue is short ||
-                        outputValue is long ||
-                        outputValue is double ||
-                        outputValue is decimal ||
-                        outputValue is Vector2 ||
-                        outputValue is Vector3 ||
-                        outputValue is Vector4 ||
-                        outputValue is Vector2Int ||
-                        outputValue is Vector3Int ||
-                        outputValue is Quaternion
+                        IsNumeric(outputValue) ||
+                        IsBoolean(outputValue) ||
+                        IsVector(outputValue) ||
+                        IsQuaternion(outputValue)
                     );
+
+                // Check if applying a modifier to this value results in a different value. If it results in the same
+                // value, skip this property.
+                if (
+                    isEditableMechanic && (
+                        outputValue.GetHashCode() == ApplyModifier(outputValue, "double").GetHashCode() ||
+                        outputValue.GetHashCode() == ApplyModifier(outputValue, "half").GetHashCode() ||
+                        outputValue.GetHashCode() == ApplyModifier(outputValue, "invert").GetHashCode()
+                    )
+                )
+                {
+                    continue;
+                }
             }
             catch (NotSupportedException)
             {
@@ -223,7 +235,7 @@ public class ToggleableGameMechanic
             }
             if (isEditableMechanic)
             {
-                selectedProperty = candidateProperty;    
+                selectedProperty = candidateProperty;
             }
         } while (
             selectedProperty == null ||
@@ -233,34 +245,42 @@ public class ToggleableGameMechanic
         componentProperty = selectedProperty;
         defaultValue = GetValue();
     }
-    
+
     public void SelectModifier()
     {
-        modifier = _SelectModifier();
+        modifier = SelectModifier(defaultValue, rng);
     }
 
-    private String _SelectModifier()
+    private static String SelectModifier(object v, Random rng)
     {
-        switch (defaultValue)
+        if (IsNumeric(v) || IsVector(v))
         {
-            case float:
-            case int:
-            case sbyte:
-            case short:
-            case long:
-            case double:
-            case decimal:
-            case Vector2:
-            case Vector3:
-            case Vector4:
-            case Vector2Int:
-            case Vector3Int:
-                return modifierTypes[rng.Next(modifierTypes.Length)];
-            case bool:
-            case Quaternion:
-                return "invert";
-            default:
-                return "invert";
+            return modifierTypes[rng.Next(modifierTypes.Length)];
         }
+        if (IsBoolean(v) || IsQuaternion(v))
+        {
+            return "invert";
+        }
+        return "invert";
+    }
+
+    private static bool IsNumeric(object v)
+    {
+        return v is float || v is int || v is sbyte || v is short || v is long || v is double || v is decimal;
+    }
+
+    private static bool IsVector(object v)
+    {
+        return v is Vector2 || v is Vector3 || v is Vector4 || v is Vector2Int || v is Vector3Int || v is Color;
+    }
+
+    private static bool IsQuaternion(object v)
+    {
+        return v is Quaternion;
+    }
+
+    private static bool IsBoolean(object v)
+    {
+        return v is bool;
     }
 }
