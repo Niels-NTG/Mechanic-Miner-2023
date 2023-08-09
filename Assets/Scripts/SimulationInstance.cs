@@ -36,7 +36,7 @@ public class SimulationInstance
     {
         this.ID = ID;
 
-        Random rng = debugSeed == null ? new Random() : new Random(debugSeed);
+        Random rng = debugSeed == 0 ? new Random() : new Random(debugSeed);
 
         // Create new scene
         CreateSceneParameters createSceneParameters = new CreateSceneParameters(LocalPhysicsMode.Physics2D);
