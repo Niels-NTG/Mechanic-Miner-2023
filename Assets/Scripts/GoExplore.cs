@@ -21,8 +21,8 @@ public class GoExplore
     private List<int> trajectory = new List<int>();
     private readonly Dictionary<int, Cell> archive = new Dictionary<int, Cell>();
     private Cell restoreCell;
-    private readonly int maxTrajectoryRolloutLength = 20;
-    private readonly int maxRolloutAttempts = 100;
+    private readonly int maxTrajectoryLength = 100;
+    private readonly int maxAttempts = 100;
 
     private readonly Random rng;
 
@@ -41,7 +41,7 @@ public class GoExplore
     public async void Run()
     {
         bool isTerminal = false;
-        for (int i = 0; i < maxRolloutAttempts; i++)
+        for (int i = 0; i < maxAttempts; i++)
         {
             isTerminal = await RolloutAction();
             Debug.Log($"iteration {iteration}");
@@ -53,13 +53,14 @@ public class GoExplore
 
         Debug.Log(isTerminal
             ? $"Ended running GoExplore by finding level exit after {iteration} iterations"
-            : $"Ended running GoExplore without finding level exit after {iteration} iterations");
+            : $"Ended running GoExplore without finding level exit after {iteration} iterations"
+        );
     }
 
     private async Task<bool> RolloutAction()
     {
         int lastActionHash = 0;
-        for (int i = 0; i < maxTrajectoryRolloutLength; i++)
+        for (int i = 0; i < maxTrajectoryLength; i++)
         {
             iteration++;
 
