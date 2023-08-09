@@ -21,6 +21,8 @@ public class SimulationInstance
     private readonly PlayerController playerController;
     private readonly int maxInputDuration = 240;
 
+    private readonly float lowerResetRewardBound = -2000;
+
     // Move left, move right, jump, special
     public readonly int[] actionSpace =
     {
@@ -75,9 +77,10 @@ public class SimulationInstance
         SceneManager.UnloadSceneAsync(scene);
     }
 
-    public void ResetPlayer()
+    private void ResetPlayer()
     {
         TeleportPlayer(new Vector3(entryLocation.x, entryLocation.y, 0) + new Vector3(0.5f, 0.5f, 0));
+        playerController.ResetPlayer();
     }
 
     public void TeleportPlayer(Vector2Int pos)
@@ -118,13 +121,24 @@ public class SimulationInstance
         await actionTask;
         Vector2Int resultGridSpace = CurrentGridSpace();
         float reward = RewardDistanceToExit();
-        if (resultGridSpace == startGridSpace)
+        bool isTerminal = IsTerminal();
+
+        // Kill and reset player to start position if it has touched spikes or has gone too far from the level goal.
+        if (playerController.hasTouchedSpikes || reward < lowerResetRewardBound)
+        {
+            reward = float.MinValue;
+            ResetPlayer();
+        } else if (playerController.hasTouchedExit)
+        {
+            reward = float.MaxValue;
+        } else if (resultGridSpace == startGridSpace)
         {
             reward = 0f;
         }
 
-
         return new StepResult(CurrentGridSpace(), action, iteration, reward, IsTerminal());
+
+        return new StepResult(resultGridSpace, action, iteration, reward, isTerminal);
     }
 
     public readonly struct StepResult
@@ -156,12 +170,7 @@ public class SimulationInstance
 
     private bool IsTerminal()
     {
-        if (!playerController.gameObject.activeSelf)
-        {
-            return true;
-        }
-        // TODO consider adding timeout if player has spend too long to reach the exit.
-        return false;
+        return playerController.hasTouchedExit;
     }
 
     private float RewardDistanceToExit()

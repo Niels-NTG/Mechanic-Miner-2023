@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
     public LayerMask exitLayer;
     public LayerMask killLayer;
     public EdgeCollider2D groundCollider;
-    
+
     public ToggleableGameMechanic toggleableGameMechanic;
     public List<Component> componentsWithToggleableProperties;
 
@@ -50,12 +50,19 @@ public class PlayerController : MonoBehaviour
     {
         toggleableGameMechanic.Toggle();
     }
-    
+
     private bool IsGrounded()
     {
         return Physics2D.IsTouchingLayers(groundCollider, groundLayer);
     }
-    
+
+    public void ResetPlayer()
+    {
+        hasTouchedExit = false;
+        hasTouchedSpikes = false;
+        gameObject.SetActive(true);
+    }
+
     void Update()
     {
         horizontal = Input.GetAxisRaw("Horizontal");
@@ -69,7 +76,7 @@ public class PlayerController : MonoBehaviour
             ToggleSpecial();
         }
     }
-    
+
     private void FixedUpdate()
     {
         rigidBody.velocity = new Vector2(horizontal * speed, rigidBody.velocity.y);
