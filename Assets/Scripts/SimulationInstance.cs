@@ -136,7 +136,6 @@ public class SimulationInstance
             reward = 0f;
         }
 
-        return new StepResult(CurrentGridSpace(), action, iteration, reward, IsTerminal());
 
         return new StepResult(resultGridSpace, action, iteration, reward, isTerminal);
     }
