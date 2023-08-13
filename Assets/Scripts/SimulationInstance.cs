@@ -8,7 +8,7 @@ using Random = System.Random;
 
 public class SimulationInstance
 {
-    private readonly String ID;
+    public readonly String ID;
     public readonly ToggleableGameMechanic tgm;
     private readonly Scene scene;
 
@@ -32,7 +32,7 @@ public class SimulationInstance
         3
     };
 
-    private readonly int debugSeed = 877;
+    private readonly int debugSeed = 93;
 
     public SimulationInstance(String ID)
     {
@@ -88,7 +88,7 @@ public class SimulationInstance
         TeleportPlayer(new Vector3(pos.x, pos.y, 0));
     }
 
-    public void TeleportPlayer(Vector3 pos)
+    private void TeleportPlayer(Vector3 pos)
     {
         playerController.gameObject.SetActive(true);
         playerController.transform.position = pos;

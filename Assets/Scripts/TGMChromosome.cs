@@ -3,23 +3,23 @@ using GeneticSharp.Domain.Chromosomes;
 
 public sealed class TGMChromosome : ChromosomeBase
 {
-    
+
     private readonly SimulationInstance simulationInstance;
-    
+
     public TGMChromosome() : base(3)
     {
         simulationInstance = new SimulationInstance(ID);
         CreateGenes();
     }
 
-    public String ID { get; } = Guid.NewGuid().ToString();
+    private String ID { get; } = Guid.NewGuid().ToString();
 
     public override Gene GenerateGene(int geneIndex)
     {
         if (geneIndex == 0)
         {
             simulationInstance.tgm.SelectComponentProperty();
-        } else if (geneIndex == 1) 
+        } else if (geneIndex == 1)
         {
             simulationInstance.tgm.SelectModifier();
         }

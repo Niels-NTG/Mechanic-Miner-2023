@@ -29,7 +29,7 @@ public class ToggleableGameMechanic
         Type componentType = component.GetType();
         String fieldName = componentProperty.Name;
 
-        Debug.Log( component.name + " " + componentType.Name + " " + fieldName + " : " + defaultValue + " / " + ApplyModifier(defaultValue) + " (" + modifier + ")");
+        Debug.Log($"{component.name} {componentType.Name} {fieldName} : {defaultValue} / {ApplyModifier(defaultValue)} ({modifier})");
     }
 
     private void GenerateTGM()

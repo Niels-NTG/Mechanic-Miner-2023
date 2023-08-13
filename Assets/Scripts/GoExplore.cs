@@ -8,13 +8,14 @@ using Random = System.Random;
 public class GoExplore
 {
     private readonly SimulationInstance env;
+    public readonly String ID;
 
     private static readonly CellStats Weights = new CellStats(0.1f, 0, 0.3f);
     private static readonly CellStats Powers = new CellStats(0.5f, 0.5f, 0.5f);
     private static readonly double e1 = 0.001;
     private static readonly double e2 = 0.00001;
 
-    private int iteration;
+    public int iteration;
     private double highScore;
     private double score;
     private int action;
@@ -29,6 +30,7 @@ public class GoExplore
     public GoExplore(SimulationInstance env)
     {
         this.env = env;
+        ID = env.ID;
         rng = new Random();
         action = SelectRandomAction();
     }
@@ -38,7 +40,7 @@ public class GoExplore
         return env.actionSpace[rng.Next(0, env.actionSpace.Length)];
     }
 
-    public async void Run()
+    public async Task<bool> Run()
     {
         bool isTerminal = false;
         for (int i = 0; i < maxAttempts; i++)
@@ -55,6 +57,7 @@ public class GoExplore
             ? $"Ended running GoExplore by finding level exit after {iteration} iterations"
             : $"Ended running GoExplore without finding level exit after {iteration} iterations"
         );
+        return isTerminal;
     }
 
     private async Task<bool> RolloutAction()
