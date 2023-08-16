@@ -8,7 +8,8 @@ public sealed class TGMChromosome : ChromosomeBase
 
     public TGMChromosome() : base(3)
     {
-        simulationInstance = new SimulationInstance(ID);
+        // simulationInstance = new SimulationInstance(ID);
+        simulationInstance = UnityMainThreadDispatcher.Dispatch(() => new SimulationInstance(ID));
         CreateGenes();
     }
 

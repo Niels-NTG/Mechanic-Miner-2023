@@ -74,7 +74,7 @@ public class SimulationInstance
 
     public void UnloadScene()
     {
-        SceneManager.UnloadSceneAsync(scene);
+        UnityMainThreadDispatcher.Dispatch(() => SceneManager.UnloadSceneAsync(scene));
     }
 
     private void ResetPlayer()
@@ -118,7 +118,7 @@ public class SimulationInstance
                 break;
         }
 
-        await actionTask;
+        if (actionTask != null) await actionTask;
         Vector2Int resultGridSpace = CurrentGridSpace();
         float reward = RewardDistanceToExit();
         bool isTerminal = IsTerminal();

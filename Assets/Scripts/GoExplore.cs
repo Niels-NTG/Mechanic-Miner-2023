@@ -40,12 +40,15 @@ public class GoExplore
         return env.actionSpace[rng.Next(0, env.actionSpace.Length)];
     }
 
-    public async Task<bool> Run()
+    public bool Run()
     {
         bool isTerminal = false;
         for (int i = 0; i < maxAttempts; i++)
         {
-            isTerminal = await RolloutAction();
+            Task<bool> rolloutActionTask = UnityMainThreadDispatcher.Dispatch(RolloutAction);
+            rolloutActionTask.Wait();
+            isTerminal = rolloutActionTask.GetAwaiter().GetResult();
+
             Debug.Log($"iteration {iteration}");
             if (isTerminal)
             {

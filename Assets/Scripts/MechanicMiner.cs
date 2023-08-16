@@ -15,12 +15,17 @@ public class MechanicMiner : MonoBehaviour
     public bool debugLevelMode;
 
     private GeneticAlgorithm ga;
+    private Thread evolutionThread;
     private void Start()
     {
         if (debugLevelMode)
         {
             GoExplore goExplore = new GoExplore(new SimulationInstance(Guid.NewGuid().ToString()));
-            goExplore.Run();
+            Thread debugThread = new Thread(() =>
+            {
+                goExplore.Run();
+            });
+            debugThread.Start();
         }
         else
         {
