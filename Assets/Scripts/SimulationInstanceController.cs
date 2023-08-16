@@ -6,7 +6,7 @@ public class SimulationInstanceController : MonoBehaviour
     public GameObject playerAgent;
 
     private PhysicsScene2D physicsScene;
-    public float physicsTimeScale = 1f;
+    private readonly float physicsTimeScale = 4f;
 
     private void Start()
     {
