@@ -64,6 +64,9 @@ public class SimulationInstance
         playerController = simulationInstanceController.playerAgent.GetComponent<PlayerController>();
         ResetPlayer();
 
+        // Make UUID label visible on player in the scene
+        simulationInstanceController.playerDebugLabel.text = ID;
+
         // Create TGM from toggleable properties on level generator and player instance.
         List<Component> componentsWithToggleableProperties = new List<Component>();
         componentsWithToggleableProperties.AddRange(levelGenerator.componentsWithToggleableProperties);

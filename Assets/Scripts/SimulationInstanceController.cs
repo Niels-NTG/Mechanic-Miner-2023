@@ -4,6 +4,7 @@ public class SimulationInstanceController : MonoBehaviour
 {
     public LevelGenerator levelGenerator;
     public GameObject playerAgent;
+    public TextMesh playerDebugLabel;
 
     private PhysicsScene2D physicsScene;
     private readonly float physicsTimeScale = 4f;
