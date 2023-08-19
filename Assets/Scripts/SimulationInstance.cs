@@ -32,7 +32,7 @@ public class SimulationInstance
         3
     };
 
-    private readonly int debugSeed = 93;
+    private readonly int debugSeed = 877;
 
     public SimulationInstance(String ID)
     {
@@ -142,18 +142,20 @@ public class SimulationInstance
         }
 
 
-        return new StepResult(resultGridSpace, action, iteration, reward, isTerminal);
+        return new StepResult(ID, resultGridSpace, action, iteration, reward, isTerminal);
     }
 
     public readonly struct StepResult
     {
+        public readonly String UUID;
         public readonly Vector2Int playerGridPosition;
         private readonly int iteration;
         public readonly float reward;
         public readonly bool isTerminal;
         private readonly int actionTaken;
-        public StepResult(Vector2Int playerGridPosition, int action, int iteration, float reward, bool isTerminal)
+        public StepResult(String UUID, Vector2Int playerGridPosition, int action, int iteration, float reward, bool isTerminal)
         {
+            this.UUID = UUID;
             this.playerGridPosition = playerGridPosition;
             this.iteration = iteration;
             this.reward = reward;
@@ -161,7 +163,7 @@ public class SimulationInstance
             actionTaken = action;
         }
 
-        public override String ToString() => $"player grid space: {playerGridPosition}, action: {actionTaken}, iteration: {iteration}, reward: {reward}, isTerminal: {isTerminal}";
+        public override String ToString() => $"{UUID}, player grid space: {playerGridPosition}, action: {actionTaken}, iteration: {iteration}, reward: {reward}, isTerminal: {isTerminal}";
 
         public override int GetHashCode() => playerGridPosition.GetHashCode() + (int) reward + actionTaken;
     }

@@ -16,6 +16,7 @@ public class MechanicMiner : MonoBehaviour
 
     private GeneticAlgorithm ga;
     private Thread evolutionThread;
+
     private void Start()
     {
         if (debugLevelMode)
@@ -41,17 +42,23 @@ public class MechanicMiner : MonoBehaviour
         TGMFitness fitness = new TGMFitness();
         TGMChromosome chromosome = new TGMChromosome();
         Population population = new Population(10, 10, chromosome);
-
         ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation);
         ga.Termination = new GenerationNumberTermination(10);
-        ga.TaskExecutor = new LinearTaskExecutor();
-
+        ga.TaskExecutor = new ParallelTaskExecutor
+        {
+            MinThreads = 100,
+            MaxThreads = 200
+        };
         ga.Start();
-
         Debug.Log($"Best solution found has {ga.BestChromosome.Fitness} fitness");
     }
+
     private void OnDestroy()
     {
-        ga.Stop();
+        if (ga != null && evolutionThread != null)
+        {
+            ga.Stop();
+            evolutionThread.Abort();
+        }
     }
 }

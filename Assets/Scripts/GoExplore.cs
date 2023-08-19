@@ -45,8 +45,6 @@ public class GoExplore
         for (int i = 0; i < maxAttempts; i++)
         {
             isTerminal = RolloutAction();
-
-            Debug.Log($"iteration {iteration}");
             if (isTerminal)
             {
                 break;
@@ -54,8 +52,8 @@ public class GoExplore
         }
 
         Debug.Log(isTerminal
-            ? $"Ended running GoExplore by finding level exit after {iteration} iterations"
-            : $"Ended running GoExplore without finding level exit after {iteration} iterations"
+            ? $"{ID} Ended running GoExplore by finding level exit after {iteration} iterations"
+            : $"{ID} Ended running GoExplore without finding level exit after {iteration} iterations"
         );
 
         return isTerminal;
@@ -63,30 +61,29 @@ public class GoExplore
 
     private bool RolloutAction()
     {
-        int lastActionHash = 0;
+        int lastActionResultHash = 0;
         for (int i = 0; i < maxTrajectoryLength; i++)
         {
             iteration++;
-            
-            SimulationInstance.StepResult result = UnityMainThreadDispatcher.Dispatch(() => env.Step(action, iteration));
 
-            Debug.Log(result);
+            SimulationInstance.StepResult actionResult = UnityMainThreadDispatcher.Dispatch(() => env.Step(action, iteration));
+            Debug.Log(actionResult);
 
             trajectory.Add(action);
 
-            score += result.reward;
+            score += actionResult.reward;
 
             if (score > highScore)
             {
                 highScore = score;
             }
 
-            if (result.isTerminal)
+            if (actionResult.isTerminal)
             {
                 return true;
             }
 
-            Cell cell = new Cell(result.playerGridPosition);
+            Cell cell = new Cell(actionResult.playerGridPosition);
             archive[cell.GetHashCode()] = cell;
             bool isFirstVisit = cell.Visit();
             if (isFirstVisit || score >= cell.reward && trajectory.Count < cell.trajectory.Count)
@@ -97,7 +94,7 @@ public class GoExplore
                 cell.cellStats.timesChosenSinceNew = 0;
             }
 
-            if (result.GetHashCode() == lastActionHash)
+            if (actionResult.GetHashCode() == lastActionResultHash)
             {
                 action = SelectRandomAction();
             } else if (rng.NextDouble() > 0.95)
@@ -105,18 +102,18 @@ public class GoExplore
                 action = SelectRandomAction();
             }
 
-            lastActionHash = result.GetHashCode();
+            lastActionResultHash = actionResult.GetHashCode();
         }
 
         restoreCell = SelectCellToRestore(archive, rng);
         if (restoreCell != null)
         {
-            Debug.Log($"Restore state. Cell: {restoreCell}");
+            Debug.Log($"{ID} Restore state. Cell: {restoreCell}");
             restoreCell.Choose();
             trajectory = restoreCell.trajectory;
             score = restoreCell.reward;
             UnityMainThreadDispatcher.Dispatch(() => env.TeleportPlayer(restoreCell.gridPosition));
-            
+
             // Replay all actions in trajectory in order.
             foreach (int trajectoryAction in trajectory)
             {
