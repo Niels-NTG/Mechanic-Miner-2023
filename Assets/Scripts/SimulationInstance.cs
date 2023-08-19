@@ -94,7 +94,8 @@ public class SimulationInstance
         playerController.transform.position = pos;
     }
 
-    public async Task<StepResult> Step(int action, int iteration)
+
+    public StepResult Step(int action, int iteration)
     {
         Vector2Int startGridSpace = CurrentGridSpace();
 
@@ -102,23 +103,27 @@ public class SimulationInstance
         switch (action)
         {
             case 0:
-                actionTask = MoveLeft();
+                actionTask = UnityMainThreadDispatcher.DispatchAsync(MoveLeft);
                 break;
             case 1:
-                actionTask = MoveRight();
+                actionTask = UnityMainThreadDispatcher.DispatchAsync(MoveRight);
                 break;
             case 2:
-                actionTask = Jump();
+                actionTask = UnityMainThreadDispatcher.DispatchAsync(Jump);
                 break;
             case 3:
-                actionTask = ToggleSpecial();
+                actionTask = UnityMainThreadDispatcher.DispatchAsync(ToggleSpecial);
                 break;
             case 4:
-                actionTask = DoNothing();
+                actionTask = UnityMainThreadDispatcher.DispatchAsync(DoNothing);
                 break;
         }
 
-        if (actionTask != null) await actionTask;
+        if (actionTask != null)
+        {
+            actionTask.Wait();
+        }
+
         Vector2Int resultGridSpace = CurrentGridSpace();
         float reward = RewardDistanceToExit();
         bool isTerminal = IsTerminal();
@@ -163,7 +168,7 @@ public class SimulationInstance
 
     private Vector2Int CurrentGridSpace()
     {
-        Vector3Int currentGridSpace3D = levelGrid.WorldToCell(playerController.transform.position);
+        Vector3Int currentGridSpace3D = UnityMainThreadDispatcher.Dispatch(() => levelGrid.WorldToCell(playerController.transform.position));
         return new Vector2Int(currentGridSpace3D.x, currentGridSpace3D.y);
     }
 

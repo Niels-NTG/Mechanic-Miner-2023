@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 using Random = System.Random;
 
@@ -45,9 +44,7 @@ public class GoExplore
         bool isTerminal = false;
         for (int i = 0; i < maxAttempts; i++)
         {
-            Task<bool> rolloutActionTask = UnityMainThreadDispatcher.Dispatch(RolloutAction);
-            rolloutActionTask.Wait();
-            isTerminal = rolloutActionTask.GetAwaiter().GetResult();
+            isTerminal = RolloutAction();
 
             Debug.Log($"iteration {iteration}");
             if (isTerminal)
@@ -60,17 +57,18 @@ public class GoExplore
             ? $"Ended running GoExplore by finding level exit after {iteration} iterations"
             : $"Ended running GoExplore without finding level exit after {iteration} iterations"
         );
+
         return isTerminal;
     }
 
-    private async Task<bool> RolloutAction()
+    private bool RolloutAction()
     {
         int lastActionHash = 0;
         for (int i = 0; i < maxTrajectoryLength; i++)
         {
             iteration++;
-
-            SimulationInstance.StepResult result = await env.Step(action, iteration);
+            
+            SimulationInstance.StepResult result = UnityMainThreadDispatcher.Dispatch(() => env.Step(action, iteration));
 
             Debug.Log(result);
 
@@ -117,11 +115,12 @@ public class GoExplore
             restoreCell.Choose();
             trajectory = restoreCell.trajectory;
             score = restoreCell.reward;
-            env.TeleportPlayer(restoreCell.gridPosition);
+            UnityMainThreadDispatcher.Dispatch(() => env.TeleportPlayer(restoreCell.gridPosition));
+            
             // Replay all actions in trajectory in order.
             foreach (int trajectoryAction in trajectory)
             {
-                await env.Step(trajectoryAction, iteration);
+                UnityMainThreadDispatcher.Dispatch(() => env.Step(trajectoryAction, iteration));
             }
         }
 
