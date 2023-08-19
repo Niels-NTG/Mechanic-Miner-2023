@@ -84,8 +84,9 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        hasTouchedExit = ((1 << other.gameObject.layer) & exitLayer) != 0;
-        hasTouchedSpikes = ((1 << other.gameObject.layer) & killLayer) != 0;
+        GameObject otherGameObject = other.gameObject;
+        hasTouchedExit = ((1 << otherGameObject.layer) & exitLayer) != 0;
+        hasTouchedSpikes = ((1 << otherGameObject.layer) & killLayer) != 0;
         if (hasTouchedExit || hasTouchedSpikes)
         {
             gameObject.SetActive(false);
