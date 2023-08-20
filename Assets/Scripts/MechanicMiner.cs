@@ -15,7 +15,6 @@ public class MechanicMiner : MonoBehaviour
     public bool debugLevelMode;
 
     private GeneticAlgorithm ga;
-    private Thread evolutionThread;
 
     private void Start()
     {
@@ -55,10 +54,9 @@ public class MechanicMiner : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (ga != null && evolutionThread != null)
+        if (ga != null)
         {
             ga.Stop();
-            evolutionThread.Abort();
         }
     }
 }
