@@ -80,10 +80,13 @@ public class SimulationInstance
         UnityMainThreadDispatcher.Dispatch(() => SceneManager.UnloadSceneAsync(scene));
     }
 
-    private void ResetPlayer()
+    public void ResetPlayer()
     {
-        TeleportPlayer(new Vector3(entryLocation.x, entryLocation.y, 0) + new Vector3(0.5f, 0.5f, 0));
-        playerController.ResetPlayer();
+        UnityMainThreadDispatcher.Dispatch(() =>
+        {
+            TeleportPlayer(new Vector3(entryLocation.x, entryLocation.y, 0) + new Vector3(0.5f, 0.5f, 0));
+            playerController.ResetPlayer();
+        });
     }
 
     public void TeleportPlayer(Vector2Int pos)
