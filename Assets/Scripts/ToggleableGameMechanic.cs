@@ -14,7 +14,7 @@ public class ToggleableGameMechanic
 
     private object defaultValue;
 
-    public String modifier;
+    private String modifier;
     private static readonly String[] modifierTypes = { "double", "half", "invert" };
 
     private bool isActive;
@@ -25,11 +25,6 @@ public class ToggleableGameMechanic
         this.rng = rng;
 
         GenerateTGM();
-
-        Type componentType = component.GetType();
-        String fieldName = componentProperty.Name;
-
-        Debug.Log($"{component.name} {componentType.Name} {fieldName} : {defaultValue} / {ApplyModifier(defaultValue)} ({modifier})");
     }
 
     private void GenerateTGM()
@@ -282,5 +277,12 @@ public class ToggleableGameMechanic
     private static bool IsBoolean(object v)
     {
         return v is bool;
+    }
+
+    public override string ToString()
+    {
+        Type componentType = component.GetType();
+        String fieldName = componentProperty.Name;
+        return $"{component.name} {componentType.Name} {fieldName} : {defaultValue} / {ApplyModifier(defaultValue)} ({modifier})";
     }
 }

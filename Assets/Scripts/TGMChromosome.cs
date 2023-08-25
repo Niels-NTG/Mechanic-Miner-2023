@@ -1,5 +1,6 @@
 using System;
 using GeneticSharp.Domain.Chromosomes;
+using UnityEngine;
 
 public sealed class TGMChromosome : ChromosomeBase
 {
@@ -8,7 +9,6 @@ public sealed class TGMChromosome : ChromosomeBase
 
     public TGMChromosome() : base(3)
     {
-        // simulationInstance = new SimulationInstance(ID);
         simulationInstance = UnityMainThreadDispatcher.Dispatch(() => new SimulationInstance(ID));
         CreateGenes();
     }
@@ -24,6 +24,7 @@ public sealed class TGMChromosome : ChromosomeBase
         {
             simulationInstance.tgm.SelectModifier();
         }
+        Debug.Log($"{ID} {simulationInstance.tgm}");
         return new Gene(simulationInstance);
     }
 

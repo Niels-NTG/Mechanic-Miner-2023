@@ -150,7 +150,7 @@ public class SimulationInstance
 
     public readonly struct StepResult
     {
-        public readonly String UUID;
+        private readonly String UUID;
         public readonly Vector2Int playerGridPosition;
         private readonly int iteration;
         public readonly float reward;
