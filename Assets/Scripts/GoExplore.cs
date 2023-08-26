@@ -7,14 +7,13 @@ using Random = System.Random;
 public class GoExplore
 {
     private readonly SimulationInstance env;
-    public readonly String ID;
 
     private static readonly CellStats Weights = new CellStats(0.1f, 0, 0.3f);
     private static readonly CellStats Powers = new CellStats(0.5f, 0.5f, 0.5f);
     private static readonly double e1 = 0.001;
     private static readonly double e2 = 0.00001;
 
-    public int iteration;
+    private int iteration;
     private double highScore;
     private double score;
     private int action;
@@ -29,7 +28,6 @@ public class GoExplore
     public GoExplore(SimulationInstance env)
     {
         this.env = env;
-        ID = env.ID;
         rng = new Random();
         action = SelectRandomAction();
     }
@@ -39,7 +37,7 @@ public class GoExplore
         return env.actionSpace[rng.Next(0, env.actionSpace.Length)];
     }
 
-    public bool Run()
+    public int Run()
     {
         bool isTerminal = false;
         for (int i = 0; i < maxAttempts; i++)
@@ -51,12 +49,12 @@ public class GoExplore
             }
         }
 
+        int archiveCount = isTerminal ? archive.Count : int.MaxValue;
         Debug.Log(isTerminal
-            ? $"{ID} Ended running GoExplore by finding level exit after {iteration} iterations"
-            : $"{ID} Ended running GoExplore without finding level exit after {iteration} iterations"
+            ? $"{env.ID} Ended running GoExplore by finding level exit after {iteration} iterations with {archiveCount}"
+            : $"{env.ID} Ended running GoExplore without finding level exit after {iteration} iterations"
         );
-
-        return isTerminal;
+        return archiveCount;
     }
 
     private bool RolloutAction()
@@ -67,7 +65,7 @@ public class GoExplore
             iteration++;
 
             SimulationInstance.StepResult actionResult = UnityMainThreadDispatcher.Dispatch(() => env.Step(action, iteration));
-            Debug.Log(actionResult);
+            // Debug.Log(actionResult);
 
             trajectory.Add(action);
 
@@ -108,7 +106,7 @@ public class GoExplore
         restoreCell = SelectCellToRestore(archive, rng);
         if (restoreCell != null)
         {
-            Debug.Log($"{ID} Restore state. Cell: {restoreCell}");
+            // Debug.Log($"{env.ID} Restore state. Cell: {restoreCell}");
             restoreCell.Choose();
             trajectory = restoreCell.trajectory;
             score = restoreCell.reward;

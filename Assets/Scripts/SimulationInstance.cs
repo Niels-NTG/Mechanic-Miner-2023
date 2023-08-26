@@ -14,8 +14,8 @@ public class SimulationInstance
 
     // Level
     private readonly Grid levelGrid;
-    private readonly Vector2Int entryLocation;
-    private readonly Vector2Int exitLocation;
+    public readonly Vector2Int entryLocation;
+    public readonly Vector2Int exitLocation;
 
     // Player
     private readonly PlayerController playerController;
