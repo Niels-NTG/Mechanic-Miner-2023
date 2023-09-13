@@ -5,15 +5,18 @@ using UnityEngine;
 public sealed class TGMChromosome : ChromosomeBase
 {
 
+    private readonly String ID = Guid.NewGuid().ToString();
     private readonly SimulationInstance simulationInstance;
+    private readonly ToggleableGameMechanic.ToggleGameMechanicGenotype gene;
 
     public TGMChromosome() : base(3)
     {
-        simulationInstance = UnityMainThreadDispatcher.Dispatch(() => new SimulationInstance(ID));
+        // Create empty
+        gene = new ToggleableGameMechanic.ToggleGameMechanicGenotype();
+
+        simulationInstance = UnityMainThreadDispatcher.Dispatch(() => new SimulationInstance(ID, gene));
         CreateGenes();
     }
-
-    private String ID { get; } = Guid.NewGuid().ToString();
 
     public override Gene GenerateGene(int geneIndex)
     {
@@ -30,10 +33,6 @@ public sealed class TGMChromosome : ChromosomeBase
 
     public override IChromosome CreateNew()
     {
-        if (simulationInstance != null)
-        {
-            simulationInstance.UnloadScene();
-        }
         return new TGMChromosome();
     }
 }

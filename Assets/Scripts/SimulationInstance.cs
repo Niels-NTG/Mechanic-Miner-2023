@@ -34,7 +34,7 @@ public class SimulationInstance
 
     private readonly int debugSeed = 877;
 
-    public SimulationInstance(String ID)
+    public SimulationInstance(String ID, ToggleableGameMechanic.ToggleGameMechanicGenotype toggleGameMechanicGenotype)
     {
         this.ID = ID;
 
@@ -72,6 +72,18 @@ public class SimulationInstance
         componentsWithToggleableProperties.AddRange(levelGenerator.componentsWithToggleableProperties);
         componentsWithToggleableProperties.AddRange(playerController.componentsWithToggleableProperties);
         tgm = new ToggleableGameMechanic(componentsWithToggleableProperties, rng);
+
+        // Generate new TGM if genotype data structure is empty
+        if (Equals(toggleGameMechanicGenotype, default(ToggleableGameMechanic.ToggleGameMechanicGenotype)))
+        {
+            tgm.GenerateNew();
+            Debug.Log($"{ID} created new TGM {tgm}");
+        }
+        else
+        {
+            tgm.GenerateFromGenotype(toggleGameMechanicGenotype);
+            Debug.Log($"{ID} generated TGM from genotype {tgm}");
+        }
         playerController.toggleableGameMechanic = tgm;
     }
 

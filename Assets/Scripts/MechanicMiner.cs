@@ -20,10 +20,13 @@ public class MechanicMiner : MonoBehaviour
     {
         if (debugLevelMode)
         {
-            GoExplore goExplore = new GoExplore(new SimulationInstance(Guid.NewGuid().ToString()));
+            ToggleableGameMechanic.ToggleGameMechanicGenotype emptyGene = new ToggleableGameMechanic.ToggleGameMechanicGenotype();
+            String debugID = Guid.NewGuid().ToString();
+            GoExplore goExplore = new GoExplore(new SimulationInstance(debugID, emptyGene));
             Thread debugThread = new Thread(() =>
             {
-                goExplore.Run();
+                int cellCount = goExplore.Run();
+                Debug.Log($"DEBUG MODE: {debugID} finished after visiting {cellCount} cells");
             });
             debugThread.Start();
         }

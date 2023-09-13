@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using System.Reflection;
 using Random = System.Random;
@@ -23,16 +24,25 @@ public class ToggleableGameMechanic
     {
         this.componentsWithToggleableProperties = componentsWithToggleableProperties;
         this.rng = rng;
-
-        GenerateTGM();
     }
 
-    private void GenerateTGM()
+    public void GenerateNew()
     {
         SelectComponent();
         SelectComponentProperty();
-
         SelectModifier();
+    }
+
+    public void GenerateFromGenotype(ToggleGameMechanicGenotype genotype)
+    {
+        SelectComponent(genotype.gameObjectName, genotype.componentTypeName);
+        SelectComponentProperty(genotype.fieldName);
+        modifier = genotype.modifier;
+    }
+
+    public ToggleGameMechanicGenotype GetTGMGenotype()
+    {
+        return UnityMainThreadDispatcher.Dispatch(() => new ToggleGameMechanicGenotype(component, componentProperty, modifier));
     }
 
     private object GetValue()
@@ -175,6 +185,13 @@ public class ToggleableGameMechanic
         component = componentsWithToggleableProperties[rng.Next(componentsWithToggleableProperties.Count)];
     }
 
+    private void SelectComponent(String gameObjectName, String componentName)
+    {
+        component = componentsWithToggleableProperties.Find(component1 =>
+            component1.gameObject.name == gameObjectName && component1.name == componentName
+        );
+    }
+
     public void SelectComponentProperty()
     {
         Type componentType = component.GetType();
@@ -241,6 +258,15 @@ public class ToggleableGameMechanic
         defaultValue = GetValue();
     }
 
+    private void SelectComponentProperty(String componentPropertyName)
+    {
+        Type componentType = component.GetType();
+        List<PropertyInfo> componentProperties = componentType.GetProperties().ToList();
+
+        componentProperty = componentProperties.Find(selectedProperty => selectedProperty.Name == componentPropertyName);
+        defaultValue = GetValue();
+    }
+
     public void SelectModifier()
     {
         modifier = SelectModifier(defaultValue, rng);
@@ -284,5 +310,25 @@ public class ToggleableGameMechanic
         Type componentType = component.GetType();
         String fieldName = componentProperty.Name;
         return $"{component.name} {componentType.Name} {fieldName} : {defaultValue} / {ApplyModifier(defaultValue)} ({modifier})";
+    }
+    public readonly struct ToggleGameMechanicGenotype
+    {
+        public readonly String gameObjectName;
+        public readonly String componentTypeName;
+        public readonly String fieldName;
+        public readonly String modifier;
+
+        public ToggleGameMechanicGenotype(Component component, PropertyInfo componentProperty, String modifier)
+        {
+            gameObjectName = component.name;
+            componentTypeName = component.GetType().Name;
+            fieldName = componentProperty.Name;
+            this.modifier = modifier;
+        }
+
+        public override string ToString()
+        {
+            return $"TGM genotype: {gameObjectName} {componentTypeName} {fieldName} ({modifier})";
+        }
     }
 }
