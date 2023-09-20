@@ -64,8 +64,8 @@ public class GoExplore
         {
             iteration++;
 
-            SimulationInstance.StepResult actionResult = UnityMainThreadDispatcher.Dispatch(() => env.Step(action, iteration));
-            // Debug.Log(actionResult);
+            SimulationInstance.StepResult actionResult = env.Step(action, iteration);
+            Debug.Log($"actionResult {actionResult}");
 
             trajectory.Add(action);
 
@@ -110,12 +110,12 @@ public class GoExplore
             restoreCell.Choose();
             trajectory = restoreCell.trajectory;
             score = restoreCell.reward;
-            UnityMainThreadDispatcher.Dispatch(() => env.TeleportPlayer(restoreCell.gridPosition));
+            env.TeleportPlayer(restoreCell.gridPosition);
 
             // Replay all actions in trajectory in order.
             foreach (int trajectoryAction in trajectory)
             {
-                UnityMainThreadDispatcher.Dispatch(() => env.Step(trajectoryAction, iteration));
+                env.Step(trajectoryAction, iteration);
             }
         }
 

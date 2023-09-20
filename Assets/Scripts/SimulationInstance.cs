@@ -14,12 +14,12 @@ public class SimulationInstance
 
     // Level
     private readonly Grid levelGrid;
-    public readonly Vector2Int entryLocation;
-    public readonly Vector2Int exitLocation;
+    private readonly Vector2Int entryLocation;
+    private readonly Vector2Int exitLocation;
 
     // Player
     private readonly PlayerController playerController;
-    private readonly int maxInputDuration = 240;
+    private readonly int maxInputDuration = 10;
 
     private readonly float lowerResetRewardBound = -2000;
 
@@ -89,16 +89,14 @@ public class SimulationInstance
 
     public void UnloadScene()
     {
-        UnityMainThreadDispatcher.Dispatch(() => SceneManager.UnloadSceneAsync(scene));
+        SceneManager.UnloadSceneAsync(scene);
     }
 
-    public void ResetPlayer()
+    public async void ResetPlayer()
     {
-        UnityMainThreadDispatcher.Dispatch(() =>
-        {
-            TeleportPlayer(new Vector3(entryLocation.x, entryLocation.y, 0) + new Vector3(0.5f, 0.5f, 0));
-            playerController.ResetPlayer();
-        });
+        await Awaitable.MainThreadAsync();
+        TeleportPlayer(new Vector3(entryLocation.x, entryLocation.y, 0) + new Vector3(0.5f, 0.5f, 0));
+        playerController.ResetPlayer();
     }
 
     public void TeleportPlayer(Vector2Int pos)
@@ -106,8 +104,9 @@ public class SimulationInstance
         TeleportPlayer(new Vector3(pos.x, pos.y, 0));
     }
 
-    private void TeleportPlayer(Vector3 pos)
+    private async void TeleportPlayer(Vector3 pos)
     {
+        await Awaitable.MainThreadAsync();
         playerController.gameObject.SetActive(true);
         playerController.transform.position = pos;
     }
@@ -115,25 +114,25 @@ public class SimulationInstance
 
     public StepResult Step(int action, int iteration)
     {
-        Vector2Int startGridSpace = CurrentGridSpace();
+        Vector2Int startGridSpace = CurrentGridSpace().GetAwaiter().GetResult();
 
         Task actionTask = null;
         switch (action)
         {
             case 0:
-                actionTask = UnityMainThreadDispatcher.DispatchAsync(MoveLeft);
+                actionTask = MoveLeft();
                 break;
             case 1:
-                actionTask = UnityMainThreadDispatcher.DispatchAsync(MoveRight);
+                actionTask = MoveRight();
                 break;
             case 2:
-                actionTask = UnityMainThreadDispatcher.DispatchAsync(Jump);
+                actionTask = Jump();
                 break;
             case 3:
-                actionTask = UnityMainThreadDispatcher.DispatchAsync(ToggleSpecial);
+                actionTask = ToggleSpecial();
                 break;
             case 4:
-                actionTask = UnityMainThreadDispatcher.DispatchAsync(DoNothing);
+                actionTask = DoNothing();
                 break;
         }
 
@@ -142,7 +141,7 @@ public class SimulationInstance
             actionTask.Wait();
         }
 
-        Vector2Int resultGridSpace = CurrentGridSpace();
+        Vector2Int resultGridSpace = CurrentGridSpace().GetAwaiter().GetResult();
         float reward = RewardDistanceToExit();
         bool isTerminal = IsTerminal();
 
@@ -186,9 +185,10 @@ public class SimulationInstance
         public override int GetHashCode() => playerGridPosition.GetHashCode() + (int) reward + actionTaken;
     }
 
-    private Vector2Int CurrentGridSpace()
+    private async Task<Vector2Int> CurrentGridSpace()
     {
-        Vector3Int currentGridSpace3D = UnityMainThreadDispatcher.Dispatch(() => levelGrid.WorldToCell(playerController.transform.position));
+        await Awaitable.MainThreadAsync();
+        Vector3Int currentGridSpace3D = levelGrid.WorldToCell(playerController.transform.position);
         return new Vector2Int(currentGridSpace3D.x, currentGridSpace3D.y);
     }
 
@@ -200,12 +200,13 @@ public class SimulationInstance
     private float RewardDistanceToExit()
     {
         return Vector2Int.Distance(Vector2Int.zero, LevelGenerator.levelSize.size) -
-               Vector2Int.Distance(exitLocation, CurrentGridSpace());
+               Vector2Int.Distance(exitLocation, CurrentGridSpace().GetAwaiter().GetResult());
     }
 
     private async Task MoveLeft()
     {
-        Vector2Int startGridSpace = CurrentGridSpace();
+        Vector2Int startGridSpace = await CurrentGridSpace();
+        await Awaitable.MainThreadAsync();
         int horizontalMovementInputs = 0;
         do
         {
@@ -213,13 +214,14 @@ public class SimulationInstance
                 playerController.MoveLeft()
             );
             horizontalMovementInputs++;
-            await Task.Yield();
-        } while (startGridSpace == CurrentGridSpace() && horizontalMovementInputs < maxInputDuration);
+            await Awaitable.FixedUpdateAsync();
+        } while (startGridSpace == await CurrentGridSpace() && horizontalMovementInputs < maxInputDuration);
     }
 
     private async Task MoveRight()
     {
-        Vector2Int startGridSpace = CurrentGridSpace();
+        Vector2Int startGridSpace = await CurrentGridSpace();
+        await Awaitable.MainThreadAsync();
         int horizontalMovementInputs = 0;
         do
         {
@@ -227,13 +229,14 @@ public class SimulationInstance
                 playerController.MoveRight()
             );
             horizontalMovementInputs++;
-            await Task.Yield();
-        } while (startGridSpace == CurrentGridSpace() && horizontalMovementInputs < maxInputDuration);
+            await Awaitable.FixedUpdateAsync();
+        } while (startGridSpace == await CurrentGridSpace() && horizontalMovementInputs < maxInputDuration);
     }
 
     private async Task Jump()
     {
-        Vector2Int startGridSpace = CurrentGridSpace();
+        Vector2Int startGridSpace = await CurrentGridSpace();
+        await Awaitable.MainThreadAsync();
         int jumpWaitTimer = 0;
         playerController.rigidBody.AddForce(
             playerController.Jump()
@@ -241,21 +244,22 @@ public class SimulationInstance
         do
         {
             jumpWaitTimer++;
-            await Task.Yield();
-        } while (startGridSpace == CurrentGridSpace() && jumpWaitTimer < maxInputDuration);
+            await Awaitable.FixedUpdateAsync();
+        } while (startGridSpace == await CurrentGridSpace() && jumpWaitTimer < maxInputDuration);
     }
 
     private async Task ToggleSpecial()
     {
+        await Awaitable.MainThreadAsync();
         playerController.ToggleSpecial();
-        await Task.Yield();
+        await Awaitable.FixedUpdateAsync();
     }
 
     private async Task DoNothing()
     {
         for (int i = 0; i < maxInputDuration; i++)
         {
-            await Task.Yield();
+            await Awaitable.FixedUpdateAsync();
         }
     }
 }

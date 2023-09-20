@@ -42,7 +42,7 @@ public class ToggleableGameMechanic
 
     public ToggleGameMechanicGenotype GetTGMGenotype()
     {
-        return UnityMainThreadDispatcher.Dispatch(() => new ToggleGameMechanicGenotype(component, componentProperty, modifier));
+        return new ToggleGameMechanicGenotype(component, componentProperty, modifier);
     }
 
     private object GetValue()
