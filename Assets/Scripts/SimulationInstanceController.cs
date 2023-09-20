@@ -7,7 +7,7 @@ public class SimulationInstanceController : MonoBehaviour
     public TextMesh playerDebugLabel;
 
     private PhysicsScene2D physicsScene;
-    private readonly float physicsTimeScale = 4f;
+    private readonly float physicsTimeScale = 10f;
 
     private void Start()
     {
