@@ -22,7 +22,9 @@ public class MechanicMiner : MonoBehaviour
         {
             ToggleableGameMechanic.ToggleGameMechanicGenotype emptyGene = new ToggleableGameMechanic.ToggleGameMechanicGenotype();
             String debugID = Guid.NewGuid().ToString();
-            GoExplore goExplore = new GoExplore(new SimulationInstance(debugID, emptyGene));
+            SimulationInstance simulationInstance = new SimulationInstance(debugID);
+            simulationInstance.SetTGM(emptyGene);
+            GoExplore goExplore = new GoExplore(simulationInstance);
             Thread debugThread = new Thread(() =>
             {
                 int cellCount = goExplore.Run();
