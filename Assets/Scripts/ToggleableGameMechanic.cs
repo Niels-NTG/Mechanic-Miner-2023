@@ -188,7 +188,7 @@ public class ToggleableGameMechanic
     private void SelectComponent(String gameObjectName, String componentName)
     {
         component = componentsWithToggleableProperties.Find(component1 =>
-            component1.gameObject.name == gameObjectName && component1.name == componentName
+            component1.gameObject.name == gameObjectName && component1.GetType().Name == componentName
         );
     }
 
