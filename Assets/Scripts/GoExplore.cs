@@ -65,7 +65,6 @@ public class GoExplore
             iteration++;
 
             SimulationInstance.StepResult actionResult = env.Step(action, iteration);
-            Debug.Log($"actionResult {actionResult}");
 
             trajectory.Add(action);
 
