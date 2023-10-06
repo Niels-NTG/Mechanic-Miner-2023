@@ -21,7 +21,7 @@ public class GoExplore
     private readonly Dictionary<int, Cell> archive = new Dictionary<int, Cell>();
     private Cell restoreCell;
     private readonly int maxTrajectoryLength = 100;
-    private readonly int maxAttempts = 100;
+    private readonly int maxAttempts = 10;
 
     private readonly Random rng;
 
