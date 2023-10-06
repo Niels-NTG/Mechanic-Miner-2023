@@ -51,8 +51,8 @@ public class GoExplore
 
         int archiveCount = isTerminal ? archive.Count : int.MaxValue;
         Debug.Log(isTerminal
-            ? $"{env.ID} Ended running GoExplore by finding level exit after {iteration} iterations visiting {archiveCount} cells"
-            : $"{env.ID} Ended running GoExplore without finding level exit after {iteration} iterations"
+            ? $"{env.ID} GoExplore: Ended running GoExplore by finding level exit after {iteration} iterations visiting {archiveCount} cells"
+            : $"{env.ID} GoExplore: Ended running GoExplore without finding level exit after {iteration} iterations"
         );
         return archiveCount;
     }

@@ -14,7 +14,10 @@ public class MechanicMiner : MonoBehaviour
 
     public bool debugLevelMode;
 
+    private Thread evolutionThread;
     private GeneticAlgorithm ga;
+    private readonly int populationSize = 10;
+    private readonly int maxGenerationCount = 10;
 
     private void Start()
     {
@@ -38,30 +41,38 @@ public class MechanicMiner : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        if (ga != null)
+        {
+            ga.Stop();
+            evolutionThread.Abort();
+        }
+    }
+
     private void RunEvolution()
     {
         EliteSelection selection = new EliteSelection();
         UniformCrossover crossover = new UniformCrossover();
         ReverseSequenceMutation mutation = new ReverseSequenceMutation();
         TGMFitness fitness = new TGMFitness();
-        TGMChromosome chromosome = new TGMChromosome();
-        Population population = new Population(10, 10, chromosome);
-        ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation);
-        ga.Termination = new GenerationNumberTermination(10);
-        ga.TaskExecutor = new ParallelTaskExecutor
+        TGMChromosome chromosome = new TGMChromosome(true);
+        Population population = new Population(populationSize, populationSize, chromosome);
+        ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation)
         {
-            MinThreads = 100,
-            MaxThreads = 200
+            Termination = new GenerationNumberTermination(maxGenerationCount),
+            TaskExecutor = new ParallelTaskExecutor
+            {
+                MinThreads = 100,
+                MaxThreads = 200
+            }
         };
-        ga.Start();
-        Debug.Log($"Best solution found has {ga.BestChromosome.Fitness} fitness");
+        evolutionThread = new Thread(() =>
+        {
+            ga.Start();
+            Debug.Log($"Best solution found has {ga.BestChromosome.Fitness} fitness {ga.BestChromosome}");
+        });
+        evolutionThread.Start();
     }
 
-    private void OnDestroy()
-    {
-        if (ga != null)
-        {
-            ga.Stop();
-        }
-    }
 }

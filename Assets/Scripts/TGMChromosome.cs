@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using GeneticSharp.Domain.Chromosomes;
 using UnityEngine;
 
@@ -8,8 +9,30 @@ public sealed class TGMChromosome : ChromosomeBase
     private ToggleableGameMechanic.ToggleGameMechanicGenotype gene;
     private SimulationInstance simulationInstance;
 
-    public TGMChromosome() : base(3)
+    public readonly struct GeneStruct
     {
+        public readonly String ID;
+        public readonly ToggleableGameMechanic.ToggleGameMechanicGenotype gene;
+        public readonly SimulationInstance simulationInstance;
+
+        public GeneStruct(
+            String ID,
+            ToggleableGameMechanic.ToggleGameMechanicGenotype gene,
+            SimulationInstance simulationInstance
+        )
+        {
+            this.ID = ID;
+            this.gene = gene;
+            this.simulationInstance = simulationInstance;
+        }
+    }
+
+    public TGMChromosome(bool isSetup) : base(3)
+    {
+        if (isSetup)
+        {
+            return;
+        }
         // Create empty
         gene = new ToggleableGameMechanic.ToggleGameMechanicGenotype();
 
@@ -20,10 +43,26 @@ public sealed class TGMChromosome : ChromosomeBase
     {
         if (simulationInstance == null)
         {
-            simulationInstance = new SimulationInstance($"TGM-generator-{ID}");
+            Debug.Log($"{ID} TGMChromosome.GenerateGene: attempt to generate new SimulationInstance");
+            Task<SimulationInstance> simulationSceneCreationTask = CreateSimulationInstance();
+            simulationInstance = simulationSceneCreationTask.GetAwaiter().GetResult();
         }
-        simulationInstance.SetTGM(gene);
+        Debug.Log($"{ID} TGMChromosome.GenerateGene: attempt to assign TGM to simulation instance");
+        Task<GeneStruct> assignAndMutateTGMTask = AssignAndMutateTGM(gene, geneIndex);
+        GeneStruct geneStruct = assignAndMutateTGMTask.GetAwaiter().GetResult();
+        return new Gene(geneStruct);
+    }
 
+    private async Task<SimulationInstance> CreateSimulationInstance()
+    {
+        await Awaitable.MainThreadAsync();
+        return new SimulationInstance(ID);
+    }
+
+    private async Task<GeneStruct> AssignAndMutateTGM(ToggleableGameMechanic.ToggleGameMechanicGenotype toggleGameMechanicGenotype, int geneIndex)
+    {
+        await Awaitable.MainThreadAsync();
+        simulationInstance.SetTGM(toggleGameMechanicGenotype);
         if (geneIndex == 0)
         {
             simulationInstance.tgm.SelectComponentProperty();
@@ -31,13 +70,12 @@ public sealed class TGMChromosome : ChromosomeBase
         {
             simulationInstance.tgm.SelectModifier();
         }
-        Debug.Log($"{ID} {simulationInstance.tgm}");
-        gene = simulationInstance.tgm.GetTGMGenotype();
-        return new Gene(gene);
+        Debug.Log($"{ID} TGMChromosome.AssignAndMutateTGM: {simulationInstance.tgm}");
+        return new GeneStruct(ID, gene, simulationInstance);
     }
 
     public override IChromosome CreateNew()
     {
-        return new TGMChromosome();
+        return new TGMChromosome(false);
     }
 }

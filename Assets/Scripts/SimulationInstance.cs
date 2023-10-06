@@ -80,12 +80,12 @@ public class SimulationInstance
         if (Equals(toggleGameMechanicGenotype, default(ToggleableGameMechanic.ToggleGameMechanicGenotype)))
         {
             tgm.GenerateNew();
-            Debug.Log($"{ID} created new TGM {tgm}");
+            Debug.Log($"{ID} SimulationInstance: created new TGM {tgm}");
         }
         else
         {
             tgm.GenerateFromGenotype(toggleGameMechanicGenotype);
-            Debug.Log($"{ID} generated TGM from genotype {tgm}");
+            Debug.Log($"{ID} SimulationInstance: generated TGM from genotype {tgm}");
         }
         playerController.toggleableGameMechanic = tgm;
     }

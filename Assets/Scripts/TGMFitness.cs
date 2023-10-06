@@ -10,22 +10,23 @@ public class TGMFitness : IFitness
     {
         Gene gene = chromosome.GetGene(0);
 
-        SimulationInstance env = (SimulationInstance) gene.Value;
-        env.ResetPlayer();
+        TGMChromosome.GeneStruct geneStruct = (TGMChromosome.GeneStruct) gene.Value;
 
-        GoExplore goExplore = new GoExplore(env);
+        Debug.Log($"{geneStruct.ID} TGMFitness: START FITNESS EVALUATION {geneStruct.ID}");
+        double fitnessValue = RunSimulation(geneStruct).GetAwaiter().GetResult();
+        Debug.Log($"{geneStruct.ID} TGMFitness: FITNESS {fitnessValue}");
+        return fitnessValue;
+    }
 
-        Task<int> goExploreTask = Task.Run(() => goExplore.Run());
-        goExploreTask.Start();
-        goExploreTask.Wait();
-        int simulationResult = goExploreTask.GetAwaiter().GetResult();
-
-        Vector2Int levelEntry = env.entryLocation;
-        Vector2Int levelExit = env.exitLocation;
+    private async Task<double> RunSimulation(TGMChromosome.GeneStruct geneStruct)
+    {
+        await Awaitable.BackgroundThreadAsync();
+        GoExplore goExplore = new GoExplore(geneStruct.simulationInstance);
+        int goExploreCellCount = goExplore.Run();
         int levelCellCount = LevelGenerator.levelSize.width * LevelGenerator.levelSize.height;
-        double archiveToLevelSizeRatio = 1.0 - (double)simulationResult / levelCellCount;
+        double archiveToLevelSizeRation = 1.0 - (double) goExploreCellCount / levelCellCount;
 
-        double fitnessValue = archiveToLevelSizeRatio;
+        double fitnessValue = archiveToLevelSizeRation;
         return fitnessValue;
     }
 }
