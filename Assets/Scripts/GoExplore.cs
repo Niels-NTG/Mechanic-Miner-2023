@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using Random = System.Random;
 
@@ -42,6 +43,8 @@ public class GoExplore
         bool isTerminal = false;
         for (int i = 0; i < maxAttempts; i++)
         {
+            // Debug.Log($"{env.ID} GoExplore: start attempt {i + 1}");
+            env.ResetPlayer();
             isTerminal = RolloutAction();
             if (isTerminal)
             {
@@ -65,6 +68,7 @@ public class GoExplore
             iteration++;
 
             SimulationInstance.StepResult actionResult = env.Step(action, iteration);
+            // Debug.Log($"{env.ID} GoExplore: step result {actionResult}");
 
             trajectory.Add(action);
 
