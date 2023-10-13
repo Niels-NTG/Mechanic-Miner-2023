@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using GeneticSharp.Domain.Chromosomes;
 using GeneticSharp.Domain.Fitnesses;
@@ -24,7 +25,7 @@ public class TGMFitness : IFitness
         GoExplore goExplore = new GoExplore(geneStruct.simulationInstance);
         int goExploreCellCount = goExplore.Run();
         int levelCellCount = LevelGenerator.levelSize.width * LevelGenerator.levelSize.height;
-        double archiveToLevelSizeRation = 1.0 - (double) goExploreCellCount / levelCellCount;
+        double archiveToLevelSizeRation = Math.Clamp(1.0 - (double) goExploreCellCount / levelCellCount, 0.0, 1.0);
 
         double fitnessValue = archiveToLevelSizeRation;
         return fitnessValue;
