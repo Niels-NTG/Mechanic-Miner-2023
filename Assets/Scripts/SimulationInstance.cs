@@ -88,6 +88,7 @@ public class SimulationInstance
             Debug.Log($"{ID} SimulationInstance: generated TGM from genotype {tgm}");
         }
         playerController.toggleableGameMechanic = tgm;
+        ResetPlayer();
     }
 
     public void UnloadScene()
