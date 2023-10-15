@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 using Random = System.Random;
 
@@ -22,7 +21,7 @@ public class GoExplore
     private readonly Dictionary<int, Cell> archive = new Dictionary<int, Cell>();
     private Cell restoreCell;
     private readonly int maxTrajectoryLength = 100;
-    private readonly int maxAttempts = 10;
+    private readonly int maxAttempts = 4;
 
     private readonly Random rng;
 
