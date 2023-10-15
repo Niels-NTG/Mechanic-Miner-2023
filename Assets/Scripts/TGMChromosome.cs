@@ -28,17 +28,9 @@ public sealed class TGMChromosome : ChromosomeBase
 
     ~TGMChromosome()
     {
-        Task unloadSceneTask = UnloadScene();
-        unloadSceneTask.GetAwaiter().GetResult();
-    }
-
-    private async Task UnloadScene()
-    {
         if (simulationInstance != null)
         {
-            Debug.Log($"{ID} TGMChromosome: de-constructor unload scene");
-            await Awaitable.MainThreadAsync();
-            simulationInstance.UnloadScene();
+            simulationInstance = null;
         }
     }
 

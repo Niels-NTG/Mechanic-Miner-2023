@@ -71,6 +71,10 @@ public class MechanicMiner : MonoBehaviour
         {
             ga.Start();
             Debug.Log($"Best solution found has {ga.BestChromosome.Fitness} fitness {ga.BestChromosome}");
+            if (!ga.IsRunning)
+            {
+                evolutionThread.Abort();
+            }
         });
         evolutionThread.Start();
     }

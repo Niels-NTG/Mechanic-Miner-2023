@@ -74,6 +74,11 @@ public class SimulationInstance
         tgm = new ToggleableGameMechanic(componentsWithToggleableProperties, new Random());
     }
 
+    ~SimulationInstance()
+    {
+        UnloadScene().GetAwaiter().GetResult();
+    }
+
     public void SetTGM(ToggleableGameMechanic.ToggleGameMechanicGenotype toggleGameMechanicGenotype)
     {
         // Generate new TGM if genotype data structure is empty
@@ -88,12 +93,15 @@ public class SimulationInstance
             Debug.Log($"{ID} SimulationInstance: generated TGM from genotype {tgm}");
         }
         playerController.toggleableGameMechanic = tgm;
+
         ResetPlayer();
     }
 
-    public void UnloadScene()
+    private async Task UnloadScene()
     {
-        SceneManager.UnloadSceneAsync(scene);
+        Debug.Log($"{ID} SimulationInstance: unloading scene");
+        await Awaitable.MainThreadAsync();
+        await SceneManager.UnloadSceneAsync(scene);
     }
 
     public async void ResetPlayer()
