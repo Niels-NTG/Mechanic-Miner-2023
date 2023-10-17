@@ -67,10 +67,17 @@ public class MechanicMiner : MonoBehaviour
                 MaxThreads = 200
             }
         };
+        ga.GenerationRan += delegate
+        {
+            TGMChromosome bestChromosome = (TGMChromosome) ga.BestChromosome;
+            Debug.Log($"GENERATION {ga.GenerationsNumber} - BEST GENE {bestChromosome.ID} ({bestChromosome.gene}) with a fitness of {bestChromosome.Fitness}");
+        };
         evolutionThread = new Thread(() =>
         {
             ga.Start();
-            Debug.Log($"Best solution found has {ga.BestChromosome.Fitness} fitness {ga.BestChromosome}");
+
+            TGMChromosome bestChromosome = (TGMChromosome) ga.BestChromosome;
+            Debug.Log($"END genetic algorithm after {ga.GenerationsNumber} - BEST GENE {bestChromosome.ID} ({bestChromosome.gene}) with a fitness of {bestChromosome.Fitness}");
             if (!ga.IsRunning)
             {
                 evolutionThread.Abort();

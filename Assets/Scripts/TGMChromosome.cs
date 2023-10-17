@@ -5,9 +5,9 @@ using UnityEngine;
 
 public sealed class TGMChromosome : ChromosomeBase
 {
-    private readonly String ID;
+    public readonly String ID;
     private SimulationInstance simulationInstance;
-    private ToggleableGameMechanic.ToggleGameMechanicGenotype gene;
+    public ToggleableGameMechanic.ToggleGameMechanicGenotype gene;
 
     public TGMChromosome(bool isSetup) : base(3)
     {
@@ -20,8 +20,6 @@ public sealed class TGMChromosome : ChromosomeBase
 
         // Create empty gene
         gene = new ToggleableGameMechanic.ToggleGameMechanicGenotype();
-
-        Debug.Log($"{ID} TGMChromosome: constructor");
 
         CreateGenes();
     }
