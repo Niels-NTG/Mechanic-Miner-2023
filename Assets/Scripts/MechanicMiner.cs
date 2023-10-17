@@ -71,6 +71,11 @@ public class MechanicMiner : MonoBehaviour
         {
             TGMChromosome bestChromosome = (TGMChromosome) ga.BestChromosome;
             Debug.Log($"GENERATION {ga.GenerationsNumber} - BEST GENE {bestChromosome.ID} ({bestChromosome.gene}) with a fitness of {bestChromosome.Fitness}");
+
+            foreach (TGMChromosome currentGenerationChromosome in ga.Population.CurrentGeneration.Chromosomes)
+            {
+                currentGenerationChromosome.simulationInstance = null;
+            }
         };
         evolutionThread = new Thread(() =>
         {

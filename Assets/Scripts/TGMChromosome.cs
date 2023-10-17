@@ -6,7 +6,7 @@ using UnityEngine;
 public sealed class TGMChromosome : ChromosomeBase
 {
     public readonly String ID;
-    private SimulationInstance simulationInstance;
+    public SimulationInstance simulationInstance;
     public ToggleableGameMechanic.ToggleGameMechanicGenotype gene;
 
     public TGMChromosome(bool isSetup) : base(3)
@@ -22,14 +22,6 @@ public sealed class TGMChromosome : ChromosomeBase
         gene = new ToggleableGameMechanic.ToggleGameMechanicGenotype();
 
         CreateGenes();
-    }
-
-    ~TGMChromosome()
-    {
-        if (simulationInstance != null)
-        {
-            simulationInstance = null;
-        }
     }
 
     public override Gene GenerateGene(int geneIndex)
