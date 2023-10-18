@@ -24,6 +24,11 @@ public sealed class TGMChromosome : ChromosomeBase
         CreateGenes();
     }
 
+    ~TGMChromosome()
+    {
+        simulationInstance = null;
+    }
+
     public override Gene GenerateGene(int geneIndex)
     {
         if (simulationInstance == null)

@@ -76,7 +76,9 @@ public class SimulationInstance
 
     ~SimulationInstance()
     {
-        UnloadScene().GetAwaiter().GetResult();
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+        UnloadScene();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
     }
 
     public void SetTGM(ToggleableGameMechanic.ToggleGameMechanicGenotype toggleGameMechanicGenotype)
@@ -169,7 +171,6 @@ public class SimulationInstance
         {
             reward = 0f;
         }
-
 
         return new StepResult(ID, resultGridSpace, action, iteration, reward, isTerminal);
     }

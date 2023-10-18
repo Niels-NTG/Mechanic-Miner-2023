@@ -70,19 +70,15 @@ public class MechanicMiner : MonoBehaviour
         ga.GenerationRan += delegate
         {
             TGMChromosome bestChromosome = (TGMChromosome) ga.BestChromosome;
-            Debug.Log($"GENERATION {ga.GenerationsNumber} - BEST GENE {bestChromosome.ID} ({bestChromosome.gene}) with a fitness of {bestChromosome.Fitness}");
+            Debug.Log($"GENERATION {ga.GenerationsNumber} - BEST GENE {bestChromosome.ID} ({bestChromosome.genotype}) with a fitness of {bestChromosome.Fitness}");
 
-            foreach (TGMChromosome currentGenerationChromosome in ga.Population.CurrentGeneration.Chromosomes)
-            {
-                currentGenerationChromosome.simulationInstance = null;
-            }
         };
         evolutionThread = new Thread(() =>
         {
             ga.Start();
 
             TGMChromosome bestChromosome = (TGMChromosome) ga.BestChromosome;
-            Debug.Log($"END genetic algorithm after {ga.GenerationsNumber} - BEST GENE {bestChromosome.ID} ({bestChromosome.gene}) with a fitness of {bestChromosome.Fitness}");
+            Debug.Log($"END genetic algorithm after {ga.GenerationsNumber} - BEST GENE {bestChromosome.ID} ({bestChromosome.genotype}) with a fitness of {bestChromosome.Fitness}");
             if (!ga.IsRunning)
             {
                 evolutionThread.Abort();
