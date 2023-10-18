@@ -1,4 +1,6 @@
 using System;
+using System.Globalization;
+using System.IO;
 using System.Threading;
 using GeneticSharp.Domain;
 using GeneticSharp.Domain.Crossovers;
@@ -8,6 +10,7 @@ using GeneticSharp.Domain.Terminations;
 using GeneticSharp.Domain.Populations;
 using GeneticSharp.Infrastructure.Framework.Threading;
 using UnityEngine;
+using CsvHelper;
 
 public class MechanicMiner : MonoBehaviour
 {
@@ -52,6 +55,11 @@ public class MechanicMiner : MonoBehaviour
 
     private void RunEvolution()
     {
+        StreamWriter writer = new StreamWriter($"Logs/GA log {DateTime.Now:yyyy-MM-dd-T-HH-mm-ss}.csv");
+        CsvWriter csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
+        csvWriter.WriteHeader<GeneticAlgorithmLogRow>();
+        csvWriter.NextRecord();
+
         EliteSelection selection = new EliteSelection();
         UniformCrossover crossover = new UniformCrossover();
         ReverseSequenceMutation mutation = new ReverseSequenceMutation();
@@ -72,6 +80,22 @@ public class MechanicMiner : MonoBehaviour
             TGMChromosome bestChromosome = (TGMChromosome) ga.BestChromosome;
             Debug.Log($"GENERATION {ga.GenerationsNumber} - BEST GENE {bestChromosome.ID} ({bestChromosome.genotype}) with a fitness of {bestChromosome.Fitness}");
 
+            // ReSharper disable once PossibleInvalidCastExceptionInForeachLoop
+            foreach (TGMChromosome currentGenerationChromosome in ga.Population.CurrentGeneration.Chromosomes)
+            {
+                csvWriter.WriteRecord(new GeneticAlgorithmLogRow
+                {
+                    generation = ga.GenerationsNumber,
+                    id = currentGenerationChromosome.ID,
+                    fitness = currentGenerationChromosome.Fitness ?? 0.0,
+                    gameObject = currentGenerationChromosome.GetGene(0).Value as String,
+                    component = currentGenerationChromosome.GetGene(1).Value as String,
+                    componentField = currentGenerationChromosome.GetGene(2).Value as String,
+                    modifier = currentGenerationChromosome.GetGene(3).Value as String
+                });
+                csvWriter.NextRecord();
+            }
+            csvWriter.Flush();
         };
         evolutionThread = new Thread(() =>
         {
@@ -83,6 +107,7 @@ public class MechanicMiner : MonoBehaviour
             {
                 evolutionThread.Abort();
             }
+            csvWriter.Flush();
         });
         evolutionThread.Start();
     }
