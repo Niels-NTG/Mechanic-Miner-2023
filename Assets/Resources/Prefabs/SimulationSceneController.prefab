@@ -1610,6 +1610,8 @@ MonoBehaviour:
   entryTile: {fileID: 11400000, guid: ebac2a194ce2fe66198146559f1ccb4a, type: 2}
   exitTilemap: {fileID: 4186914648829726649}
   exitTile: {fileID: 11400000, guid: a2c4cdfacbc7228909111ab952566c65, type: 2}
+  useEditorSeed: 0
+  editorSeed: 877
   entryLocation: {x: 0, y: 0}
   exitLocation: {x: 0, y: 0}
   componentsWithToggleableProperties:

@@ -23,6 +23,9 @@ public class LevelGenerator : MonoBehaviour
     public Tilemap exitTilemap;
     public Tile exitTile;
 
+    public bool useEditorSeed;
+    public int editorSeed = 877;
+
     private Random rng;
 
     private readonly List<LevelElement> LevelElements = new List<LevelElement>();
@@ -39,7 +42,10 @@ public class LevelGenerator : MonoBehaviour
     {
         Clear();
 
-        if (rng == null)
+        if (useEditorSeed)
+        {
+            rng = new Random(editorSeed);
+        } else if (rng == null)
         {
             rng = new Random();
         }
