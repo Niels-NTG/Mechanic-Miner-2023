@@ -26,7 +26,7 @@ public class TGMFitness : IFitness
         await Awaitable.BackgroundThreadAsync();
         GoExplore goExplore = new GoExplore(simulationInstance);
         int goExploreCellCount = goExplore.Run();
-        int levelCellCount = LevelGenerator.levelSize.width * LevelGenerator.levelSize.height;
+        int levelCellCount = Level.levelSize.width * Level.levelSize.height;
         double archiveToLevelSizeRation = Math.Clamp(1.0 - (double) goExploreCellCount / levelCellCount, 0.0, 1.0);
 
         double fitnessValue = archiveToLevelSizeRation;

@@ -1,13 +1,16 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SimulationInstanceController : MonoBehaviour
 {
-    public LevelGenerator levelGenerator;
     public GameObject playerAgent;
     public TextMesh playerDebugLabel;
 
     private PhysicsScene2D physicsScene;
     [Range(1, 20)] public float physicsTimeScale = 10f;
+
+    public List<Level> levels;
 
     private void Start()
     {

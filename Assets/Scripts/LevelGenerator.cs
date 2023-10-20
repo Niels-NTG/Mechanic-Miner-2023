@@ -4,24 +4,12 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using Random = System.Random;
 
-public class LevelGenerator : MonoBehaviour
+public class LevelGenerator : Level
 {
     private const int MIN_ELEMENT_COUNT = 2;
     private const int MAX_ELEMENT_COUNT = 20;
     private const int MIN_BOX_SIZE = 3;
     private const int MIN_LINE_SIZE = 2;
-
-    // Inner rect of the level measured in units of tiles.
-    public static RectInt levelSize = new RectInt(1, 1, 18, 13);
-
-    public Tilemap impassableTilemap;
-    public Tile impassableTile;
-    public Tilemap spikesTilemap;
-    public Tile spikeTile;
-    public Tilemap entryTilemap;
-    public Tile entryTile;
-    public Tilemap exitTilemap;
-    public Tile exitTile;
 
     public bool useEditorSeed;
     public int editorSeed = 877;
@@ -29,13 +17,6 @@ public class LevelGenerator : MonoBehaviour
     private Random rng;
 
     private readonly List<LevelElement> LevelElements = new List<LevelElement>();
-
-    [NonSerialized]
-    public Vector2Int entryLocation;
-    [NonSerialized]
-    public Vector2Int exitLocation;
-
-    public List<Component> componentsWithToggleableProperties;
 
     [ContextMenu("Generate")]
     public void Generate()
@@ -158,7 +139,6 @@ public class LevelGenerator : MonoBehaviour
 
         }
     }
-
 
     private class BoxElement : LevelElement
     {

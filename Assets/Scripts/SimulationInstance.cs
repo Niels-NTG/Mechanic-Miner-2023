@@ -35,7 +35,7 @@ public class SimulationInstance
     private readonly int tgmSeed = 0;
     private readonly int levelGeneratorSeed = 877;
 
-    public SimulationInstance(String ID)
+    public SimulationInstance(String ID, int levelIndex)
     {
         this.ID = ID;
 
@@ -52,13 +52,17 @@ public class SimulationInstance
 
         // Generate level
         Random levelGeneratorRNG = levelGeneratorSeed == 0 ? new Random() : new Random(levelGeneratorSeed);
-        LevelGenerator levelGenerator = simulationInstanceController.levelGenerator;
-        levelGenerator.Generate(levelGeneratorRNG);
+        Level level = simulationInstanceController.levels[levelIndex];
+        level.gameObject.SetActive(true);
+        if (level is LevelGenerator levelGenerator)
+        {
+            levelGenerator.Generate(levelGeneratorRNG);
+        }
 
         // Get level properties relevant for running the simulation
-        levelGrid = levelGenerator.GetComponent<Grid>();
-        entryLocation = levelGenerator.entryLocation;
-        exitLocation = levelGenerator.exitLocation;
+        levelGrid = level.GetComponent<Grid>();
+        entryLocation = level.entryLocation;
+        exitLocation = level.exitLocation;
 
         // Instantiate player agent and place at level entry position.
         playerController = simulationInstanceController.playerAgent.GetComponent<PlayerController>();
@@ -69,7 +73,7 @@ public class SimulationInstance
 
         // Create TGM from toggleable properties on level generator and player instance.
         List<Component> componentsWithToggleableProperties = new List<Component>();
-        componentsWithToggleableProperties.AddRange(levelGenerator.componentsWithToggleableProperties);
+        componentsWithToggleableProperties.AddRange(level.componentsWithToggleableProperties);
         componentsWithToggleableProperties.AddRange(playerController.componentsWithToggleableProperties);
         Random tgmRNG = tgmSeed == 0 ? new Random() : new Random(tgmSeed);
         tgm = new ToggleableGameMechanic(componentsWithToggleableProperties, tgmRNG);
@@ -77,9 +81,11 @@ public class SimulationInstance
 
     ~SimulationInstance()
     {
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+        // Do not wait for scene unload task to resolve.
+        // Because this call is not awaited, execution of the current method continues before the call is completed
+#pragma warning disable CS4014
         UnloadScene();
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+#pragma warning restore CS4014
     }
 
     public void SetTGM(ToggleableGameMechanic.ToggleGameMechanicGenotype toggleGameMechanicGenotype)
@@ -213,7 +219,7 @@ public class SimulationInstance
 
     private float RewardDistanceToExit()
     {
-        return Vector2Int.Distance(Vector2Int.zero, LevelGenerator.levelSize.size) -
+        return Vector2Int.Distance(Vector2Int.zero, Level.levelSize.size) -
                Vector2Int.Distance(exitLocation, CurrentGridSpace().GetAwaiter().GetResult());
     }
 

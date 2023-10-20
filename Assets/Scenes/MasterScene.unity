@@ -150,6 +150,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugLevelMode: 0
+  levelIndex: 3
+  populationSize: 10
+  maxGenerationCount: 10
 --- !u!4 &27798706
 Transform:
   m_ObjectHideFlags: 0

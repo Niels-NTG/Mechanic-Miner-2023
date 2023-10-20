@@ -9,6 +9,8 @@ public sealed class TGMChromosome : ChromosomeBase
     public SimulationInstance simulationInstance;
     public ToggleableGameMechanic.ToggleGameMechanicGenotype genotype;
 
+    public static int levelIndex;
+
     public TGMChromosome(bool isSetup) : base(4)
     {
         if (isSetup)
@@ -33,11 +35,10 @@ public sealed class TGMChromosome : ChromosomeBase
     {
         if (simulationInstance == null)
         {
-            Debug.Log($"{ID} TGMChromosome.GenerateGene: attempt to generate new SimulationInstance");
+            Debug.Log($"{ID} TGMChromosome.GenerateGene: generate new SimulationInstance");
             Task<SimulationInstance> simulationSceneCreationTask = CreateSimulationInstance();
             simulationInstance = simulationSceneCreationTask.GetAwaiter().GetResult();
         }
-        Debug.Log($"{ID} TGMChromosome.GenerateGene: attempt to assign TGM to simulation instance");
         Task<ToggleableGameMechanic.ToggleGameMechanicGenotype> assignAndMutateTGMTask = AssignAndMutateTGM(genotype, geneIndex);
         genotype = assignAndMutateTGMTask.GetAwaiter().GetResult();
 
@@ -62,7 +63,7 @@ public sealed class TGMChromosome : ChromosomeBase
     private async Task<SimulationInstance> CreateSimulationInstance()
     {
         await Awaitable.MainThreadAsync();
-        return new SimulationInstance(ID);
+        return new SimulationInstance(ID, levelIndex);
     }
 
     private async Task<ToggleableGameMechanic.ToggleGameMechanicGenotype> AssignAndMutateTGM(ToggleableGameMechanic.ToggleGameMechanicGenotype tgmGenotype, int geneIndex)
