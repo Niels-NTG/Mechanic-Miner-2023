@@ -32,13 +32,12 @@ public class SimulationInstance
         3
     };
 
-    private readonly int debugSeed = 877;
+    private readonly int tgmSeed = 0;
+    private readonly int levelGeneratorSeed = 877;
 
     public SimulationInstance(String ID)
     {
         this.ID = ID;
-
-        Random rng = debugSeed == 0 ? new Random() : new Random(debugSeed);
 
         // Create new scene
         CreateSceneParameters createSceneParameters = new CreateSceneParameters(LocalPhysicsMode.Physics2D);
@@ -52,8 +51,9 @@ public class SimulationInstance
         SimulationInstanceController simulationInstanceController = sceneController.GetComponent<SimulationInstanceController>();
 
         // Generate level
+        Random levelGeneratorRNG = levelGeneratorSeed == 0 ? new Random() : new Random(levelGeneratorSeed);
         LevelGenerator levelGenerator = simulationInstanceController.levelGenerator;
-        levelGenerator.Generate(rng);
+        levelGenerator.Generate(levelGeneratorRNG);
 
         // Get level properties relevant for running the simulation
         levelGrid = levelGenerator.GetComponent<Grid>();
@@ -71,7 +71,8 @@ public class SimulationInstance
         List<Component> componentsWithToggleableProperties = new List<Component>();
         componentsWithToggleableProperties.AddRange(levelGenerator.componentsWithToggleableProperties);
         componentsWithToggleableProperties.AddRange(playerController.componentsWithToggleableProperties);
-        tgm = new ToggleableGameMechanic(componentsWithToggleableProperties, new Random());
+        Random tgmRNG = tgmSeed == 0 ? new Random() : new Random(tgmSeed);
+        tgm = new ToggleableGameMechanic(componentsWithToggleableProperties, tgmRNG);
     }
 
     ~SimulationInstance()
