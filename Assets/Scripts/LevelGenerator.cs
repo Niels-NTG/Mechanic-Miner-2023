@@ -133,6 +133,9 @@ public class LevelGenerator : MonoBehaviour
         spikesTilemap.ClearAllTiles();
         entryTilemap.ClearAllTiles();
         exitTilemap.ClearAllTiles();
+        LevelElements.Clear();
+        entryLocation = new Vector2Int();
+        exitLocation = new Vector2Int();
     }
 
     private interface LevelElement
