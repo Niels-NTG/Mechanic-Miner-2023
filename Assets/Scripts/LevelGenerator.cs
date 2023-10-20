@@ -27,7 +27,9 @@ public class LevelGenerator : MonoBehaviour
 
     private readonly List<LevelElement> LevelElements = new List<LevelElement>();
 
+    [NonSerialized]
     public Vector2Int entryLocation;
+    [NonSerialized]
     public Vector2Int exitLocation;
 
     public List<Component> componentsWithToggleableProperties;
