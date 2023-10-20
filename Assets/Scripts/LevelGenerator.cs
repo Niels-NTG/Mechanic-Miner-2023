@@ -127,7 +127,7 @@ public class LevelGenerator : MonoBehaviour
     }
 
     [ContextMenu("Clear")]
-    private void Clear()
+    public void Clear()
     {
         impassableTilemap.ClearAllTiles();
         spikesTilemap.ClearAllTiles();

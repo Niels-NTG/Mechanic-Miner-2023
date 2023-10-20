@@ -1,0 +1,5 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:Button text="Generate" display-tooltip-when-elided="true" binding-path="Generate" enable-rich-text="false" name="Generate" />
+    <ui:Button text="Clear" display-tooltip-when-elided="true" binding-path="Clear" enable-rich-text="false" name="Clear" />
+    <ui:Foldout text="Default Inspector" name="Default_Inspector" />
+</ui:UXML>

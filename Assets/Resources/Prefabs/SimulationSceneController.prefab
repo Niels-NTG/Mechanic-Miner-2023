@@ -301,6 +301,7 @@ MonoBehaviour:
   levelGenerator: {fileID: 4186914650278891547}
   playerAgent: {fileID: 2175959455278381099}
   playerDebugLabel: {fileID: 812900485316216054}
+  physicsTimeScale: 10
 --- !u!1 &4186914650077924186
 GameObject:
   m_ObjectHideFlags: 0
