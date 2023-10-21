@@ -10,6 +10,8 @@ public sealed class TGMChromosome : ChromosomeBase
     public ToggleableGameMechanic.ToggleGameMechanicGenotype genotype;
 
     public static int levelIndex;
+    public static int levelGeneratorSeed;
+    public static int tgmGeneratorSeed;
 
     public TGMChromosome(bool isSetup) : base(4)
     {
@@ -63,7 +65,7 @@ public sealed class TGMChromosome : ChromosomeBase
     private async Task<SimulationInstance> CreateSimulationInstance()
     {
         await Awaitable.MainThreadAsync();
-        return new SimulationInstance(ID, levelIndex);
+        return new SimulationInstance(ID, levelIndex, levelGeneratorSeed, tgmGeneratorSeed);
     }
 
     private async Task<ToggleableGameMechanic.ToggleGameMechanicGenotype> AssignAndMutateTGM(ToggleableGameMechanic.ToggleGameMechanicGenotype tgmGenotype, int geneIndex)

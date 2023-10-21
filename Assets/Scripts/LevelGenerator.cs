@@ -11,9 +11,6 @@ public class LevelGenerator : Level
     private const int MIN_BOX_SIZE = 3;
     private const int MIN_LINE_SIZE = 2;
 
-    public bool useEditorSeed;
-    public int editorSeed = 877;
-
     private Random rng;
 
     private readonly List<LevelElement> LevelElements = new List<LevelElement>();
@@ -23,10 +20,7 @@ public class LevelGenerator : Level
     {
         Clear();
 
-        if (useEditorSeed)
-        {
-            rng = new Random(editorSeed);
-        } else if (rng == null)
+        if (rng == null)
         {
             rng = new Random();
         }

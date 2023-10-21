@@ -22,6 +22,10 @@ public class MechanicMiner : MonoBehaviour
     public int populationSize = 100;
     public int maxGenerationCount = 15;
 
+    public int levelGeneratorSeed;
+
+    public int tgmGeneratorSeed;
+
     private Thread evolutionThread;
     private GeneticAlgorithm ga;
 
@@ -31,7 +35,7 @@ public class MechanicMiner : MonoBehaviour
         {
             ToggleableGameMechanic.ToggleGameMechanicGenotype emptyGene = new ToggleableGameMechanic.ToggleGameMechanicGenotype();
             String debugID = Guid.NewGuid().ToString();
-            SimulationInstance simulationInstance = new SimulationInstance(debugID, levelIndex);
+            SimulationInstance simulationInstance = new SimulationInstance(debugID, levelIndex, levelGeneratorSeed, tgmGeneratorSeed);
             simulationInstance.SetTGM(emptyGene);
             GoExplore goExplore = new GoExplore(simulationInstance);
             Thread debugThread = new Thread(() =>
@@ -66,10 +70,16 @@ public class MechanicMiner : MonoBehaviour
         EliteSelection selection = new EliteSelection();
         UniformCrossover crossover = new UniformCrossover();
         ReverseSequenceMutation mutation = new ReverseSequenceMutation();
+
         TGMFitness fitness = new TGMFitness();
+
         TGMChromosome.levelIndex = levelIndex;
+        TGMChromosome.levelGeneratorSeed = levelGeneratorSeed;
+        TGMChromosome.tgmGeneratorSeed = tgmGeneratorSeed;
         TGMChromosome chromosome = new TGMChromosome(true);
+
         Population population = new Population(populationSize, populationSize, chromosome);
+
         ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation)
         {
             Termination = new GenerationNumberTermination(maxGenerationCount),

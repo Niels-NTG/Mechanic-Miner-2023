@@ -32,10 +32,7 @@ public class SimulationInstance
         3
     };
 
-    private readonly int tgmSeed = 0;
-    private readonly int levelGeneratorSeed = 877;
-
-    public SimulationInstance(String ID, int levelIndex)
+    public SimulationInstance(String ID, int levelIndex, int levelGeneratorSeed, int tgmSeed)
     {
         this.ID = ID;
 
