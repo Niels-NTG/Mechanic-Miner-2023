@@ -32,9 +32,14 @@ public class GoExplore
         action = SelectRandomAction();
     }
 
-    private int SelectRandomAction()
+    private int SelectRandomAction(int excludeAction = -1)
     {
-        return env.actionSpace[rng.Next(0, env.actionSpace.Length)];
+        int result;
+        do
+        {
+            result = env.actionSpace[rng.Next(0, env.actionSpace.Length)];
+        } while (result == excludeAction);
+        return result;
     }
 
     public int Run()
@@ -97,10 +102,10 @@ public class GoExplore
 
             if (actionResult.GetHashCode() == lastActionResultHash)
             {
-                action = SelectRandomAction();
+                action = SelectRandomAction(action);
             } else if (rng.NextDouble() > 0.95)
             {
-                action = SelectRandomAction();
+                action = SelectRandomAction(action);
             }
 
             lastActionResultHash = actionResult.GetHashCode();
