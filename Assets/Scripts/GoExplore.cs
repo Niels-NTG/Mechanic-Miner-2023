@@ -20,8 +20,8 @@ public class GoExplore
     private List<int> trajectory = new List<int>();
     private readonly Dictionary<int, Cell> archive = new Dictionary<int, Cell>();
     private Cell restoreCell;
-    private readonly int maxTrajectoryLength = 100;
-    private readonly int maxAttempts = 4;
+    private readonly int maxTrajectoryLength = 20;
+    private readonly int maxAttempts = 10;
 
     private readonly Random rng;
 
@@ -44,6 +44,7 @@ public class GoExplore
         {
             // Debug.Log($"{env.ID} GoExplore: start attempt {i + 1}");
             env.ResetPlayer();
+            trajectory.Clear();
             isTerminal = RolloutAction();
             if (isTerminal)
             {
@@ -62,7 +63,7 @@ public class GoExplore
     private bool RolloutAction()
     {
         int lastActionResultHash = 0;
-        for (int i = 0; i < maxTrajectoryLength; i++)
+        while (trajectory.Count < maxTrajectoryLength)
         {
             iteration++;
 
@@ -194,9 +195,9 @@ public class GoExplore
 
     private struct CellStats
     {
-        public double timesChosen;
-        public double timesChosenSinceNew;
-        public double timesSeen;
+        internal double timesChosen;
+        internal double timesChosenSinceNew;
+        internal double timesSeen;
 
         public CellStats(double timesChosen, double timesChosenSinceNew, double timesSeen)
         {
