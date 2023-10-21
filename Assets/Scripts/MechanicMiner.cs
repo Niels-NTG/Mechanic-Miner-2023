@@ -12,12 +12,14 @@ using GeneticSharp.Infrastructure.Framework.Threading;
 using UnityEngine;
 using CsvHelper;
 
+// TODO I'm using GeneticSharp 2.6.0, consider upgrading to 3.1.4 https://github.com/giacomelli/GeneticSharp/releases
+
 public class MechanicMiner : MonoBehaviour
 {
 
     public bool debugLevelMode;
 
-    [Range(0, 3)] public int levelIndex;
+    [Range(0, 4)] public int levelIndex;
 
     public int populationSize = 100;
     public int maxGenerationCount = 15;
