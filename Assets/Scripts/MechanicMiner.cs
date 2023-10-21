@@ -19,8 +19,8 @@ public class MechanicMiner : MonoBehaviour
 
     [Range(0, 3)] public int levelIndex;
 
-    public int populationSize = 10;
-    public int maxGenerationCount = 10;
+    public int populationSize = 100;
+    public int maxGenerationCount = 15;
 
     private Thread evolutionThread;
     private GeneticAlgorithm ga;
@@ -75,8 +75,8 @@ public class MechanicMiner : MonoBehaviour
             Termination = new GenerationNumberTermination(maxGenerationCount),
             TaskExecutor = new ParallelTaskExecutor
             {
-                MinThreads = 100,
-                MaxThreads = 200
+                MinThreads = 16,
+                MaxThreads = 32
             }
         };
         ga.GenerationRan += delegate
