@@ -6,13 +6,13 @@ public class PlayerController : MonoBehaviour
 {
     // Part of this is based on https://gist.github.com/bendux/5fab0c176855d4e37bf6a38bb071b4a4
 
-    [Tooltip("Only listen to input devices if true, should be set to false while simulations are running.")]
+    [Header("Only listen to input devices if true, should be set to false while simulation is running.")]
     public bool allowHumanInput;
 
     private float horizontal;
     public float speed = 8f;
     // Default value of 6.6 is just enough to jump over 2 blocks.
-    public float jumpingPower = 6.6f;
+    public float jumpingPower = 7.9f;
 
     public Rigidbody2D rigidBody;
     public LayerMask groundLayer;

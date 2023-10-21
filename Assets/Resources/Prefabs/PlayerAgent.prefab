@@ -316,7 +316,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allowHumanInput: 0
   speed: 8
-  jumpingPower: 6.6
+  jumpingPower: 7.9
   rigidBody: {fileID: 9119302039059648104}
   groundLayer:
     serializedVersion: 2
