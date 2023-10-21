@@ -8,8 +8,10 @@ public class SimulationInstanceController : MonoBehaviour
     public TextMesh playerDebugLabel;
 
     private PhysicsScene2D physicsScene;
+
     [Range(1, 20)] public float physicsTimeScale = 10f;
 
+    [Header("List of levels to run the simulator in")]
     public List<Level> levels;
 
     private void Start()

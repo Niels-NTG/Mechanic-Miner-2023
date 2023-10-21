@@ -22,6 +22,7 @@ public class Level : MonoBehaviour
     [NonSerialized]
     public Vector2Int exitLocation;
 
+    [Header("Components of the level that can be used to construct a Toggleable Game Mechanic (TGM)")]
     public List<Component> componentsWithToggleableProperties;
 
     private void Awake()

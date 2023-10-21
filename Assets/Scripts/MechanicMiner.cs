@@ -22,8 +22,10 @@ public class MechanicMiner : MonoBehaviour
     public int populationSize = 100;
     public int maxGenerationCount = 15;
 
+    [Header("Set to 0 to use random seed. Only applied if Level index is set to 0")]
     public int levelGeneratorSeed;
 
+    [Header("Seed to generate Toggleable Game Mechanics (TGM) with. Set to 0 to use random seed")]
     public int tgmGeneratorSeed;
 
     private Thread evolutionThread;

@@ -6,8 +6,7 @@ public class PlayerController : MonoBehaviour
 {
     // Part of this is based on https://gist.github.com/bendux/5fab0c176855d4e37bf6a38bb071b4a4
 
-    // Only listen to input devices if true.
-    // Should be set to false while simulation is running.
+    [Tooltip("Only listen to input devices if true, should be set to false while simulations are running.")]
     public bool allowHumanInput;
 
     private float horizontal;
@@ -22,6 +21,8 @@ public class PlayerController : MonoBehaviour
     public EdgeCollider2D groundCollider;
 
     public ToggleableGameMechanic toggleableGameMechanic;
+
+    [Header("Components of the player that can be used to construct a Toggleable Game Mechanic (TGM)")]
     public List<Component> componentsWithToggleableProperties;
 
     [NonSerialized]
