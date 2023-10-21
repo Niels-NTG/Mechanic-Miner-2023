@@ -20,7 +20,7 @@ public class GoExplore
     private List<int> trajectory = new List<int>();
     private readonly Dictionary<int, Cell> archive = new Dictionary<int, Cell>();
     private Cell restoreCell;
-    private readonly int maxTrajectoryLength = 20;
+    private readonly int maxTrajectoryLength = 30;
     private readonly int maxAttempts = 10;
 
     private readonly Random rng;

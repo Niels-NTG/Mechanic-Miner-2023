@@ -153,6 +153,8 @@ MonoBehaviour:
   levelIndex: 3
   populationSize: 100
   maxGenerationCount: 15
+  levelGeneratorSeed: 0
+  tgmGeneratorSeed: 0
 --- !u!4 &27798706
 Transform:
   m_ObjectHideFlags: 0

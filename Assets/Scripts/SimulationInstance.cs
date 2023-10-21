@@ -19,6 +19,10 @@ public class SimulationInstance
 
     // Player
     private readonly PlayerController playerController;
+
+    // NOTE: you may need to change this value when you use a different value for
+    // physicsTileScale (SimulationInstanceController). 10 is optimised for a
+    // physicsTileScale of 10f.
     private readonly int maxInputDuration = 10;
 
     private readonly float lowerResetRewardBound = -2000;
@@ -130,9 +134,10 @@ public class SimulationInstance
         playerController.transform.position = pos;
     }
 
-
     public StepResult Step(int action, int iteration)
     {
+        WaitForEndOfLastInput().GetAwaiter().GetResult();
+
         Vector2Int startGridSpace = CurrentGridSpace().GetAwaiter().GetResult();
 
         Task actionTask = null;
@@ -201,6 +206,15 @@ public class SimulationInstance
         public override String ToString() => $"{UUID}, player grid space: {playerGridPosition}, action: {actionTaken}, iteration: {iteration}, reward: {reward}, isTerminal: {isTerminal}";
 
         public override int GetHashCode() => playerGridPosition.GetHashCode() + actionTaken;
+    }
+
+    private async Task WaitForEndOfLastInput()
+    {
+        await Awaitable.MainThreadAsync();
+        do
+        {
+            await Awaitable.FixedUpdateAsync();
+        } while (playerController.rigidBody.totalForce != Vector2.zero);
     }
 
     private async Task<Vector2Int> CurrentGridSpace()
