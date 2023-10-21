@@ -79,7 +79,7 @@ public sealed class TGMChromosome : ChromosomeBase
         {
             simulationInstance.tgm.SelectModifier();
         }
-        Debug.Log($"{ID} TGMChromosome.AssignAndMutateTGM: gene index {geneIndex} - {simulationInstance.tgm}");
+        // Debug.Log($"{ID} TGMChromosome.AssignAndMutateTGM: gene index {geneIndex} - {simulationInstance.tgm}");
         return simulationInstance.tgm.GetTGMGenotype();
     }
 
