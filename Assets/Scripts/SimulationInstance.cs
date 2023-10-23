@@ -90,21 +90,9 @@ public class SimulationInstance
 #pragma warning restore CS4014
     }
 
-    public void SetTGM(ToggleableGameMechanic.ToggleGameMechanicGenotype toggleGameMechanicGenotype)
+    public void ApplyTGM()
     {
-        // Generate new TGM if genotype data structure is empty
-        if (Equals(toggleGameMechanicGenotype, default(ToggleableGameMechanic.ToggleGameMechanicGenotype)))
-        {
-            tgm.GenerateNew();
-            // Debug.Log($"{ID} SimulationInstance: created new TGM {tgm}");
-        }
-        else
-        {
-            tgm.GenerateFromGenotype(toggleGameMechanicGenotype);
-            // Debug.Log($"{ID} SimulationInstance: generated TGM from genotype {tgm}");
-        }
         playerController.toggleableGameMechanic = tgm;
-
         ResetPlayer();
     }
 

@@ -1,21 +1,23 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using System.Reflection;
+using System.Threading.Tasks;
 using Random = System.Random;
 
 public class ToggleableGameMechanic
 {
     private readonly List<Component> componentsWithToggleableProperties;
     private readonly Random rng;
+    private readonly List<GameObject> gameObjectsWithToggleableProperties = new List<GameObject>();
 
-    private Component component;
-    private PropertyInfo componentProperty;
+    private GameObject selectedGameObject;
+    private Component selectedComponent;
+    private PropertyInfo selectedComponentProperty;
 
     private object defaultValue;
 
-    private String modifier;
+    private String selectedModifier;
     private static readonly String[] modifierTypes = { "double", "half", "invert" };
 
     private bool isActive;
@@ -24,6 +26,13 @@ public class ToggleableGameMechanic
     {
         this.componentsWithToggleableProperties = componentsWithToggleableProperties;
         this.rng = rng;
+        foreach (Component component in componentsWithToggleableProperties)
+        {
+            if (!gameObjectsWithToggleableProperties.Contains(component.gameObject))
+            {
+                gameObjectsWithToggleableProperties.Add(component.gameObject);
+            }
+        }
     }
 
     public void GenerateNew()
@@ -33,26 +42,14 @@ public class ToggleableGameMechanic
         SelectModifier();
     }
 
-    public void GenerateFromGenotype(ToggleGameMechanicGenotype genotype)
-    {
-        SelectComponent(genotype.gameObjectName, genotype.componentTypeName);
-        SelectComponentProperty(genotype.fieldName);
-        modifier = genotype.modifier;
-    }
-
-    public ToggleGameMechanicGenotype GetTGMGenotype()
-    {
-        return new ToggleGameMechanicGenotype(component, componentProperty, modifier);
-    }
-
     private object GetValue()
     {
-        return componentProperty.GetValue(component);
+        return selectedComponentProperty.GetValue(selectedComponent);
     }
 
     private void SetValue(object value)
     {
-        componentProperty.SetValue(component, value);
+        selectedComponentProperty.SetValue(selectedComponent, value);
     }
 
     public void Toggle()
@@ -70,7 +67,7 @@ public class ToggleableGameMechanic
 
     private object ApplyModifier(object inputValue)
     {
-        return ApplyModifier(inputValue, modifier);
+        return ApplyModifier(inputValue, selectedModifier);
     }
 
     private static object ApplyModifier(object inputValue, String modifier)
@@ -180,21 +177,37 @@ public class ToggleableGameMechanic
         return inputValue;
     }
 
-    private void SelectComponent()
+    public String SelectGameObject()
     {
-        component = componentsWithToggleableProperties[rng.Next(componentsWithToggleableProperties.Count)];
+        selectedGameObject = gameObjectsWithToggleableProperties[rng.Next(gameObjectsWithToggleableProperties.Count)];
+        return GetGameObjectName();
     }
 
-    private void SelectComponent(String gameObjectName, String componentName)
+    public String SelectComponent()
     {
-        component = componentsWithToggleableProperties.Find(component1 =>
-            component1.gameObject.name == gameObjectName && component1.GetType().Name == componentName
-        );
+        if (selectedGameObject == null)
+        {
+            selectedComponent = componentsWithToggleableProperties[rng.Next(componentsWithToggleableProperties.Count)];
+            selectedGameObject = selectedComponent.gameObject;
+        }
+        else
+        {
+            List<Component> selectableComponents = new List<Component>();
+            foreach (Component component in componentsWithToggleableProperties)
+            {
+                if (component.gameObject == selectedGameObject)
+                {
+                    selectableComponents.Add(component);
+                }
+            }
+            selectedComponent = selectableComponents[rng.Next(selectableComponents.Count)];
+        }
+        return GetComponentName();
     }
 
-    public void SelectComponentProperty()
+    public String SelectComponentProperty()
     {
-        Type componentType = component.GetType();
+        Type componentType = selectedComponent.GetType();
         PropertyInfo[] componentProperties = componentType.GetProperties();
 
         bool[] sampleFlags = new bool[componentProperties.Length];
@@ -215,7 +228,7 @@ public class ToggleableGameMechanic
             PropertyInfo candidateProperty = componentProperties[nextRandomIndex];
             try
             {
-                object outputValue = candidateProperty.GetValue(component);
+                object outputValue = candidateProperty.GetValue(selectedComponent);
                 isEditableMechanic =
                     candidateProperty.SetMethod != null && (
                         IsNumeric(outputValue) ||
@@ -254,22 +267,16 @@ public class ToggleableGameMechanic
             Array.TrueForAll(sampleFlags, b => b) == false
         );
 
-        componentProperty = selectedProperty;
+        selectedComponentProperty = selectedProperty;
         defaultValue = GetValue();
+
+        return GetComponentFieldName();
     }
 
-    private void SelectComponentProperty(String componentPropertyName)
+    public String SelectModifier()
     {
-        Type componentType = component.GetType();
-        List<PropertyInfo> componentProperties = componentType.GetProperties().ToList();
-
-        componentProperty = componentProperties.Find(selectedProperty => selectedProperty.Name == componentPropertyName);
-        defaultValue = GetValue();
-    }
-
-    public void SelectModifier()
-    {
-        modifier = SelectModifier(defaultValue, rng);
+        selectedModifier = SelectModifier(defaultValue, rng);
+        return selectedModifier;
     }
 
     private static String SelectModifier(object v, Random rng)
@@ -305,30 +312,32 @@ public class ToggleableGameMechanic
         return v is bool;
     }
 
-    public override string ToString()
+    private String GetGameObjectName()
     {
-        Type componentType = component.GetType();
-        String fieldName = componentProperty.Name;
-        return $"{component.name} {componentType.Name} {fieldName} : {defaultValue} / {ApplyModifier(defaultValue)} ({modifier})";
+        return selectedGameObject.name;
     }
-    public readonly struct ToggleGameMechanicGenotype
+
+    private String GetComponentName()
     {
-        public readonly String gameObjectName;
-        public readonly String componentTypeName;
-        public readonly String fieldName;
-        public readonly String modifier;
+        return selectedComponent.GetType().Name;
+    }
 
-        public ToggleGameMechanicGenotype(Component component, PropertyInfo componentProperty, String modifier)
-        {
-            gameObjectName = component.name;
-            componentTypeName = component.GetType().Name;
-            fieldName = componentProperty.Name;
-            this.modifier = modifier;
-        }
+    private String GetComponentFieldName()
+    {
+        return selectedComponentProperty.Name;
+    }
 
-        public override string ToString()
+    private String GetModifier()
+    {
+        return selectedModifier;
+    }
+
+    public override String ToString()
+    {
+        return Task.Run(async () =>
         {
-            return $"TGM genotype: {gameObjectName} {componentTypeName} {fieldName} ({modifier})";
-        }
+            await Awaitable.MainThreadAsync();
+            return $"{GetGameObjectName()} {GetComponentName()} {GetComponentFieldName()} : {defaultValue} / {ApplyModifier(defaultValue)} ({GetModifier()})";
+        }).GetAwaiter().GetResult();
     }
 }

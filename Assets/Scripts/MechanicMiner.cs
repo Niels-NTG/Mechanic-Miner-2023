@@ -37,10 +37,10 @@ public class MechanicMiner : MonoBehaviour
     {
         if (debugLevelMode)
         {
-            ToggleableGameMechanic.ToggleGameMechanicGenotype emptyGene = new ToggleableGameMechanic.ToggleGameMechanicGenotype();
             String debugID = Guid.NewGuid().ToString();
             SimulationInstance simulationInstance = new SimulationInstance(debugID, levelIndex, levelGeneratorSeed, tgmGeneratorSeed);
-            simulationInstance.SetTGM(emptyGene);
+            simulationInstance.tgm.GenerateNew();
+            simulationInstance.ApplyTGM();
             GoExplore goExplore = new GoExplore(simulationInstance);
             Thread debugThread = new Thread(() =>
             {
@@ -73,8 +73,7 @@ public class MechanicMiner : MonoBehaviour
 
         EliteSelection selection = new EliteSelection();
         UniformCrossover crossover = new UniformCrossover();
-        ReverseSequenceMutation mutation = new ReverseSequenceMutation();
-
+        UniformMutation mutation = new UniformMutation(mutableGenesIndexes: new[] {2, 3});
         TGMFitness fitness = new TGMFitness();
 
         TGMChromosome.levelIndex = levelIndex;
@@ -96,20 +95,19 @@ public class MechanicMiner : MonoBehaviour
         ga.GenerationRan += delegate
         {
             TGMChromosome bestChromosome = (TGMChromosome) ga.BestChromosome;
-            Debug.Log($"GENERATION {ga.GenerationsNumber} - BEST GENE {bestChromosome.ID} ({bestChromosome.genotype}) with a fitness of {bestChromosome.Fitness}");
+            Debug.Log($"GENERATION {ga.GenerationsNumber} - BEST GENE {bestChromosome}");
 
             // ReSharper disable once PossibleInvalidCastExceptionInForeachLoop
             foreach (TGMChromosome currentGenerationChromosome in ga.Population.CurrentGeneration.Chromosomes)
             {
-                csvWriter.WriteRecord(new GeneticAlgorithmLogRow
-                {
+                csvWriter.WriteRecord(new GeneticAlgorithmLogRow{
                     generation = ga.GenerationsNumber,
                     id = currentGenerationChromosome.ID,
                     fitness = currentGenerationChromosome.Fitness ?? 0.0,
-                    gameObject = currentGenerationChromosome.GetGene(0).Value as String,
-                    component = currentGenerationChromosome.GetGene(1).Value as String,
-                    componentField = currentGenerationChromosome.GetGene(2).Value as String,
-                    modifier = currentGenerationChromosome.GetGene(3).Value as String
+                    gameObject = currentGenerationChromosome.GetGene(0).Value.ToString(),
+                    component = currentGenerationChromosome.GetGene(1).Value.ToString(),
+                    componentField = currentGenerationChromosome.GetGene(2).Value.ToString(),
+                    modifier = currentGenerationChromosome.GetGene(3).Value.ToString()
                 });
                 csvWriter.NextRecord();
             }
@@ -120,7 +118,7 @@ public class MechanicMiner : MonoBehaviour
             ga.Start();
 
             TGMChromosome bestChromosome = (TGMChromosome) ga.BestChromosome;
-            Debug.Log($"END genetic algorithm after {ga.GenerationsNumber} - BEST GENE {bestChromosome.ID} ({bestChromosome.genotype}) with a fitness of {bestChromosome.Fitness}");
+            Debug.Log($"END genetic algorithm after {ga.GenerationsNumber} - BEST GENE {bestChromosome}");
             if (!ga.IsRunning)
             {
                 evolutionThread.Abort();
