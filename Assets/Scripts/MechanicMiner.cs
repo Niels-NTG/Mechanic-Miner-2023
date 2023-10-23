@@ -90,7 +90,7 @@ public class MechanicMiner : MonoBehaviour
             TaskExecutor = new ParallelTaskExecutor
             {
                 MinThreads = 16,
-                MaxThreads = 32
+                MaxThreads = 100
             }
         };
         ga.GenerationRan += delegate
