@@ -13,12 +13,7 @@ public sealed class TGMUniformCrossover : UniformCrossover
         TGMChromosome chromosome2 = (TGMChromosome) parent2.CreateNew();
         for (int index = 0; index < parent1.Length; index++)
         {
-            if (RandomizationProvider.Current.GetDouble() < MixProbability)
-            {
-                chromosome1.ReplaceGene(index, parent1.GetGene(index));
-                chromosome2.ReplaceGene(index, parent2.GetGene(index));
-            }
-            else if (chromosome1.isSameType(chromosome2))
+            if (chromosome1.isSameType(chromosome2))
             {
                 chromosome1.ReplaceGene(index, parent2.GetGene(index));
                 chromosome2.ReplaceGene(index, parent1.GetGene(index));
