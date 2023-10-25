@@ -3,7 +3,6 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using GeneticSharp.Domain;
-using GeneticSharp.Domain.Crossovers;
 using GeneticSharp.Domain.Mutations;
 using GeneticSharp.Domain.Selections;
 using GeneticSharp.Domain.Terminations;
@@ -72,7 +71,7 @@ public class MechanicMiner : MonoBehaviour
         csvWriter.NextRecord();
 
         EliteSelection selection = new EliteSelection();
-        UniformCrossover crossover = new UniformCrossover();
+        TGMUniformCrossover crossover = new TGMUniformCrossover();
         UniformMutation mutation = new UniformMutation(mutableGenesIndexes: new[] {2, 3});
         TGMFitness fitness = new TGMFitness();
 

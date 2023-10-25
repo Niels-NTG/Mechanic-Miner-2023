@@ -78,6 +78,11 @@ public sealed class TGMChromosome : ChromosomeBase
         return new Gene();
     }
 
+    public bool isSameType(TGMChromosome otherChromosome)
+    {
+        return simulationInstance.tgm.GetFieldValueType() == otherChromosome.simulationInstance.tgm.GetFieldValueType();
+    }
+
     public override IChromosome CreateNew()
     {
         return new TGMChromosome(false);

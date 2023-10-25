@@ -332,6 +332,11 @@ public class ToggleableGameMechanic
         return selectedModifier;
     }
 
+    public Type GetFieldValueType()
+    {
+        return defaultValue.GetType();
+    }
+
     public override String ToString()
     {
         return Task.Run(async () =>
