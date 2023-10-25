@@ -81,6 +81,14 @@ public class SimulationInstance
         tgm = new ToggleableGameMechanic(componentsWithToggleableProperties, tgmRNG);
     }
 
+    ~SimulationInstance()
+    {
+        // Do not wait for the scene to be unloaded.
+#pragma warning disable CS4014
+        UnloadScene();
+#pragma warning restore CS4014
+    }
+
     public void ApplyTGM()
     {
         playerController.toggleableGameMechanic = tgm;
