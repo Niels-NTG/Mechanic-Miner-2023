@@ -70,7 +70,7 @@ public class MechanicMiner : MonoBehaviour
         csvWriter.WriteHeader<GeneticAlgorithmLogRow>();
         csvWriter.NextRecord();
 
-        EliteSelection selection = new EliteSelection();
+        RouletteWheelSelection selection = new RouletteWheelSelection();
         TGMUniformCrossover crossover = new TGMUniformCrossover();
         UniformMutation mutation = new UniformMutation(mutableGenesIndexes: new[] {2, 3});
         TGMFitness fitness = new TGMFitness();
