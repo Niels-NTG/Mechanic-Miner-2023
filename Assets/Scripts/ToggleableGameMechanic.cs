@@ -339,10 +339,18 @@ public class ToggleableGameMechanic
 
     public override String ToString()
     {
+        // WARNING: can only be called while scene is active.
         return Task.Run(async () =>
         {
-            await Awaitable.MainThreadAsync();
-            return $"{GetGameObjectName()} {GetComponentName()} {GetComponentFieldName()} : {defaultValue} / {ApplyModifier(defaultValue)} ({GetModifier()})";
+            try
+            {
+                await Awaitable.MainThreadAsync();
+                return $"{GetGameObjectName()} {GetComponentName()} {GetComponentFieldName()} : {defaultValue} / {ApplyModifier(defaultValue)} ({GetModifier()})";
+            }
+            catch (MissingReferenceException e)
+            {
+                return $"Cannot read TGM. Scene in which TGM instance resides is no longer present. {e}";
+            }
         }).GetAwaiter().GetResult();
     }
 }

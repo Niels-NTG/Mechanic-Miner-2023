@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using GeneticSharp.Domain.Chromosomes;
 using UnityEngine;
@@ -6,13 +7,14 @@ using UnityEngine;
 public sealed class TGMChromosome : ChromosomeBase
 {
     public readonly String ID;
+    public readonly String lineageID;
     public SimulationInstance simulationInstance;
 
     public static int levelIndex;
     public static int levelGeneratorSeed;
     public static int tgmGeneratorSeed;
 
-    public TGMChromosome(bool isSetup) : base(4)
+    public TGMChromosome(bool isSetup, String previousID = null, SimulationInstance previousSimulationInstance = null) : base(4)
     {
         if (isSetup)
         {
@@ -21,12 +23,15 @@ public sealed class TGMChromosome : ChromosomeBase
 
         ID = Guid.NewGuid().ToString();
 
-        CreateGenes();
-    }
+        lineageID = previousID ?? ID;
 
-    ~TGMChromosome()
-    {
-        simulationInstance = null;
+        // Unload scene from previous simulation instance, if present.
+        if (previousSimulationInstance != null)
+        {
+            previousSimulationInstance.UnloadScene().GetAwaiter().GetResult();
+        }
+
+        CreateGenes();
     }
 
     public override Gene GenerateGene(int geneIndex)
@@ -85,15 +90,11 @@ public sealed class TGMChromosome : ChromosomeBase
 
     public override IChromosome CreateNew()
     {
-        return new TGMChromosome(false);
+        return new TGMChromosome(false, ID, simulationInstance);
     }
 
     public override string ToString()
     {
-        if (simulationInstance != null)
-        {
-            return $"{ID} ({simulationInstance.tgm}) with fitness {Fitness}";
-        }
-        return $"{ID} (NO GENE) with fitness {Fitness}";
+        return $"{ID} ({String.Join(" - ", GetGenes().Select(g => g.Value))}) with fitness {Fitness}";
     }
 }

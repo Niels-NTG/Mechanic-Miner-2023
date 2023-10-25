@@ -10,7 +10,7 @@ public class SimulationInstance
 {
     public readonly String ID;
     public readonly ToggleableGameMechanic tgm;
-    private readonly Scene scene;
+    private Scene scene;
 
     // Level
     private readonly Grid levelGrid;
@@ -81,26 +81,20 @@ public class SimulationInstance
         tgm = new ToggleableGameMechanic(componentsWithToggleableProperties, tgmRNG);
     }
 
-    ~SimulationInstance()
-    {
-        // Do not wait for scene unload task to resolve.
-        // Because this call is not awaited, execution of the current method continues before the call is completed
-#pragma warning disable CS4014
-        UnloadScene();
-#pragma warning restore CS4014
-    }
-
     public void ApplyTGM()
     {
         playerController.toggleableGameMechanic = tgm;
         ResetPlayer();
     }
 
-    private async Task UnloadScene()
+    public async Task UnloadScene()
     {
         Debug.Log($"{ID} SimulationInstance: unloading scene");
         await Awaitable.MainThreadAsync();
-        await SceneManager.UnloadSceneAsync(scene);
+        if (scene.IsValid())
+        {
+            await SceneManager.UnloadSceneAsync(scene);
+        }
     }
 
     public async void ResetPlayer()
