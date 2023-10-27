@@ -82,7 +82,7 @@ public class MechanicMiner : MonoBehaviour
 
         Population population = new Population(populationSize, populationSize, chromosome)
         {
-            GenerationStrategy = new PerformanceGenerationStrategy(2)
+            GenerationStrategy = new PerformanceGenerationStrategy(1)
         };
 
         ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation)

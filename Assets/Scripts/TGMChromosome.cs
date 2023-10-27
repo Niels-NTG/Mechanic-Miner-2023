@@ -14,7 +14,7 @@ public sealed class TGMChromosome : ChromosomeBase
     public static int levelGeneratorSeed;
     public static int tgmGeneratorSeed;
 
-    public TGMChromosome(bool isSetup, String previousID = null, SimulationInstance previousSimulationInstance = null) : base(4)
+    public TGMChromosome(bool isSetup, String previousID = null) : base(4)
     {
         if (isSetup)
         {
@@ -24,12 +24,6 @@ public sealed class TGMChromosome : ChromosomeBase
         ID = Guid.NewGuid().ToString();
 
         lineageID = previousID ?? ID;
-
-        // Unload scene from previous simulation instance, if present.
-        if (previousSimulationInstance != null)
-        {
-            previousSimulationInstance.UnloadScene().GetAwaiter().GetResult();
-        }
 
         CreateGenes();
     }
@@ -95,7 +89,7 @@ public sealed class TGMChromosome : ChromosomeBase
 
     public override IChromosome CreateNew()
     {
-        return new TGMChromosome(false, ID, simulationInstance);
+        return new TGMChromosome(false, ID);
     }
 
     public override string ToString()
