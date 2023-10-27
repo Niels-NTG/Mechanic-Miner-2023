@@ -80,17 +80,21 @@ public class MechanicMiner : MonoBehaviour
         TGMChromosome.tgmGeneratorSeed = tgmGeneratorSeed;
         TGMChromosome chromosome = new TGMChromosome(true);
 
-        Population population = new Population(populationSize, populationSize, chromosome);
+        Population population = new Population(populationSize, populationSize, chromosome)
+        {
+            GenerationStrategy = new PerformanceGenerationStrategy(2)
+        };
 
         ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation)
         {
             Termination = new GenerationNumberTermination(maxGenerationCount),
             TaskExecutor = new ParallelTaskExecutor
             {
-                MinThreads = 16,
+                MinThreads = 10,
                 MaxThreads = 100
             }
         };
+
         ga.GenerationRan += delegate
         {
             TGMChromosome bestChromosome = (TGMChromosome) ga.BestChromosome;
