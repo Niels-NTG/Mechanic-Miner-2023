@@ -27,7 +27,11 @@ public class TGMFitness : IFitness
         GoExplore goExplore = new GoExplore(simulationInstance);
         int goExploreCellCount = goExplore.Run();
         int levelCellCount = Level.levelSize.width * Level.levelSize.height;
-        double archiveToLevelSizeRation = Math.Clamp(1.0 - (double) goExploreCellCount / levelCellCount, 0.0, 1.0);
+        // Do not use 0 for minimum value, since this can break RouletteWheelSelection
+        double archiveToLevelSizeRation = Math.Clamp(
+            1.0 - (double) goExploreCellCount / levelCellCount,
+            Mathf.Epsilon, 1.0
+        );
 
         double fitnessValue = archiveToLevelSizeRation;
         return fitnessValue;
