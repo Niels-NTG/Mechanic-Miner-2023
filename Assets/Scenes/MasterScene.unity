@@ -150,8 +150,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugLevelMode: 0
-  levelIndex: 4
-  populationSize: 100
+  levelIndex: 2
+  populationSize: 10
   maxGenerationCount: 15
   levelGeneratorSeed: 0
   tgmGeneratorSeed: 0

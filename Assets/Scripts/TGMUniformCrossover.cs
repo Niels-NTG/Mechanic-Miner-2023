@@ -8,22 +8,22 @@ public sealed class TGMUniformCrossover : UniformCrossover
     {
         IChromosome parent1 = parents[0];
         IChromosome parent2 = parents[1];
-        TGMChromosome chromosome1 = (TGMChromosome) parent1.CreateNew();
-        TGMChromosome chromosome2 = (TGMChromosome) parent2.CreateNew();
-        bool isSameType = chromosome1.isSameType(chromosome2);
+        IChromosome chromosome1 = parent1.CreateNew();
+        IChromosome chromosome2 = parent2.CreateNew();
+        TGMChromosome tgmChromosome1 = (TGMChromosome) chromosome1;
+        TGMChromosome tgmChromosome2 = (TGMChromosome) chromosome2;
+        bool isSameType = tgmChromosome1.isSameType(tgmChromosome2);
+        for (int index = 0; index < parent1.Length; index++)
         {
-            for (int index = 0; index < parent1.Length; index++)
+            if (isSameType)
             {
-                if (isSameType)
-                {
-                    chromosome1.ReplaceGene(index, parent2.GetGene(index));
-                    chromosome2.ReplaceGene(index, parent1.GetGene(index));
-                }
-                else
-                {
-                    chromosome1.ReplaceGene(index, parent1.GetGene(index));
-                    chromosome2.ReplaceGene(index, parent2.GetGene(index));
-                }
+                chromosome1.ReplaceGene(index, parent2.GetGene(index));
+                chromosome2.ReplaceGene(index, parent1.GetGene(index));
+            }
+            else
+            {
+                chromosome1.ReplaceGene(index, parent1.GetGene(index));
+                chromosome2.ReplaceGene(index, parent2.GetGene(index));
             }
         }
         return new List<IChromosome>
