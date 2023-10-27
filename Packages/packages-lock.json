@@ -243,6 +243,13 @@
       },
       "url": "https://unitynuget-registry.azurewebsites.net"
     },
+    "org.nuget.geneticsharp": {
+      "version": "2.6.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://unitynuget-registry.azurewebsites.net"
+    },
     "org.nuget.microsoft.bcl.asyncinterfaces": {
       "version": "1.0.0",
       "depth": 1,
