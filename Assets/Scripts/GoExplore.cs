@@ -101,6 +101,7 @@ public class GoExplore
             }
 
             if (
+                !actionResult.canActionBeRepeated ||
                 actionResult.reward <= 0f ||
                 actionResult.GetHashCode() == lastActionResultHash ||
                 rng.NextDouble() > 0.95

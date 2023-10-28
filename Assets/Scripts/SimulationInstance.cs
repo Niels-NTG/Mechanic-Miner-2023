@@ -103,7 +103,7 @@ public class SimulationInstance
         ResetPlayer();
     }
 
-    public async Task UnloadScene()
+    private async Task UnloadScene()
     {
         Debug.Log($"{ID} SimulationInstance: unloading scene");
         await Awaitable.MainThreadAsync();
@@ -160,7 +160,7 @@ public class SimulationInstance
 
         if (actionTask != null)
         {
-            actionTask.Wait();
+            actionTask.GetAwaiter().GetResult();
         }
 
         Vector2Int resultGridSpace = CurrentGridSpace().GetAwaiter().GetResult();
@@ -180,7 +180,10 @@ public class SimulationInstance
             reward = 0f;
         }
 
-        return new StepResult(ID, resultGridSpace, action, iteration, reward, isTerminal);
+        // Jumps shouldn't not be repeated.
+        bool canActionBeRepeated = action != 2;
+
+        return new StepResult(ID, resultGridSpace, action, iteration, reward, isTerminal, canActionBeRepeated);
     }
 
     public record StepResult
@@ -191,7 +194,8 @@ public class SimulationInstance
         public readonly float reward;
         public readonly bool isTerminal;
         private readonly int actionTaken;
-        public StepResult(String UUID, Vector2Int playerGridPosition, int action, int iteration, float reward, bool isTerminal)
+        public readonly bool canActionBeRepeated;
+        public StepResult(String UUID, Vector2Int playerGridPosition, int action, int iteration, float reward, bool isTerminal, bool canActionBeRepeated)
         {
             this.UUID = UUID;
             this.playerGridPosition = playerGridPosition;
@@ -199,11 +203,12 @@ public class SimulationInstance
             this.reward = reward;
             this.isTerminal = isTerminal;
             actionTaken = action;
+            this.canActionBeRepeated = canActionBeRepeated;
         }
 
         public override String ToString() => $"{UUID}, player grid space: {playerGridPosition}, action: {actionSpaceNames[actionTaken]}, iteration: {iteration}, reward: {reward}, isTerminal: {isTerminal}";
 
-        public override int GetHashCode() => playerGridPosition.GetHashCode() + actionTaken;
+        public override int GetHashCode() => playerGridPosition.GetHashCode() + actionTaken + (int) reward;
     }
 
     private async Task WaitForEndOfLastInput()
