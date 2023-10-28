@@ -100,10 +100,11 @@ public class GoExplore
                 cell.cellStats.timesChosenSinceNew = 0;
             }
 
-            if (actionResult.GetHashCode() == lastActionResultHash)
-            {
-                action = SelectRandomAction(action);
-            } else if (rng.NextDouble() > 0.95)
+            if (
+                actionResult.reward <= 0f ||
+                actionResult.GetHashCode() == lastActionResultHash ||
+                rng.NextDouble() > 0.95
+            )
             {
                 action = SelectRandomAction(action);
             }
