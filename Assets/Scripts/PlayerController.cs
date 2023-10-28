@@ -56,7 +56,7 @@ public class PlayerController : MonoBehaviour
         toggleableGameMechanic.Toggle();
     }
 
-    private bool IsGrounded()
+    public bool IsGrounded()
     {
         return Physics2D.IsTouchingLayers(groundCollider, groundLayer);
     }

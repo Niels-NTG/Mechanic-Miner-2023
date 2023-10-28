@@ -259,16 +259,21 @@ public class SimulationInstance
     {
         Vector2Int startGridSpace = await CurrentGridSpace();
         await Awaitable.MainThreadAsync();
-        int jumpDuration = 0;
-        await Awaitable.FixedUpdateAsync();
-        playerController.rigidBody.AddForce(
-            playerController.Jump()
-        );
-        do
+        if (playerController.IsGrounded())
         {
-            await Awaitable.FixedUpdateAsync();
-            jumpDuration++;
-        } while (startGridSpace == await CurrentGridSpace() && jumpDuration < maxInputDuration);
+            int jumpDuration = 0;
+            playerController.rigidBody.AddForce(
+                playerController.Jump()
+            );
+            do
+            {
+                await Awaitable.FixedUpdateAsync();
+                jumpDuration++;
+            } while (
+                startGridSpace == await CurrentGridSpace() &&
+                jumpDuration < maxInputDuration
+            );
+        }
     }
 
     private async Task ToggleSpecial()
