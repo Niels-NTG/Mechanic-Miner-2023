@@ -27,14 +27,22 @@ public class SimulationInstance
 
     private readonly float lowerResetRewardBound = -2000;
 
-    // Move left, move right, jump, special
-    public readonly int[] actionSpace =
+    // Move left, move right, jump, special, do nothing
+    public static readonly int[] actionSpace =
     {
         0,
         1,
         2,
         3,
         4
+    };
+    private static readonly String[] actionSpaceNames =
+    {
+        "MOVE_LEFT",
+        "MOVE_RIGHT",
+        "JUMP",
+        "SPECIAL",
+        "DO_NOTHING"
     };
 
     public SimulationInstance(String ID, int levelIndex, int levelGeneratorSeed, int tgmSeed)
@@ -175,7 +183,7 @@ public class SimulationInstance
         return new StepResult(ID, resultGridSpace, action, iteration, reward, isTerminal);
     }
 
-    public readonly struct StepResult
+    public record StepResult
     {
         private readonly String UUID;
         public readonly Vector2Int playerGridPosition;
@@ -193,7 +201,7 @@ public class SimulationInstance
             actionTaken = action;
         }
 
-        public override String ToString() => $"{UUID}, player grid space: {playerGridPosition}, action: {actionTaken}, iteration: {iteration}, reward: {reward}, isTerminal: {isTerminal}";
+        public override String ToString() => $"{UUID}, player grid space: {playerGridPosition}, action: {actionSpaceNames[actionTaken]}, iteration: {iteration}, reward: {reward}, isTerminal: {isTerminal}";
 
         public override int GetHashCode() => playerGridPosition.GetHashCode() + actionTaken;
     }

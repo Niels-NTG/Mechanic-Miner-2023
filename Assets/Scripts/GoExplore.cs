@@ -37,7 +37,7 @@ public class GoExplore
         int result;
         do
         {
-            result = env.actionSpace[rng.Next(0, env.actionSpace.Length)];
+            result = SimulationInstance.actionSpace[rng.Next(0, SimulationInstance.actionSpace.Length)];
         } while (result == excludeAction);
         return result;
     }
