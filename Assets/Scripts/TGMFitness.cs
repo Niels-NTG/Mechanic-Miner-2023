@@ -26,10 +26,12 @@ public class TGMFitness : IFitness
         await Awaitable.BackgroundThreadAsync();
         GoExplore goExplore = new GoExplore(simulationInstance);
         int goExploreCellCount = goExplore.Run();
-        int levelCellCount = Level.levelSize.width * Level.levelSize.height;
-        // Do not use 0 for minimum value, since this can break RouletteWheelSelection
+        int levelInnerCellCount = (Level.levelSize.width - 1) * (Level.levelSize.height - 1);
+
+        // Reward population members that explore a larger part of the level
         double archiveToLevelSizeRation = Math.Clamp(
-            1.0 - (double) goExploreCellCount / levelCellCount,
+            (double) goExploreCellCount / levelInnerCellCount,
+            // Do not use 0 for minimum value, since this can break RouletteWheelSelection
             Mathf.Epsilon, 1.0
         );
 
