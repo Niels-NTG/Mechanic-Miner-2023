@@ -208,7 +208,8 @@ public class SimulationInstance
 
         public override String ToString() => $"{UUID}, player grid space: {playerGridPosition}, action: {actionSpaceNames[actionTaken]}, iteration: {iteration}, reward: {reward}, isTerminal: {isTerminal}";
 
-        public override int GetHashCode() => playerGridPosition.GetHashCode() + actionTaken + (int) reward;
+        public override int GetHashCode() =>
+            MathUtils.Cantor(MathUtils.HashVector2Int(playerGridPosition), actionTaken, (int) reward);
     }
 
     private async Task WaitForEndOfLastInput()

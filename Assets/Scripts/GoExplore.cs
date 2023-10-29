@@ -196,7 +196,7 @@ public class GoExplore
 
         public override String ToString() => $"player grid space {gridPosition}, trajectory size: {trajectory.Count}";
 
-        public override int GetHashCode() => gridPosition.GetHashCode();
+        public override int GetHashCode() => MathUtils.HashVector2Int(gridPosition);
     }
 
     private struct CellStats
