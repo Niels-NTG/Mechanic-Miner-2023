@@ -84,13 +84,12 @@ public class GoExplore
                 highScore = score;
             }
 
+            Cell cell = new Cell(actionResult.playerGridPosition);
+            archive[cell.GetHashCode()] = cell;
             if (actionResult.isTerminal)
             {
                 return true;
             }
-
-            Cell cell = new Cell(actionResult.playerGridPosition);
-            archive[cell.GetHashCode()] = cell;
             bool isFirstVisit = cell.Visit();
             if (isFirstVisit || score >= cell.reward && trajectory.Count < cell.trajectory.Count)
             {
