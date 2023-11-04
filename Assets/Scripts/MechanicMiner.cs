@@ -43,6 +43,7 @@ public class MechanicMiner : MonoBehaviour
             GoExplore goExplore = new GoExplore(simulationInstance);
             Thread debugThread = new Thread(() =>
             {
+                Debug.Log(simulationInstance.tgm);
                 int cellCount = goExplore.Run();
                 Debug.Log($"DEBUG MODE: {debugID} finished after visiting {cellCount} cells");
             });

@@ -15,7 +15,7 @@ public class ToggleableGameMechanic
     private Component selectedComponent;
     private PropertyInfo selectedComponentProperty;
 
-    private object defaultValue;
+    private object initialPropertyValue;
 
     private String selectedModifier;
     private static readonly String[] modifierTypes = { "double", "half", "invert" };
@@ -52,22 +52,24 @@ public class ToggleableGameMechanic
         selectedComponentProperty.SetValue(selectedComponent, value);
     }
 
+    public void Reset()
+    {
+        SetValue(initialPropertyValue);
+    }
+
     public void Toggle()
     {
-        Toggle(isActive = !isActive);
-    }
+        isActive = !isActive;
 
-    private void Toggle(bool newState)
-    {
-        object modifierValue = ApplyModifier(defaultValue);
-
-        SetValue(newState ? modifierValue : defaultValue);
-        isActive = newState;
-    }
-
-    private object ApplyModifier(object inputValue)
-    {
-        return ApplyModifier(inputValue, selectedModifier);
+        String modifierToApply = selectedModifier;
+        if (selectedModifier == "double" && isActive == false)
+        {
+            modifierToApply = "half";
+        } else if (selectedModifier == "half" && isActive == false)
+        {
+            modifierToApply = "double";
+        }
+        SetValue(ApplyModifier(GetValue(), modifierToApply));
     }
 
     private static object ApplyModifier(object inputValue, String modifier)
@@ -268,20 +270,15 @@ public class ToggleableGameMechanic
         );
 
         selectedComponentProperty = selectedProperty;
-        defaultValue = GetValue();
+        initialPropertyValue = GetValue();
 
         return GetComponentFieldName();
     }
 
     public String SelectModifier()
     {
-        selectedModifier = SelectModifier(defaultValue, rng);
+        selectedModifier = SelectModifier(initialPropertyValue, rng);
         return selectedModifier;
-    }
-
-    public void Reset()
-    {
-        SetValue(defaultValue);
     }
 
     private static String SelectModifier(object v, Random rng)
@@ -339,7 +336,7 @@ public class ToggleableGameMechanic
 
     public Type GetFieldValueType()
     {
-        return defaultValue.GetType();
+        return initialPropertyValue.GetType();
     }
 
     public override String ToString()
@@ -350,7 +347,7 @@ public class ToggleableGameMechanic
             try
             {
                 await Awaitable.MainThreadAsync();
-                return $"{GetGameObjectName()} {GetComponentName()} {GetComponentFieldName()} : {defaultValue} / {ApplyModifier(defaultValue)} ({GetModifier()})";
+                return $"{GetGameObjectName()} {GetComponentName()} {GetComponentFieldName()} : {initialPropertyValue} / {ApplyModifier(initialPropertyValue, GetModifier())} ({GetModifier()})";
             }
             catch (MissingReferenceException e)
             {
