@@ -50,10 +50,11 @@ public class GoExplore
             // Debug.Log($"{env.ID} GoExplore: start attempt {i + 1}");
             env.ResetPlayer();
             trajectory.Clear();
-            isTerminal = RolloutAction();
-            if (isTerminal)
+            // Continue playing even if terminal state has been found, since we want to find how much of level
+            // the agent can explore using the current TGM.
+            if (RolloutAction())
             {
-                break;
+                isTerminal = true;
             }
         }
 
