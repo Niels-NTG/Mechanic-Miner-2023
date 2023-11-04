@@ -279,6 +279,11 @@ public class ToggleableGameMechanic
         return selectedModifier;
     }
 
+    public void Reset()
+    {
+        SetValue(defaultValue);
+    }
+
     private static String SelectModifier(object v, Random rng)
     {
         if (IsNumeric(v) || IsVector(v))

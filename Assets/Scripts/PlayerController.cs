@@ -66,6 +66,10 @@ public class PlayerController : MonoBehaviour
         hasTouchedExit = false;
         hasTouchedSpikes = false;
         gameObject.SetActive(true);
+        if (toggleableGameMechanic != null)
+        {
+            toggleableGameMechanic.Reset();
+        }
     }
 
     void Update()
