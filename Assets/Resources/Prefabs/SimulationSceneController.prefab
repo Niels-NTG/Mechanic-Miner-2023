@@ -4436,7 +4436,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerAgent: {fileID: 2175959455278381099}
-  playerDebugLabel: {fileID: 812900485316216054}
+  playerDebugLabel: {fileID: 0}
   physicsTimeScale: 10
   levels:
   - {fileID: 4186914650278891547}
@@ -9692,11 +9692,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e705898192c6b47b3b49ee0aa63c7d7f, type: 3}
---- !u!102 &812900485316216054 stripped
-TextMesh:
-  m_CorrespondingSourceObject: {fileID: 5743314912481022298, guid: e705898192c6b47b3b49ee0aa63c7d7f, type: 3}
-  m_PrefabInstance: {fileID: 4970947959562081708}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1850820001677081600 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6724776018109852076, guid: e705898192c6b47b3b49ee0aa63c7d7f, type: 3}

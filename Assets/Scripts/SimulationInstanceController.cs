@@ -5,7 +5,6 @@ using UnityEngine;
 public class SimulationInstanceController : MonoBehaviour
 {
     public GameObject playerAgent;
-    public TextMesh playerDebugLabel;
 
     private PhysicsScene2D physicsScene;
 
