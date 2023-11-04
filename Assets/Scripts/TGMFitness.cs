@@ -15,9 +15,8 @@ public class TGMFitness : IFitness
             return 0.0;
         }
 
-        Debug.Log($"{tgmChromosome.ID} TGMFitness: START FITNESS EVALUATION");
         double fitnessValue = RunSimulation(tgmChromosome.simulationInstance).GetAwaiter().GetResult();
-        Debug.Log($"{tgmChromosome.ID} TGMFitness: FITNESS {fitnessValue}");
+        Debug.Log($"{tgmChromosome}{fitnessValue}");
         return fitnessValue;
     }
 
