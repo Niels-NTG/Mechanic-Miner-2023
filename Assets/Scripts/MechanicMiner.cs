@@ -108,6 +108,7 @@ public class MechanicMiner : MonoBehaviour
                     generation = ga.GenerationsNumber,
                     lineageId = currentGenerationChromosome.lineageID,
                     id = currentGenerationChromosome.ID,
+                    hash = currentGenerationChromosome.GetHashCode(),
                     fitness = currentGenerationChromosome.Fitness ?? 0.0,
                     gameObject = currentGenerationChromosome.GetGene(0).Value.ToString(),
                     component = currentGenerationChromosome.GetGene(1).Value.ToString(),

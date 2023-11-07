@@ -19,4 +19,9 @@ public static class MathUtils
     {
         return Cantor(a, Cantor(b, c));
     }
+
+    public static int Cantor(int a, int b, int c, int d)
+    {
+        return Cantor(Cantor(a, b), Cantor(c, d));
+    }
 }

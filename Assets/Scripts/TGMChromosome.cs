@@ -96,4 +96,14 @@ public sealed class TGMChromosome : ChromosomeBase
     {
         return $"{ID} ({String.Join(" - ", GetGenes().Select(g => g.Value))}) with fitness {Fitness}";
     }
+
+    public override int GetHashCode()
+    {
+        Gene[] genes = GetGenes();
+        int gameObjectHash = genes[0].Value == null ? 0 : genes[0].Value.GetHashCode();
+        int componentHash = genes[1].Value == null ? 0 : genes[1].Value.GetHashCode();
+        int componentPropertyHash = genes[2].Value == null ? 0 : genes[2].Value.GetHashCode();
+        int modifierHash = genes[3].Value == null ? 0 : genes[3].Value.GetHashCode();
+        return MathUtils.Cantor(gameObjectHash, componentHash, componentPropertyHash, modifierHash);
+    }
 }
