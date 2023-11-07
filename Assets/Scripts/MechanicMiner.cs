@@ -71,7 +71,7 @@ public class MechanicMiner : MonoBehaviour
         csvWriter.WriteHeader<GeneticAlgorithmLogRow>();
         csvWriter.NextRecord();
 
-        RouletteWheelSelection selection = new RouletteWheelSelection();
+        RouletteWheelSelection selection = new TGMSelection();
         TGMUniformCrossover crossover = new TGMUniformCrossover();
         UniformMutation mutation = new UniformMutation(mutableGenesIndexes: new[] {2, 3});
         TGMFitness fitness = new TGMFitness();

@@ -14,7 +14,7 @@ public sealed class TGMChromosome : ChromosomeBase
     public static int levelGeneratorSeed;
     public static int tgmGeneratorSeed;
 
-    public TGMChromosome(bool isSetup, String previousID = null) : base(4)
+    public TGMChromosome(bool isSetup = false, String previousID = null) : base(4)
     {
         if (isSetup)
         {
