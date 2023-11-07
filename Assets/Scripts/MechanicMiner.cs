@@ -81,7 +81,7 @@ public class MechanicMiner : MonoBehaviour
         TGMChromosome.tgmGeneratorSeed = tgmGeneratorSeed;
         TGMChromosome chromosome = new TGMChromosome(true);
 
-        Population population = new Population(populationSize, populationSize, chromosome)
+        Population population = new TGMPopulation(populationSize, populationSize, chromosome)
         {
             GenerationStrategy = new PerformanceGenerationStrategy(1)
         };

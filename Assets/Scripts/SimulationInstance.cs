@@ -86,21 +86,13 @@ public class SimulationInstance
         tgm = new ToggleableGameMechanic(componentsWithToggleableProperties, tgmRNG);
     }
 
-    ~SimulationInstance()
-    {
-        // Do not wait for the scene to be unloaded.
-#pragma warning disable CS4014
-        UnloadScene();
-#pragma warning restore CS4014
-    }
-
     public void ApplyTGM()
     {
         playerController.toggleableGameMechanic = tgm;
         ResetPlayer();
     }
 
-    private async Task UnloadScene()
+    public async Task UnloadScene()
     {
         Debug.Log($"{ID} SimulationInstance: unloading scene");
         await Awaitable.MainThreadAsync();
