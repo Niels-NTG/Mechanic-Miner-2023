@@ -88,7 +88,11 @@ public class MechanicMiner : MonoBehaviour
 
         ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation)
         {
-            Termination = new GenerationNumberTermination(maxGenerationCount),
+            Termination = new OrTermination(
+                new GenerationNumberTermination(maxGenerationCount),
+                new FitnessStagnationTermination(maxGenerationCount / 2),
+                new FitnessThresholdTermination(1.0)
+            ),
             TaskExecutor = new ParallelTaskExecutor
             {
                 MinThreads = 10,
