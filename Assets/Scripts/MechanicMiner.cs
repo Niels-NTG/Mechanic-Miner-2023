@@ -11,8 +11,6 @@ using GeneticSharp.Infrastructure.Framework.Threading;
 using UnityEngine;
 using CsvHelper;
 
-// TODO I'm using GeneticSharp 2.6.0, consider upgrading to 3.1.4 https://github.com/giacomelli/GeneticSharp/releases
-
 public class MechanicMiner : MonoBehaviour
 {
 

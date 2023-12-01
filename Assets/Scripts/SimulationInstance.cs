@@ -210,7 +210,7 @@ public class SimulationInstance
         } while (playerController.rigidBody.totalForce != Vector2.zero);
     }
 
-    private async Task<Vector2Int> CurrentGridSpace()
+    public async Task<Vector2Int> CurrentGridSpace()
     {
         await Awaitable.MainThreadAsync();
         Vector3Int currentGridSpace3D = levelGrid.WorldToCell(playerController.transform.position);

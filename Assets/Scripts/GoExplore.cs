@@ -15,11 +15,7 @@ public class GoExplore
 
     private int iteration;
     private double highScore;
-    private double score;
-    private int action;
-    private List<int> trajectory = new List<int>();
     private readonly Dictionary<int, Cell> archive = new Dictionary<int, Cell>();
-    private Cell restoreCell;
     private readonly int maxTrajectoryLength = 30;
     private readonly int maxAttempts = 10;
 
@@ -29,27 +25,22 @@ public class GoExplore
     {
         this.env = env;
         rng = new Random();
-        action = SelectRandomAction();
-    }
-
-    private int SelectRandomAction(int excludeAction = -1)
-    {
-        int result;
-        do
-        {
-            result = SimulationInstance.actionSpace[rng.Next(0, SimulationInstance.actionSpace.Length)];
-        } while (result == excludeAction);
-        return result;
     }
 
     public int Run()
     {
+        env.ResetPlayer();
+        Vector2Int initialPlayerPosition = env.CurrentGridSpace().GetAwaiter().GetResult();
+        Cell initialStateCell = new Cell(initialPlayerPosition, env.Step(-1, 0).reward);
+        archive[initialStateCell.GetHashCode()] = initialStateCell;
+
         bool isTerminal = false;
         for (int i = 0; i < maxAttempts; i++)
         {
             // Debug.Log($"{env.ID} GoExplore: start attempt {i + 1}");
-            env.ResetPlayer();
-            trajectory.Clear();
+
+            Restore();
+
             // Continue playing even if terminal state has been found, since we want to find how much of level
             // the agent can explore using the current TGM.
             if (RolloutAction())
@@ -69,6 +60,10 @@ public class GoExplore
     private bool RolloutAction()
     {
         int lastActionResultHash = 0;
+        List<int> trajectory = new List<int>();
+        int action = SelectRandomAction();
+        double score = 0;
+
         while (trajectory.Count < maxTrajectoryLength)
         {
             iteration++;
@@ -85,19 +80,16 @@ public class GoExplore
                 highScore = score;
             }
 
-            Cell cell = new Cell(actionResult.playerGridPosition);
-            archive[cell.GetHashCode()] = cell;
+            Cell cell = new Cell(actionResult.playerGridPosition, actionResult.reward, trajectory);
+            if (!archive.ContainsKey(cell.GetHashCode()) || cell.IsBetterThan(archive[cell.GetHashCode()]))
+            {
+                archive[cell.GetHashCode()] = cell;
+            }
+            cell.Visit();
+
             if (actionResult.isTerminal)
             {
                 return true;
-            }
-            bool isFirstVisit = cell.Visit();
-            if (isFirstVisit || score >= cell.reward && trajectory.Count < cell.trajectory.Count)
-            {
-                cell.reward = score;
-                cell.trajectory = new List<int>(trajectory);
-                cell.cellStats.timesChosen = 0;
-                cell.cellStats.timesChosenSinceNew = 0;
             }
 
             if (
@@ -113,37 +105,54 @@ public class GoExplore
             lastActionResultHash = actionResult.GetHashCode();
         }
 
-        restoreCell = SelectCellToRestore(archive, rng);
+        return false;
+    }
+
+    private void Restore()
+    {
+        Cell restoreCell = SelectCellToRestore(archive, rng);
         if (restoreCell != null)
         {
             // Debug.Log($"{env.ID} Restore state. Cell: {restoreCell}");
             restoreCell.Choose();
-            trajectory = restoreCell.trajectory;
-            score = restoreCell.reward;
-            env.TeleportPlayer(restoreCell.gridPosition);
+
+            env.ResetPlayer();
 
             // Replay all actions in trajectory in order.
-            foreach (int trajectoryAction in trajectory)
+            foreach (int trajectoryAction in restoreCell.trajectory)
             {
                 env.Step(trajectoryAction, iteration);
             }
         }
+    }
 
-        return false;
+    private int SelectRandomAction(int excludeAction = -1)
+    {
+        int result;
+        do
+        {
+            result = SimulationInstance.actionSpace[rng.Next(0, SimulationInstance.actionSpace.Length)];
+        } while (result == excludeAction);
+        return result;
     }
 
     private class Cell
     {
-        public CellStats cellStats;
-        public double reward;
-        public List<int> trajectory = new List<int>();
+        private readonly Vector2Int gridPosition;
+        private readonly double reward;
 
-        public readonly Vector2Int gridPosition;
+        public readonly List<int> trajectory;
 
-        public Cell(Vector2Int playerGridPosition)
+        private CellStats cellStats;
+
+        public Cell(Vector2Int playerGridPosition, double reward, List<int> trajectory = null)
         {
-            cellStats = new CellStats(0, 0, 0);
             gridPosition = playerGridPosition;
+            this.reward = reward;
+
+            this.trajectory = trajectory ?? new List<int>();
+
+            cellStats = new CellStats(0, 0, 0);
         }
 
         private double CNTScore(double w, double p, double v)
@@ -183,10 +192,9 @@ public class GoExplore
             return CNTScoreTimesChosen() + CNTScoreTimesChosenSinceNew() + CNTScoreTimesSeen() + 1;
         }
 
-        public bool Visit()
+        public void Visit()
         {
             cellStats.timesSeen += 1;
-            return (int)cellStats.timesSeen == 1;
         }
 
         public void Choose()
@@ -195,7 +203,13 @@ public class GoExplore
             cellStats.timesChosenSinceNew += 1;
         }
 
-        public override String ToString() => $"player grid space {gridPosition}, trajectory size: {trajectory.Count}";
+        public bool IsBetterThan(Cell otherCell)
+        {
+            return reward > otherCell.reward ||
+                   (Math.Abs(reward - otherCell.reward) < e2 && trajectory.Count < otherCell.trajectory.Count);
+        }
+
+        public override String ToString() => $"Cell: player grid space: {gridPosition}, reward: {reward}, visited: {cellStats.timesChosen}, trajectory size: {trajectory.Count}";
 
         public override int GetHashCode() => MathUtils.HashVector2Int(gridPosition);
     }
