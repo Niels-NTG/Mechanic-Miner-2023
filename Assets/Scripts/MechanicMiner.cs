@@ -127,6 +127,7 @@ public class MechanicMiner : MonoBehaviour
 
             TGMChromosome bestChromosome = (TGMChromosome) ga.BestChromosome;
             Debug.Log($"END genetic algorithm after {ga.GenerationsNumber} - BEST GENE {bestChromosome}");
+            Debug.Log($"Termination: {ga.Termination}");
             if (!ga.IsRunning)
             {
                 evolutionThread.Abort();
