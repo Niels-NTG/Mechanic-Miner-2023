@@ -28,6 +28,7 @@ public class GoExplore
 
     public int Run()
     {
+        // Reset player to starting position and save this state as a cell to the archive.
         env.ResetPlayer();
         Vector2Int initialPlayerPosition = env.CurrentGridSpace().GetAwaiter().GetResult();
         Cell initialStateCell = new Cell(initialPlayerPosition, env.Step(-1, 0).reward);
@@ -38,6 +39,7 @@ public class GoExplore
         {
             // Debug.Log($"{env.ID} GoExplore: start attempt {i + 1}");
 
+            // Restore state from archived cell, selected by weighted distribution.
             Restore();
 
             // Continue playing even if terminal state has been found, since we want to find how much of level
@@ -58,10 +60,17 @@ public class GoExplore
 
     private bool RolloutAction()
     {
+        // Hash of previous selected action. For the purposes of comparing to prevent certain types of actions
+        // from being repeated. The hash takes the player's position, action type and reward as arguments.
         int lastActionResultHash = 0;
+
+        // List of actions taken thus far.
         List<int> trajectory = new List<int>();
+
+        // Initial selected action. See SimulationInstance for a list of possible actions the player can take.
         int action = SelectRandomAction();
 
+        // Keep taking actions until a maximum rollout is reached or when the player reaches a terminal state.
         while (trajectory.Count < maxTrajectoryLength)
         {
             iteration++;
@@ -72,17 +81,25 @@ public class GoExplore
             trajectory.Add(action);
 
             Cell cell = new Cell(actionResult.playerGridPosition, actionResult.reward, trajectory);
+            // Add cell to archive if there isn't an entry for this location yet, or if the current cell is better than
+            // the existing one at the same location in the level.
             if (!archive.ContainsKey(cell.GetHashCode()) || cell.IsBetterThan(archive[cell.GetHashCode()]))
             {
                 archive[cell.GetHashCode()] = cell;
             }
+            // Increment the visit count by one.
             cell.Visit();
 
+            // Return if player reaches a terminal state.
             if (actionResult.isTerminal)
             {
                 return true;
             }
 
+            // Select a different random action if the current type of action cannot be repeated (as defined in
+            // SimulationInstance), the reward is zero or less (caused by if player dies by touching spikes or went
+            // too far outside of the level bounds, the result of the action hashes to the same value as the previous
+            // taken action, or a 5% random chance.
             if (
                 !actionResult.canActionBeRepeated ||
                 actionResult.reward <= 0f ||
@@ -107,9 +124,11 @@ public class GoExplore
             // Debug.Log($"{env.ID} Restore state. Cell: {restoreCell}");
             restoreCell.Choose();
 
+            // Reset player to start position of the level.
             env.ResetPlayer();
 
             // Replay all actions in trajectory in order.
+            // This way velocity and state of the player is retained when reaching the end of the recorded trajectory.
             foreach (int trajectoryAction in restoreCell.trajectory)
             {
                 env.Step(trajectoryAction, iteration);

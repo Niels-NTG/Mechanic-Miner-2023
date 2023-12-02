@@ -109,11 +109,6 @@ public class SimulationInstance
         playerController.ResetPlayer();
     }
 
-    public void TeleportPlayer(Vector2Int pos)
-    {
-        TeleportPlayer(new Vector3(pos.x, pos.y, 0));
-    }
-
     private async void TeleportPlayer(Vector3 pos)
     {
         await Awaitable.MainThreadAsync();
