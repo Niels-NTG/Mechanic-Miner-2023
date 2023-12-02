@@ -14,7 +14,6 @@ public class GoExplore
     private static readonly double e2 = 0.00001;
 
     private int iteration;
-    private double highScore;
     private readonly Dictionary<int, Cell> archive = new Dictionary<int, Cell>();
     private readonly int maxTrajectoryLength = 30;
     private readonly int maxAttempts = 10;
@@ -62,7 +61,6 @@ public class GoExplore
         int lastActionResultHash = 0;
         List<int> trajectory = new List<int>();
         int action = SelectRandomAction();
-        double score = 0;
 
         while (trajectory.Count < maxTrajectoryLength)
         {
@@ -72,13 +70,6 @@ public class GoExplore
             // Debug.Log($"{env.ID} GoExplore: step result {actionResult}");
 
             trajectory.Add(action);
-
-            score += actionResult.reward;
-
-            if (score > highScore)
-            {
-                highScore = score;
-            }
 
             Cell cell = new Cell(actionResult.playerGridPosition, actionResult.reward, trajectory);
             if (!archive.ContainsKey(cell.GetHashCode()) || cell.IsBetterThan(archive[cell.GetHashCode()]))
