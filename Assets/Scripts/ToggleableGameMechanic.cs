@@ -58,10 +58,8 @@ public class ToggleableGameMechanic
         {
             SetValue(initialPropertyValue);
         }
-        catch (NullReferenceException e)
-        {
-            Debug.LogWarning($"Tried to reset TGM in an level that's already unloaded. Continuing… ({e})");
-        }
+        catch (NullReferenceException)
+        { }
     }
 
     public void Toggle()
