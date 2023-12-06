@@ -177,7 +177,7 @@ public class SimulationInstance
         private readonly int iteration;
         public readonly float reward;
         public readonly bool isTerminal;
-        private readonly int actionTaken;
+        public readonly int actionTaken;
         public readonly bool canActionBeRepeated;
         public StepResult(String UUID, Vector2Int playerGridPosition, int action, int iteration, float reward, bool isTerminal, bool canActionBeRepeated)
         {

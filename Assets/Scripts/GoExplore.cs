@@ -65,7 +65,7 @@ public class GoExplore
         int lastActionResultHash = 0;
 
         // List of actions taken thus far.
-        List<int> trajectory = new List<int>();
+        List<SimulationInstance.StepResult> trajectory = new List<SimulationInstance.StepResult>();
 
         // Initial selected action. See SimulationInstance for a list of possible actions the player can take.
         int action = SelectRandomAction();
@@ -78,7 +78,7 @@ public class GoExplore
             SimulationInstance.StepResult actionResult = env.Step(action, iteration);
             // Debug.Log($"{env.ID} GoExplore: step result {actionResult}");
 
-            trajectory.Add(action);
+            trajectory.Add(actionResult);
 
             Cell cell = new Cell(actionResult.playerGridPosition, actionResult.reward, trajectory);
             // Add cell to archive if there isn't an entry for this location yet, or if the current cell is better than
@@ -129,9 +129,9 @@ public class GoExplore
 
             // Replay all actions in trajectory in order.
             // This way velocity and state of the player is retained when reaching the end of the recorded trajectory.
-            foreach (int trajectoryAction in restoreCell.trajectory)
+            foreach (SimulationInstance.StepResult trajectoryAction in restoreCell.trajectory)
             {
-                env.Step(trajectoryAction, iteration);
+                env.Step(trajectoryAction.actionTaken, iteration);
             }
         }
     }
@@ -146,21 +146,21 @@ public class GoExplore
         return result;
     }
 
-    private class Cell
+    public class Cell
     {
         private readonly Vector2Int gridPosition;
         private readonly double reward;
 
-        public readonly List<int> trajectory;
+        public readonly SimulationInstance.StepResult[] trajectory;
 
         private CellStats cellStats;
 
-        public Cell(Vector2Int playerGridPosition, double reward, List<int> trajectory = null)
+        public Cell(Vector2Int playerGridPosition, double reward, List<SimulationInstance.StepResult> trajectory = null)
         {
             gridPosition = playerGridPosition;
             this.reward = reward;
 
-            this.trajectory = trajectory ?? new List<int>();
+            this.trajectory = trajectory?.ToArray() ?? Array.Empty<SimulationInstance.StepResult>();
 
             cellStats = new CellStats(0, 0, 0);
         }
@@ -216,10 +216,10 @@ public class GoExplore
         public bool IsBetterThan(Cell otherCell)
         {
             return reward > otherCell.reward ||
-                   (Math.Abs(reward - otherCell.reward) < e2 && trajectory.Count < otherCell.trajectory.Count);
+                   (Math.Abs(reward - otherCell.reward) < e2 && trajectory.Length < otherCell.trajectory.Length);
         }
 
-        public override String ToString() => $"Cell: player grid space: {gridPosition}, reward: {reward}, visited: {cellStats.timesChosen}, trajectory size: {trajectory.Count}";
+        public override String ToString() => $"Cell: player grid space: {gridPosition}, reward: {reward}, visited: {cellStats.timesChosen}, trajectory size: {trajectory.Length}";
 
         public override int GetHashCode() => MathUtils.HashVector2Int(gridPosition);
     }
