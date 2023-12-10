@@ -4436,7 +4436,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerAgent: {fileID: 2175959455278381099}
-  playerDebugLabel: {fileID: 0}
   physicsTimeScale: 10
   levels:
   - {fileID: 4186914650278891547}
