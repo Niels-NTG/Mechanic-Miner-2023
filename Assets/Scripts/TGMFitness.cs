@@ -25,7 +25,7 @@ public class TGMFitness : IFitness
         await Awaitable.BackgroundThreadAsync();
         GoExplore goExplore = new GoExplore(simulationInstance);
         int goExploreCellCount = goExplore.Run();
-        int levelInnerCellCount = (Level.levelSize.width - 1) * (Level.levelSize.height - 1);
+        int levelInnerCellCount = Level.levelSize.width * Level.levelSize.height;
 
         // Reward population members that explore a larger part of the level
         double archiveToLevelSizeRation = Math.Clamp(
