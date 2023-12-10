@@ -111,7 +111,29 @@ public class ToggleableGameMechanic
                     case Vector3Int value:
                         return value * 2;
                     case Quaternion value:
-                        return Quaternion.Inverse(value);
+                        return value * new Vector3(2, 2, 2);
+                    case Matrix4x4 value:
+                        return value * Matrix4x4.Scale(new Vector3(2, 2, 2));
+                    case Rect value:
+                        return new Rect(
+                            value.min - value.size / 4,
+                            value.size * 2 - value.size / 2
+                        );
+                    case RectInt value:
+                        return new RectInt(
+                            value.min - value.size / 4,
+                            value.size * 2 - value.size / 2
+                        );
+                    case Bounds value:
+                        return new Bounds(
+                            value.min - value.size / 4,
+                            value.size * 2 - value.size / 2
+                        );
+                    case BoundsInt value:
+                        return new BoundsInt(
+                            value.position - value.size / 4,
+                            value.size * 2 - value.size / 2
+                        );
                 }
                 break;
             case "half":
@@ -144,7 +166,29 @@ public class ToggleableGameMechanic
                     case Vector3Int value:
                         return value / 2;
                     case Quaternion value:
-                        return Quaternion.Inverse(value);
+                        return value * new Vector3(0.5f, 0.5f, 0.5f);
+                    case Matrix4x4 value:
+                        return value * Matrix4x4.Scale(new Vector3(0.5f, 0.5f, 0.5f));
+                    case Rect value:
+                        return new Rect(
+                            value.min + value.size / 4,
+                            value.size / 2
+                        );
+                    case RectInt value:
+                        return new RectInt(
+                            value.min + value.size / 4,
+                            value.size / 2
+                        );
+                    case Bounds value:
+                        return new Bounds(
+                            value.min + value.size / 4,
+                            value.size / 2
+                        );
+                    case BoundsInt value:
+                        return new BoundsInt(
+                            value.position + value.size / 4,
+                            value.size / 2
+                        );
                 }
                 break;
             case "invert":
@@ -178,6 +222,18 @@ public class ToggleableGameMechanic
                         return value * -1;
                     case Quaternion value:
                         return Quaternion.Inverse(value);
+                    case Matrix4x4 value:
+                        return value.inverse;
+                    case Rect value:
+                        return new Rect(value.min, value.size * -1);
+                    case RectInt value:
+                        return new RectInt(value.min, value.size * -1);
+                    case Bounds value:
+                        value.SetMinMax(value.max, value.min);
+                        return value;
+                    case BoundsInt value:
+                        value.SetMinMax(value.max, value.min);
+                        return value;
                 }
                 break;
         }
@@ -241,7 +297,9 @@ public class ToggleableGameMechanic
                         IsNumeric(outputValue) ||
                         IsBoolean(outputValue) ||
                         IsVector(outputValue) ||
-                        IsQuaternion(outputValue)
+                        IsQuaternion(outputValue) ||
+                        IsMatrix(outputValue) ||
+                        IsRect(outputValue)
                     );
 
                 // Check if applying a modifier to this value results in a different value. If it results in the same
@@ -288,11 +346,11 @@ public class ToggleableGameMechanic
 
     private static String SelectModifier(object v, Random rng)
     {
-        if (IsNumeric(v) || IsVector(v))
+        if (IsNumeric(v) || IsVector(v) || IsQuaternion(v) || IsMatrix(v) || IsRect(v))
         {
             return modifierTypes[rng.Next(modifierTypes.Length)];
         }
-        if (IsBoolean(v) || IsQuaternion(v))
+        if (IsBoolean(v))
         {
             return "invert";
         }
@@ -312,6 +370,16 @@ public class ToggleableGameMechanic
     private static bool IsQuaternion(object v)
     {
         return v is Quaternion;
+    }
+
+    private static bool IsMatrix(object v)
+    {
+        return v is Matrix4x4;
+    }
+
+    private static bool IsRect(object v)
+    {
+        return v is Rect || v is RectInt || v is Bounds || v is BoundsInt;
     }
 
     private static bool IsBoolean(object v)
