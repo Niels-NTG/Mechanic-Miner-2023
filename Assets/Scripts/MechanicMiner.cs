@@ -42,7 +42,8 @@ public class MechanicMiner : MonoBehaviour
             Thread debugThread = new Thread(() =>
             {
                 Debug.Log(simulationInstance.tgm);
-                int cellCount = goExplore.Run();
+                GoExplore.GoExploreResult goExploreResult = goExplore.Run();
+                int cellCount = goExploreResult.archiveCount;
                 Debug.Log($"DEBUG MODE: {debugID} finished after visiting {cellCount} cells");
             });
             debugThread.Start();
@@ -116,7 +117,10 @@ public class MechanicMiner : MonoBehaviour
                     component = currentGenerationChromosome.GetGene(1).Value.ToString(),
                     componentField = currentGenerationChromosome.GetGene(2).Value.ToString(),
                     modifier = currentGenerationChromosome.GetGene(3).Value.ToString(),
-                    fieldType = currentGenerationChromosome.simulationInstance.tgm.GetFieldValueType().ToString()
+                    fieldType = currentGenerationChromosome.simulationInstance.tgm.GetFieldValueType().ToString(),
+                    iterations = currentGenerationChromosome.goExploreResult.iterations,
+                    archiveLength = currentGenerationChromosome.goExploreResult.archive.Length,
+                    archive = currentGenerationChromosome.goExploreResult.PrintArchive()
                 });
                 csvWriter.NextRecord();
             }

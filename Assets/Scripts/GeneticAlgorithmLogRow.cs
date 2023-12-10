@@ -12,4 +12,7 @@ public record GeneticAlgorithmLogRow
     public String componentField { get; set; }
     public String modifier { get; set; }
     public String fieldType { get; set; }
+    public int iterations { get; set; }
+    public int archiveLength { get; set; }
+    public String archive { get; set; }
 }

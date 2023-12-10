@@ -26,7 +26,7 @@ public class GoExplore
         rng = new Random();
     }
 
-    public int Run()
+    public GoExploreResult Run()
     {
         // Reset player to starting position and save this state as a cell to the archive.
         env.ResetPlayer();
@@ -55,7 +55,13 @@ public class GoExplore
             ? $"{env.ID} GoExplore: Ended running GoExplore by finding level exit after {iteration} iterations visiting {archiveCount} cells"
             : $"{env.ID} GoExplore: Ended running GoExplore without finding level exit after {iteration} iterations"
         );
-        return archiveCount;
+
+        return new GoExploreResult
+        {
+            archive = archive.Values.ToArray(),
+            iterations = iteration,
+            archiveCount = archiveCount
+        };
     }
 
     private bool RolloutAction()
@@ -219,7 +225,7 @@ public class GoExplore
                    (Math.Abs(reward - otherCell.reward) < e2 && trajectory.Length < otherCell.trajectory.Length);
         }
 
-        public override String ToString() => $"Cell: player grid space: {gridPosition}, reward: {reward}, visited: {cellStats.timesChosen}, trajectory size: {trajectory.Length}";
+        public override String ToString() => $"position={gridPosition},reward={reward},visited={cellStats.timesChosen},trajectorySize={trajectory.Length}";
 
         public override int GetHashCode() => MathUtils.HashVector2Int(gridPosition);
     }
@@ -270,5 +276,21 @@ public class GoExplore
         }
 
         return null;
+    }
+
+    public record GoExploreResult
+    {
+        public Cell[] archive { get; set; }
+        public int iterations { get; set; }
+        public int archiveCount { get; set; }
+
+        public String PrintArchive()
+        {
+            if (archive != null)
+            {
+                return String.Join(",", archive.ToList());
+            }
+            return "";
+        }
     }
 }

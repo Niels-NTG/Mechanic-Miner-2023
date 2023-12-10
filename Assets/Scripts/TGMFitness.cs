@@ -15,16 +15,20 @@ public class TGMFitness : IFitness
             return 0.0;
         }
 
-        double fitnessValue = RunSimulation(tgmChromosome.simulationInstance).GetAwaiter().GetResult();
+        double fitnessValue = RunSimulation(tgmChromosome).GetAwaiter().GetResult();
         Debug.Log($"{tgmChromosome}{fitnessValue}");
         return fitnessValue;
     }
 
-    private async Task<double> RunSimulation(SimulationInstance simulationInstance)
+    private async Task<double> RunSimulation(TGMChromosome tgmChromosome)
     {
+        SimulationInstance simulationInstance = tgmChromosome.simulationInstance;
         await Awaitable.BackgroundThreadAsync();
         GoExplore goExplore = new GoExplore(simulationInstance);
-        int goExploreCellCount = goExplore.Run();
+        GoExplore.GoExploreResult goExploreResult = goExplore.Run();
+        tgmChromosome.goExploreResult = goExploreResult;
+
+        int goExploreCellCount = goExploreResult.archiveCount;
         int levelInnerCellCount = Level.levelSize.width * Level.levelSize.height;
 
         // Reward population members that explore a larger part of the level

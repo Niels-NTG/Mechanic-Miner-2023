@@ -8,7 +8,9 @@ public sealed class TGMChromosome : ChromosomeBase
 {
     public readonly String ID;
     public readonly String lineageID;
+
     public SimulationInstance simulationInstance;
+    public GoExplore.GoExploreResult goExploreResult;
 
     public static int levelIndex;
     public static int levelGeneratorSeed;
