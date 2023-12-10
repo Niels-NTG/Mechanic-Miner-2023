@@ -115,7 +115,8 @@ public class MechanicMiner : MonoBehaviour
                     gameObject = currentGenerationChromosome.GetGene(0).Value.ToString(),
                     component = currentGenerationChromosome.GetGene(1).Value.ToString(),
                     componentField = currentGenerationChromosome.GetGene(2).Value.ToString(),
-                    modifier = currentGenerationChromosome.GetGene(3).Value.ToString()
+                    modifier = currentGenerationChromosome.GetGene(3).Value.ToString(),
+                    fieldType = currentGenerationChromosome.simulationInstance.tgm.GetFieldValueType().ToString()
                 });
                 csvWriter.NextRecord();
             }

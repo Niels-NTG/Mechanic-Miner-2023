@@ -11,4 +11,5 @@ public record GeneticAlgorithmLogRow
     public String component { get; set; }
     public String componentField { get; set; }
     public String modifier { get; set; }
+    public String fieldType { get; set; }
 }
