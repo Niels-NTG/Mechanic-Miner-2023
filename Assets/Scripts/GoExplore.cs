@@ -36,6 +36,8 @@ public class GoExplore
         Cell initialStateCell = new Cell(initialPlayerPosition, env.Step(-1, 0).reward);
         archive[initialStateCell.GetHashCode()] = initialStateCell;
 
+        List<SimulationInstance.StepResult[]> terminalTrajectories = new List<SimulationInstance.StepResult[]>();
+
         bool isTerminal = false;
         for (int i = 0; i < maxAttempts; i++)
         {
@@ -46,8 +48,10 @@ public class GoExplore
 
             // Continue playing even if terminal state has been found, since we want to find how much of level
             // the agent can explore using the current TGM.
-            if (RolloutAction())
+            RolloutResult rolloutResult = RolloutAction();
+            if (rolloutResult.isTerminal)
             {
+                terminalTrajectories.Add(rolloutResult.trajectory);
                 isTerminal = true;
             }
         }
@@ -62,11 +66,12 @@ public class GoExplore
         {
             archive = archive.Values.ToArray(),
             iterations = iteration,
-            archiveCount = archiveCount
+            archiveCount = archiveCount,
+            terminalTrajectories = terminalTrajectories
         };
     }
 
-    private bool RolloutAction()
+    private RolloutResult RolloutAction()
     {
         // Hash of previous selected action. For the purposes of comparing to prevent certain types of actions
         // from being repeated. The hash takes the player's position, action type and reward as arguments.
@@ -105,7 +110,11 @@ public class GoExplore
             // Return if player reaches a terminal state.
             if (actionResult.isTerminal)
             {
-                return true;
+                return new RolloutResult
+                {
+                    isTerminal = true,
+                    trajectory = trajectory.ToArray()
+                };
             }
 
             // Select a different random action if the current type of action cannot be repeated (as defined in
@@ -125,7 +134,11 @@ public class GoExplore
             lastActionResultHash = actionResult.GetHashCode();
         }
 
-        return false;
+        return new RolloutResult
+        {
+            isTerminal = false,
+            trajectory = trajectory.ToArray()
+        };
     }
 
     private void Restore()
@@ -311,15 +324,27 @@ public class GoExplore
         return null;
     }
 
+    private record RolloutResult
+    {
+        public SimulationInstance.StepResult[] trajectory { get; set; }
+        public bool isTerminal { get; set; }
+    }
+
     public record GoExploreResult
     {
         public Cell[] archive { get; set; }
         public int iterations { get; set; }
         public int archiveCount { get; set; }
+        public List<SimulationInstance.StepResult[]> terminalTrajectories { get; set; }
 
         public String PrintArchive()
         {
             return JsonSerializer.Serialize(archive);
+        }
+
+        public String PrintTerminalTrajectories()
+        {
+            return JsonSerializer.Serialize(terminalTrajectories);
         }
     }
 }

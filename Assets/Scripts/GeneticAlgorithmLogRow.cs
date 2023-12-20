@@ -15,4 +15,5 @@ public record GeneticAlgorithmLogRow
     public int iterations { get; set; }
     public int archiveLength { get; set; }
     public String archive { get; set; }
+    public String terminalTrajectories { get; set; }
 }

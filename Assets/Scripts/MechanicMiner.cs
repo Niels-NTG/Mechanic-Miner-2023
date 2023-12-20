@@ -120,7 +120,8 @@ public class MechanicMiner : MonoBehaviour
                     fieldType = currentGenerationChromosome.simulationInstance.tgm.GetFieldValueType().ToString(),
                     iterations = currentGenerationChromosome.goExploreResult.iterations,
                     archiveLength = currentGenerationChromosome.goExploreResult.archive.Length,
-                    archive = currentGenerationChromosome.goExploreResult.PrintArchive()
+                    archive = currentGenerationChromosome.goExploreResult.PrintArchive(),
+                    terminalTrajectories = currentGenerationChromosome.goExploreResult.PrintTerminalTrajectories()
                 });
                 csvWriter.NextRecord();
             }

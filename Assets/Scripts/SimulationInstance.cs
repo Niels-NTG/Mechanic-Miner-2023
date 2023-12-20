@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
@@ -176,9 +177,16 @@ public class SimulationInstance
         public readonly Vector2Int playerGridPosition;
         private readonly int iteration;
         public readonly float reward;
-        public readonly bool isTerminal;
+        [JsonInclude] public readonly bool isTerminal;
         public readonly int actionTaken;
         public readonly bool canActionBeRepeated;
+
+        // Only used for printing JSON
+        [JsonInclude] private readonly String action;
+        [JsonInclude] private readonly int x;
+        [JsonInclude] private readonly int y;
+        [JsonInclude] private readonly int hash;
+
         public StepResult(String UUID, Vector2Int playerGridPosition, int action, int iteration, float reward, bool isTerminal, bool canActionBeRepeated)
         {
             this.UUID = UUID;
@@ -188,9 +196,26 @@ public class SimulationInstance
             this.isTerminal = isTerminal;
             actionTaken = action;
             this.canActionBeRepeated = canActionBeRepeated;
+
+            this.action = getActionName();
+            x = playerGridPosition.x;
+            y = playerGridPosition.y;
+            hash = MathUtils.HashVector2Int(playerGridPosition);
         }
 
-        public override String ToString() => $"{UUID}, player grid space: {playerGridPosition}, action: {actionSpaceNames[actionTaken]}, iteration: {iteration}, reward: {reward}, isTerminal: {isTerminal}";
+        private String getActionName()
+        {
+            try
+            {
+                return actionSpaceNames[actionTaken];
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return "";
+            }
+        }
+
+        public override String ToString() => $"{UUID}, player grid space: {playerGridPosition}, action: {getActionName()}, iteration: {iteration}, reward: {reward}, isTerminal: {isTerminal}";
 
         public override int GetHashCode() =>
             MathUtils.Cantor(MathUtils.HashVector2Int(playerGridPosition), actionTaken, (int) reward);
