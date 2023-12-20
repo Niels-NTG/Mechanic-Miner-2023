@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Random = System.Random;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 public class GoExplore
 {
@@ -86,7 +88,11 @@ public class GoExplore
 
             trajectory.Add(actionResult);
 
-            Cell cell = new Cell(actionResult.playerGridPosition, actionResult.reward, trajectory);
+            Cell cell = new Cell(
+                actionResult.playerGridPosition,
+                actionResult.reward,
+                trajectory
+            );
             // Add cell to archive if there isn't an entry for this location yet, or if the current cell is better than
             // the existing one at the same location in the level.
             if (!archive.ContainsKey(cell.GetHashCode()) || cell.IsBetterThan(archive[cell.GetHashCode()]))
@@ -155,20 +161,47 @@ public class GoExplore
     public class Cell
     {
         private readonly Vector2Int gridPosition;
-        private readonly double reward;
+        [JsonInclude] private readonly double reward;
 
         public readonly SimulationInstance.StepResult[] trajectory;
 
         private CellStats cellStats;
 
-        public Cell(Vector2Int playerGridPosition, double reward, List<SimulationInstance.StepResult> trajectory = null)
+        // Only used for printing JSON
+        [JsonInclude] private readonly int x;
+        [JsonInclude] private readonly int y;
+        [JsonInclude] private readonly int hash;
+        [JsonInclude] private int timesChosen
+        {
+            get
+            {
+                return (int) cellStats.timesChosen;
+            }
+        }
+        [JsonInclude] private int timesSeen
+        {
+            get
+            {
+                return (int) cellStats.timesSeen;
+            }
+        }
+
+        public Cell(
+            Vector2Int playerGridPosition,
+            double reward,
+            List<SimulationInstance.StepResult> trajectory = null
+        )
         {
             gridPosition = playerGridPosition;
             this.reward = reward;
 
             this.trajectory = trajectory?.ToArray() ?? Array.Empty<SimulationInstance.StepResult>();
 
-            cellStats = new CellStats(0, 0, 0);
+            cellStats = new CellStats(1, 0, 1);
+
+            x = gridPosition.x;
+            y = gridPosition.y;
+            hash = GetHashCode();
         }
 
         private double CNTScore(double w, double p, double v)
@@ -225,9 +258,9 @@ public class GoExplore
                    (Math.Abs(reward - otherCell.reward) < e2 && trajectory.Length < otherCell.trajectory.Length);
         }
 
-        public override String ToString() => $"position={gridPosition},reward={reward},visited={cellStats.timesChosen},trajectorySize={trajectory.Length}";
+        public override String ToString() => $"x={gridPosition.x},y={gridPosition.y},reward={reward},timesChosen={cellStats.timesChosen},timesSeen={cellStats.timesSeen},hash={GetHashCode()}";
 
-        public override int GetHashCode() => MathUtils.HashVector2Int(gridPosition);
+        public sealed override int GetHashCode() => MathUtils.HashVector2Int(gridPosition);
     }
 
     private struct CellStats
@@ -286,11 +319,7 @@ public class GoExplore
 
         public String PrintArchive()
         {
-            if (archive != null)
-            {
-                return String.Join(",", archive.ToList());
-            }
-            return "";
+            return JsonSerializer.Serialize(archive);
         }
     }
 }
