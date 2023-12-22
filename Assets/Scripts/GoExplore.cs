@@ -100,11 +100,17 @@ public class GoExplore
             );
             // Add cell to archive if there isn't an entry for this location yet, or if the current cell is better than
             // the existing one at the same location in the level.
-            if (!archive.ContainsKey(cell.GetHashCode()) || cell.IsBetterThan(archive[cell.GetHashCode()]))
+            int cellHash = cell.GetHashCode();
+            if (!archive.ContainsKey(cellHash))
             {
-                archive[cell.GetHashCode()] = cell;
+                archive[cellHash] = cell;
+            } else if (cell.IsBetterThan(archive[cellHash]))
+            {
+                Cell existingCell = archive[cellHash];
+                cell.cellStats.timesSeen = existingCell.cellStats.timesSeen;
+                cell.cellStats.timesChosen = existingCell.cellStats.timesChosen;
+                archive[cellHash] = cell;
             }
-            // Increment the visit count by one.
             cell.Visit();
 
             // Return if player reaches a terminal state.
@@ -178,7 +184,7 @@ public class GoExplore
 
         public readonly SimulationInstance.StepResult[] trajectory;
 
-        private CellStats cellStats;
+        public CellStats cellStats;
 
         // Only used for printing JSON
         [JsonInclude] private readonly int x;
@@ -210,7 +216,7 @@ public class GoExplore
 
             this.trajectory = trajectory?.ToArray() ?? Array.Empty<SimulationInstance.StepResult>();
 
-            cellStats = new CellStats(1, 0, 1);
+            cellStats = new CellStats(0, 0, 0);
 
             x = gridPosition.x;
             y = gridPosition.y;
@@ -276,7 +282,7 @@ public class GoExplore
         public sealed override int GetHashCode() => MathUtils.HashVector2Int(gridPosition);
     }
 
-    private struct CellStats
+    public struct CellStats
     {
         internal double timesChosen;
         internal double timesChosenSinceNew;
