@@ -73,3 +73,6 @@ crashlytics-build.properties
 
 .idea
 .vscode
+
+# JavaScript
+node_modules/

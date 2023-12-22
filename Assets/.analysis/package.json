@@ -1,0 +1,11 @@
+{
+  "name": "mechanic-miner-2023-analysis-tools",
+  "version": "1.0.0",
+  "description": "Various data visualisation tools to analyse the output logs from Mechanic Miner 2023",
+  "scripts": {},
+  "author": "Niels NTG Poldervaart",
+  "license": "MIT",
+  "dependencies": {
+    "p5": "^1.9.0"
+  }
+}
