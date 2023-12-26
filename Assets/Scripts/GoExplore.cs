@@ -33,7 +33,7 @@ public class GoExplore
         // Reset player to starting position and save this state as a cell to the archive.
         env.ResetPlayer();
         Vector2Int initialPlayerPosition = env.CurrentGridSpace().GetAwaiter().GetResult();
-        Cell initialStateCell = new Cell(initialPlayerPosition, env.Step(-1, 0).reward);
+        Cell initialStateCell = new Cell(initialPlayerPosition, env.Step(-1, 0).reward, true);
         archive[initialStateCell.GetHashCode()] = initialStateCell;
 
         List<SimulationInstance.StepResult[]> terminalTrajectories = new List<SimulationInstance.StepResult[]>();
@@ -96,6 +96,7 @@ public class GoExplore
             Cell cell = new Cell(
                 actionResult.playerGridPosition,
                 actionResult.reward,
+                false,
                 trajectory
             );
             // Add cell to archive if there isn't an entry for this location yet, or if the current cell is better than
@@ -181,6 +182,7 @@ public class GoExplore
     {
         private readonly Vector2Int gridPosition;
         [JsonInclude] private readonly double reward;
+        [JsonInclude] private readonly bool isStart;
 
         public readonly SimulationInstance.StepResult[] trajectory;
 
@@ -208,11 +210,13 @@ public class GoExplore
         public Cell(
             Vector2Int playerGridPosition,
             double reward,
+            bool isStart = false,
             List<SimulationInstance.StepResult> trajectory = null
         )
         {
             gridPosition = playerGridPosition;
             this.reward = reward;
+            this.isStart = isStart;
 
             this.trajectory = trajectory?.ToArray() ?? Array.Empty<SimulationInstance.StepResult>();
 
