@@ -14,7 +14,7 @@ const actionPalette = {
 let table
 
 function preload() {
-    table = loadTable('../../../Logs/GA log 2023-12-22-T-10-58-34 - level 3 - population 100.csv', 'csv', 'header')
+    table = loadTable('../../../Logs/GA log 2023-12-27-T-20-31-26 - level 3 - population 100.csv', 'csv', 'header')
 }
 
 function setup() {
@@ -22,7 +22,7 @@ function setup() {
 
     colorMode(HSB, 360, 100, 100)
 
-    const sampleRows = table.findRows('cellSize', 'componentField')
+    const sampleRows = table.findRows('isTrigger', 'componentField')
     renderArchive(sampleRows)
     for (const row of sampleRows) {
         const trajectories = JSON.parse(row.get('terminalTrajectories'))
@@ -83,44 +83,43 @@ function renderRow(trajectories) {
         const firstCell = trajectory[0]
         fill(actionPalette[firstCell.action])
         ellipse(
-            ...tilePos(firstCell),
-            tileSize / 2,
-            tileSize / 2
+            ...tilePos(firstCell, true, 'startX', 'startY'),
+            8,
+            8
         )
         const lastCell = trajectory[trajectory.length - 1]
         fill(actionPalette[lastCell.action])
         ellipse(
             ...tilePos(lastCell),
-            tileSize / 2,
-            tileSize / 2
+            8,
+            8
         )
 
-        noStroke()
-        fill(actionPalette[firstCell.action])
-        text(firstCell.action, ...tilePos(firstCell))
         noFill()
-        strokeWeight(4)
+        strokeWeight(2)
         strokeJoin(ROUND)
-        let lastAction = firstCell.action
-        for (let index = 0; index < trajectory.length - 1; index++) {
+        textAlign(RIGHT, TOP)
+        for (let index = 0; index < trajectory.length; index++) {
             const cell = trajectory[index]
-            if (cell.action !== lastAction) {
-                noStroke()
-                fill(actionPalette[cell.action])
-                textAlign(LEFT, BASELINE)
-                text(cell.action, ...tilePos(cell))
-                noFill()
-                stroke(actionPalette[cell.action])
-            }
-            line(...tilePos(trajectory[index]), ...tilePos(trajectory[index + 1]))
-            lastAction = cell.action
+            noStroke()
+            fill(actionPalette[cell.action])
+            text(
+                index + 1,
+                ...tilePos(cell, true, 'startX', 'startY')
+            )
+            noFill()
+            stroke(actionPalette[cell.action])
+            line(
+                ...tilePos(cell),
+                ...tilePos(cell, true, 'startX', 'startY')
+            )
         }
     }
 }
 
-function tilePos(cell, isCenterPosition = true) {
+function tilePos(cell, isCenterPosition = true, xKey = 'x', yKey = 'y') {
     return [
-        cell.x * tileSize + (isCenterPosition ? tileSize / 2 : 0),
-        height - (cell.y * tileSize + (isCenterPosition ? tileSize / 2 : 0)),
+        cell[xKey] * tileSize + (isCenterPosition ? tileSize / 2 : 0),
+        height - (cell[yKey] * tileSize + (isCenterPosition ? tileSize / 2 : 0)),
     ]
 }
