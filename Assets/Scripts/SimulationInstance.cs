@@ -168,13 +168,14 @@ public class SimulationInstance
         // Jumps shouldn't not be repeated.
         bool canActionBeRepeated = action != 2;
 
-        return new StepResult(ID, resultGridSpace, action, iteration, reward, isTerminal, canActionBeRepeated);
+        return new StepResult(ID, startGridSpace, resultGridSpace, action, iteration, reward, isTerminal, canActionBeRepeated);
     }
 
     public record StepResult
     {
         private readonly String UUID;
-        public readonly Vector2Int playerGridPosition;
+        private readonly Vector2Int startingPlayerPosition;
+        public readonly Vector2Int resultingPlayerPosition;
         private readonly int iteration;
         public readonly float reward;
         [JsonInclude] public readonly bool isTerminal;
@@ -186,11 +187,26 @@ public class SimulationInstance
         [JsonInclude] private readonly int x;
         [JsonInclude] private readonly int y;
         [JsonInclude] private readonly int hash;
+        [JsonInclude] private int startX
+        {
+            get
+            {
+                return startingPlayerPosition.x;
+            }
+        }
+        [JsonInclude] private int startY
+        {
+            get
+            {
+                return startingPlayerPosition.y;
+            }
+        }
 
-        public StepResult(String UUID, Vector2Int playerGridPosition, int action, int iteration, float reward, bool isTerminal, bool canActionBeRepeated)
+        public StepResult(String UUID, Vector2Int startingPlayerPosition, Vector2Int resultingPlayerPosition, int action, int iteration, float reward, bool isTerminal, bool canActionBeRepeated)
         {
             this.UUID = UUID;
-            this.playerGridPosition = playerGridPosition;
+            this.startingPlayerPosition = startingPlayerPosition;
+            this.resultingPlayerPosition = resultingPlayerPosition;
             this.iteration = iteration;
             this.reward = reward;
             this.isTerminal = isTerminal;
@@ -198,9 +214,9 @@ public class SimulationInstance
             this.canActionBeRepeated = canActionBeRepeated;
 
             this.action = getActionName();
-            x = playerGridPosition.x;
-            y = playerGridPosition.y;
-            hash = MathUtils.HashVector2Int(playerGridPosition);
+            x = resultingPlayerPosition.x;
+            y = resultingPlayerPosition.y;
+            hash = MathUtils.HashVector2Int(resultingPlayerPosition);
         }
 
         private String getActionName()
@@ -215,10 +231,10 @@ public class SimulationInstance
             }
         }
 
-        public override String ToString() => $"{UUID}, player grid space: {playerGridPosition}, action: {getActionName()}, iteration: {iteration}, reward: {reward}, isTerminal: {isTerminal}";
+        public override String ToString() => $"{UUID}, player grid space: {resultingPlayerPosition}, action: {getActionName()}, iteration: {iteration}, reward: {reward}, isTerminal: {isTerminal}";
 
         public override int GetHashCode() =>
-            MathUtils.Cantor(MathUtils.HashVector2Int(playerGridPosition), actionTaken, (int) reward);
+            MathUtils.Cantor(MathUtils.HashVector2Int(resultingPlayerPosition), actionTaken, (int) reward);
     }
 
     private async Task WaitForEndOfLastInput()

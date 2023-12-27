@@ -98,7 +98,7 @@ public class GoExplore
             trajectory.Add(actionResult);
 
             Cell cell = new Cell(
-                actionResult.playerGridPosition,
+                actionResult.resultingPlayerPosition,
                 actionResult.reward,
                 trajectory
             );
