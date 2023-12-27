@@ -328,7 +328,7 @@ public class ToggleableGameMechanic
                 selectedProperty = candidateProperty;
             }
         } while (
-            selectedProperty == null ||
+            selectedProperty == null &&
             Array.TrueForAll(sampleFlags, b => b) == false
         );
 
