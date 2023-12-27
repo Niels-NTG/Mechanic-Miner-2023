@@ -177,7 +177,7 @@ public class SimulationInstance
         private readonly Vector2Int startingPlayerPosition;
         public readonly Vector2Int resultingPlayerPosition;
         private readonly int iteration;
-        public readonly float reward;
+        [JsonInclude] public readonly float reward;
         [JsonInclude] public readonly bool isTerminal;
         public readonly int actionTaken;
         public readonly bool canActionBeRepeated;
