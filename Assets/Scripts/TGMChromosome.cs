@@ -81,7 +81,10 @@ public sealed class TGMChromosome : ChromosomeBase
 
     public bool isSameType(TGMChromosome otherChromosome)
     {
-        return simulationInstance.tgm.GetFieldValueType() == otherChromosome.simulationInstance.tgm.GetFieldValueType();
+        return ReferenceEquals(
+            simulationInstance.tgm.GetFieldValueType(),
+            otherChromosome.simulationInstance.tgm.GetFieldValueType()
+        );
     }
 
     public override IChromosome CreateNew()
