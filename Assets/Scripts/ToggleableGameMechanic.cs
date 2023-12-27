@@ -409,7 +409,7 @@ public class ToggleableGameMechanic
 
     public Type GetFieldValueType()
     {
-        return initialPropertyValue.GetType();
+        return selectedComponentProperty.PropertyType;
     }
 
     public override String ToString()
