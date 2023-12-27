@@ -306,9 +306,9 @@ public class ToggleableGameMechanic
                 // value, skip this property.
                 if (
                     isEditableMechanic && (
-                        outputValue.GetHashCode() == ApplyModifier(outputValue, "double").GetHashCode() ||
-                        outputValue.GetHashCode() == ApplyModifier(outputValue, "half").GetHashCode() ||
-                        outputValue.GetHashCode() == ApplyModifier(outputValue, "invert").GetHashCode()
+                        outputValue.Equals(ApplyModifier(outputValue, "double"))  ||
+                        outputValue.Equals(ApplyModifier(outputValue, "half")) ||
+                        outputValue.Equals(ApplyModifier(outputValue, "invert"))
                     )
                 )
                 {
