@@ -17,6 +17,8 @@ public class GoExplore
 
     private int iteration;
     private readonly Dictionary<int, Cell> archive = new Dictionary<int, Cell>();
+    // List of actions taken thus far.
+    private readonly List<SimulationInstance.StepResult> trajectory = new List<SimulationInstance.StepResult>();
     private readonly int maxTrajectoryLength = 30;
     private readonly int maxAttempts = 10;
 
@@ -30,10 +32,15 @@ public class GoExplore
 
     public GoExploreResult Run()
     {
+        // Clear archive and trajectory for each run.
+        iteration = 0;
+        archive.Clear();
+        trajectory.Clear();
+
         // Reset player to starting position and save this state as a cell to the archive.
         env.ResetPlayer();
         Vector2Int initialPlayerPosition = env.CurrentGridSpace().GetAwaiter().GetResult();
-        Cell initialStateCell = new Cell(initialPlayerPosition, env.Step(-1, 0).reward, true);
+        Cell initialStateCell = new Cell(initialPlayerPosition, env.Step(-1, 0).reward);
         archive[initialStateCell.GetHashCode()] = initialStateCell;
 
         List<SimulationInstance.StepResult[]> terminalTrajectories = new List<SimulationInstance.StepResult[]>();
@@ -77,9 +84,6 @@ public class GoExplore
         // from being repeated. The hash takes the player's position, action type and reward as arguments.
         int lastActionResultHash = 0;
 
-        // List of actions taken thus far.
-        List<SimulationInstance.StepResult> trajectory = new List<SimulationInstance.StepResult>();
-
         // Initial selected action. See SimulationInstance for a list of possible actions the player can take.
         int action = SelectRandomAction();
 
@@ -96,7 +100,6 @@ public class GoExplore
             Cell cell = new Cell(
                 actionResult.playerGridPosition,
                 actionResult.reward,
-                false,
                 trajectory
             );
             // Add cell to archive if there isn't an entry for this location yet, or if the current cell is better than
@@ -153,6 +156,8 @@ public class GoExplore
         Cell restoreCell = SelectCellToRestore(archive, rng);
         if (restoreCell != null)
         {
+            trajectory.Clear();
+            trajectory.AddRange(restoreCell.trajectory);
             // Debug.Log($"{env.ID} Restore state. Cell: {restoreCell}");
             restoreCell.Choose();
 
@@ -182,7 +187,6 @@ public class GoExplore
     {
         private readonly Vector2Int gridPosition;
         [JsonInclude] private readonly double reward;
-        [JsonInclude] private readonly bool isStart;
 
         public readonly SimulationInstance.StepResult[] trajectory;
 
@@ -210,13 +214,11 @@ public class GoExplore
         public Cell(
             Vector2Int playerGridPosition,
             double reward,
-            bool isStart = false,
             List<SimulationInstance.StepResult> trajectory = null
         )
         {
             gridPosition = playerGridPosition;
             this.reward = reward;
-            this.isStart = isStart;
 
             this.trajectory = trajectory?.ToArray() ?? Array.Empty<SimulationInstance.StepResult>();
 
