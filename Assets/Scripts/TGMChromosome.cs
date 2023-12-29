@@ -79,12 +79,12 @@ public sealed class TGMChromosome : ChromosomeBase
         return new Gene();
     }
 
-    public bool isSameType(TGMChromosome otherChromosome)
+    public bool IsSameComponentField(TGMChromosome otherChromosome)
     {
         return ReferenceEquals(
-            simulationInstance.tgm.GetFieldValueType(),
-            otherChromosome.simulationInstance.tgm.GetFieldValueType()
-        );
+            simulationInstance.tgm.GetComponentType(),
+            otherChromosome.simulationInstance.tgm.GetComponentType()
+        ) && simulationInstance.tgm.GetComponentFieldName() == otherChromosome.simulationInstance.tgm.GetComponentFieldName();
     }
 
     public override IChromosome CreateNew()

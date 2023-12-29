@@ -12,7 +12,7 @@ public sealed class TGMUniformCrossover : UniformCrossover
         IChromosome chromosome2 = parent2.CreateNew();
         TGMChromosome tgmChromosome1 = (TGMChromosome) chromosome1;
         TGMChromosome tgmChromosome2 = (TGMChromosome) chromosome2;
-        bool isSameType = tgmChromosome1.isSameType(tgmChromosome2);
+        bool isSameType = tgmChromosome1.IsSameComponentField(tgmChromosome2);
         for (int index = 0; index < parent1.Length; index++)
         {
             if (isSameType)
