@@ -130,14 +130,6 @@ public sealed class TGMChromosome : ChromosomeBase
         }
     }
 
-    public bool IsSameComponentField(TGMChromosome otherChromosome)
-    {
-        return ReferenceEquals(
-            simulationInstance.tgm.GetComponentType(),
-            otherChromosome.simulationInstance.tgm.GetComponentType()
-        ) && simulationInstance.tgm.GetComponentFieldName() == otherChromosome.simulationInstance.tgm.GetComponentFieldName();
-    }
-
     public override IChromosome CreateNew()
     {
         return new TGMChromosome(ID);
