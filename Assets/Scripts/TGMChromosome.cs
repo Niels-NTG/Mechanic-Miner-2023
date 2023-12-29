@@ -16,18 +16,36 @@ public sealed class TGMChromosome : ChromosomeBase
     public static int levelGeneratorSeed;
     public static int tgmGeneratorSeed;
 
-    public TGMChromosome(bool isSetup = false, String previousID = null) : base(4)
+    public TGMChromosome() : base(4) { }
+
+    private TGMChromosome(String previousID) : base(4)
     {
-        if (isSetup)
-        {
-            return;
-        }
-
         ID = Guid.NewGuid().ToString();
-
-        lineageID = previousID ?? ID;
-
+        lineageID = previousID;
         CreateGenes();
+    }
+
+    public TGMChromosome(string previousID, Gene[] predefinedGenes) : base(4)
+    {
+        ID = Guid.NewGuid().ToString();
+        lineageID = previousID;
+        ReplaceGenes(0, predefinedGenes);
+
+        Debug.Log($"{ID} TGMChromosome.GenerateGene: generate new SimulationInstance");
+        Task<SimulationInstance> simulationSceneCreationTask = CreateSimulationInstance();
+        simulationInstance = simulationSceneCreationTask.GetAwaiter().GetResult();
+
+        for (int geneIndex = 0; geneIndex < Length; geneIndex++)
+        {
+            Gene predefinedGene = predefinedGenes[geneIndex];
+            if (predefinedGene.Value == null)
+            {
+                ReplaceGene(geneIndex, GenerateTGMGene(geneIndex).GetAwaiter().GetResult());
+                continue;
+            }
+            ApplyGeneToTGM(geneIndex, predefinedGene);
+        }
+        simulationInstance.ApplyTGM();
     }
 
     public override Gene GenerateGene(int geneIndex)
@@ -38,7 +56,7 @@ public sealed class TGMChromosome : ChromosomeBase
             Task<SimulationInstance> simulationSceneCreationTask = CreateSimulationInstance();
             simulationInstance = simulationSceneCreationTask.GetAwaiter().GetResult();
         }
-        Task<Gene> assignAndMutateTGMTask = AssignAndMutateTGM(geneIndex);
+        Task<Gene> assignAndMutateTGMTask = GenerateTGMGene(geneIndex);
         Gene newGene = assignAndMutateTGMTask.GetAwaiter().GetResult();
         simulationInstance.ApplyTGM();
         return newGene;
@@ -50,7 +68,7 @@ public sealed class TGMChromosome : ChromosomeBase
         return new SimulationInstance(ID, levelIndex, levelGeneratorSeed, tgmGeneratorSeed);
     }
 
-    private async Task<Gene> AssignAndMutateTGM(int geneIndex)
+    private async Task<Gene> GenerateTGMGene(int geneIndex)
     {
         await Awaitable.MainThreadAsync();
 
@@ -59,24 +77,57 @@ public sealed class TGMChromosome : ChromosomeBase
         //  2 = component field
         //  3 = modifier
 
-        if (geneIndex == 0)
+        switch (geneIndex)
         {
-            return new Gene(simulationInstance.tgm.SelectGameObject());
+            case 0:
+                return new Gene(simulationInstance.tgm.SelectGameObject());
+            case 1:
+                return new Gene(simulationInstance.tgm.SelectComponent());
+            case 2:
+                return new Gene(simulationInstance.tgm.SelectComponentProperty());
+            case 3:
+                return new Gene(simulationInstance.tgm.SelectModifier());
+            default:
+                return new Gene();
         }
-        if (geneIndex == 1)
-        {
-            return new Gene(simulationInstance.tgm.SelectComponent());
-        }
-        if (geneIndex == 2)
-        {
-            return new Gene(simulationInstance.tgm.SelectComponentProperty());
-        }
-        if (geneIndex == 3)
-        {
-            return new Gene(simulationInstance.tgm.SelectModifier());
-        }
+    }
 
-        return new Gene();
+    private async void ApplyGeneToTGM(int geneIndex, Gene existingGene)
+    {
+        await Awaitable.MainThreadAsync();
+
+        //  0 = game object
+        //  1 = component
+        //  2 = component field
+        //  3 = modifier
+
+        switch (geneIndex)
+        {
+            case 0:
+                ReplaceGene(
+                    geneIndex,
+                    new Gene(simulationInstance.tgm.SelectGameObject((String)existingGene.Value))
+                );
+                return;
+            case 1:
+                ReplaceGene(
+                    geneIndex,
+                    new Gene(simulationInstance.tgm.SelectComponent((String)existingGene.Value))
+                );
+                return;
+            case 2:
+                ReplaceGene(
+                    geneIndex,
+                    new Gene(simulationInstance.tgm.SelectComponentProperty((String)existingGene.Value))
+                );
+                return;
+            case 3:
+                ReplaceGene(
+                    geneIndex,
+                    new Gene(simulationInstance.tgm.SelectModifier((String)existingGene.Value))
+                );
+                return;
+        }
     }
 
     public bool IsSameComponentField(TGMChromosome otherChromosome)
@@ -89,7 +140,7 @@ public sealed class TGMChromosome : ChromosomeBase
 
     public override IChromosome CreateNew()
     {
-        return new TGMChromosome(false, ID);
+        return new TGMChromosome(ID);
     }
 
     public override string ToString()

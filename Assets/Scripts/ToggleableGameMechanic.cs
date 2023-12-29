@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -246,6 +247,18 @@ public class ToggleableGameMechanic
         return GetGameObjectName();
     }
 
+    public String SelectGameObject(String gameObjectName)
+    {
+        selectedGameObject = gameObjectsWithToggleableProperties.Find(gameObject =>
+            gameObject.name == gameObjectName
+        );
+        if (selectedGameObject == null)
+        {
+            Debug.LogError($"No GameObject was found for {gameObjectName} !");
+        }
+        return GetGameObjectName();
+    }
+
     public String SelectComponent()
     {
         if (selectedGameObject == null)
@@ -268,10 +281,25 @@ public class ToggleableGameMechanic
         return GetComponentName();
     }
 
+    public String SelectComponent(String componentName)
+    {
+        if (selectedGameObject == null)
+        {
+            Debug.LogError($"No GameObject was found to find component {componentName} within!");
+        }
+        selectedComponent = componentsWithToggleableProperties.Find(component =>
+            component.gameObject == selectedGameObject && component.GetType().Name == componentName
+        );
+        if (selectedComponent == null)
+        {
+            Debug.LogError($"No Component found with the name {componentName} in GameObject {selectedGameObject} !");
+        }
+        return GetComponentName();
+    }
+
     public String SelectComponentProperty()
     {
-        Type componentType = selectedComponent.GetType();
-        PropertyInfo[] componentProperties = componentType.GetProperties();
+        PropertyInfo[] componentProperties = GetComponentType().GetProperties();
 
         bool[] sampleFlags = new bool[componentProperties.Length];
         Array.Fill(sampleFlags, false);
@@ -338,10 +366,36 @@ public class ToggleableGameMechanic
         return GetComponentFieldName();
     }
 
+    public String SelectComponentProperty(String componentFieldName)
+    {
+        if (selectedComponent == null)
+        {
+            Debug.LogError("No component was set for this TGM!");
+        }
+
+        List<PropertyInfo> componentProperties = GetComponentType().GetProperties().ToList();
+        selectedComponentProperty = componentProperties.Find(property =>
+            property.Name == componentFieldName
+        );
+        initialPropertyValue = GetValue();
+
+        return GetComponentFieldName();
+    }
+
     public String SelectModifier()
     {
         selectedModifier = SelectModifier(initialPropertyValue, rng);
-        return selectedModifier;
+        return GetModifier();
+    }
+
+    public String SelectModifier(String modifierName)
+    {
+        if (!modifierTypes.Contains(modifierName))
+        {
+            Debug.LogError($"Invalid modifier name {modifierName} !");
+        }
+        selectedModifier = modifierName != "invert" && IsBoolean(initialPropertyValue) ? "invert" : modifierName;
+        return GetModifier();
     }
 
     private static String SelectModifier(object v, Random rng)

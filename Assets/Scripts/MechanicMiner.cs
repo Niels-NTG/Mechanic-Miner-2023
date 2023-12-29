@@ -78,7 +78,7 @@ public class MechanicMiner : MonoBehaviour
         TGMChromosome.levelIndex = levelIndex;
         TGMChromosome.levelGeneratorSeed = levelGeneratorSeed;
         TGMChromosome.tgmGeneratorSeed = tgmGeneratorSeed;
-        TGMChromosome chromosome = new TGMChromosome(true);
+        TGMChromosome chromosome = new TGMChromosome();
 
         Population population = new TGMPopulation(populationSize, populationSize, chromosome)
         {
