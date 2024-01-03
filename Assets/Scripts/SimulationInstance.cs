@@ -149,7 +149,7 @@ public class SimulationInstance
         }
 
         Vector2Int resultGridSpace = CurrentGridSpace().GetAwaiter().GetResult();
-        float reward = RewardDistanceToExit();
+        float reward = RewardDistanceToExit(resultGridSpace);
         bool isTerminal = IsTerminal();
 
         // Kill and reset player to start position if it has touched spikes or has gone too far from the level goal.
@@ -258,10 +258,15 @@ public class SimulationInstance
         return playerController.hasTouchedExit;
     }
 
-    private float RewardDistanceToExit()
+    private float RewardDistanceToExit(Vector2Int playerPosition)
     {
         return Vector2Int.Distance(Vector2Int.zero, Level.levelSize.size) -
-               Vector2Int.Distance(exitLocation, CurrentGridSpace().GetAwaiter().GetResult());
+               Vector2Int.Distance(exitLocation, playerPosition);
+    }
+
+    private float RewardDistanceFromStart(Vector2Int playerPosition)
+    {
+        return Vector2Int.Distance(entryLocation, playerPosition);
     }
 
     private async Task MoveLeft()
