@@ -63,7 +63,7 @@ public class MechanicMiner : MonoBehaviour
 
     private void RunEvolution()
     {
-        StreamWriter writer = new StreamWriter($"Logs/GA log {DateTime.Now:yyyy-MM-dd-T-HH-mm-ss} - level {levelIndex} - population {populationSize}.csv");
+        StreamWriter writer = new StreamWriter($"Logs/GA log {DateTime.Now:yyyy-MM-dd-T-HH-mm-ss} - {GitCommitUtility.RetrieveCurrentCommitShortHash()} - level {levelIndex} - population {populationSize}.csv");
         CsvWriter csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
         csvWriter.WriteHeader<GeneticAlgorithmLogRow>();
         csvWriter.NextRecord();
