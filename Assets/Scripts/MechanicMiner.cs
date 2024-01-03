@@ -16,7 +16,7 @@ public class MechanicMiner : MonoBehaviour
 
     public bool debugLevelMode;
 
-    [Range(0, 6)] public int levelIndex;
+    [Range(0, 7)] public int levelIndex;
 
     public int populationSize = 100;
     public int maxGenerationCount = 15;
