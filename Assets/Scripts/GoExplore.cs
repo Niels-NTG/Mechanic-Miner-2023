@@ -63,9 +63,8 @@ public class GoExplore
             }
         }
 
-        int archiveCount = isTerminal ? archive.Count : int.MinValue;
         Debug.Log(isTerminal
-            ? $"{env.ID} GoExplore: Ended running GoExplore by finding level exit after {iteration} iterations visiting {archiveCount} cells"
+            ? $"{env.ID} GoExplore: Ended running GoExplore by finding level exit after {iteration} iterations visiting {archive.Count} cells"
             : $"{env.ID} GoExplore: Ended running GoExplore without finding level exit after {iteration} iterations"
         );
 
@@ -73,8 +72,8 @@ public class GoExplore
         {
             archive = archive.Values.ToArray(),
             iterations = iteration,
-            archiveCount = archiveCount,
-            terminalTrajectories = terminalTrajectories
+            terminalTrajectories = terminalTrajectories,
+            isTerminal = isTerminal
         };
     }
 
@@ -346,7 +345,7 @@ public class GoExplore
     {
         public Cell[] archive { get; set; }
         public int iterations { get; set; }
-        public int archiveCount { get; set; }
+        public bool isTerminal { get; set; }
         public List<SimulationInstance.StepResult[]> terminalTrajectories { get; set; }
 
         public String PrintArchive()

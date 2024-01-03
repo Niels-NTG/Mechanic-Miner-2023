@@ -28,7 +28,7 @@ public class TGMFitness : IFitness
         GoExplore.GoExploreResult goExploreResult = goExplore.Run();
         tgmChromosome.goExploreResult = goExploreResult;
 
-        int goExploreCellCount = goExploreResult.archiveCount;
+        int goExploreCellCount = goExploreResult.isTerminal ? goExploreResult.archive.Length : int.MinValue;
         int levelInnerCellCount = Level.levelSize.width * Level.levelSize.height;
 
         // Reward population members that explore a larger part of the level
