@@ -107,6 +107,8 @@ public class MechanicMiner : MonoBehaviour
             {
                 csvWriter.WriteRecord(new GeneticAlgorithmLogRow{
                     generation = ga.GenerationsNumber,
+                    level = levelIndex,
+                    levelSeed = levelIndex == 0 ? levelGeneratorSeed : 0,
                     lineageId = currentGenerationChromosome.lineageID,
                     id = currentGenerationChromosome.ID,
                     hash = currentGenerationChromosome.GetHashCode(),

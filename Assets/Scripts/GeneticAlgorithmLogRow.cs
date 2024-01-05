@@ -3,6 +3,8 @@ using System;
 public record GeneticAlgorithmLogRow
 {
     public int generation { get; set; }
+    public int level { get; set; }
+    public int levelSeed { get; set; }
     public String lineageId { get; set; }
     public String id { get; set; }
     public int hash { get; set; }
