@@ -3,6 +3,8 @@ const levelSize = {
     width: 18,
     height: 12,
 }
+
+// TODO render action type legend
 const actionPalette = {
     SPECIAL: '#a300ff',
     MOVE_LEFT: '#00ff0e',
@@ -47,6 +49,7 @@ function renderArchive(sampleRows) {
             }
         }
     }
+    console.log(colCells)
 
     let maxSeenCount = 0
     let maxChosenCount = 0
@@ -76,6 +79,7 @@ function renderArchive(sampleRows) {
 
 function renderRow(trajectories) {
     for (const trajectory of trajectories) {
+        console.log(trajectory)
         if (trajectory.length < 2) {
             continue
         }
