@@ -112,7 +112,7 @@ public class MechanicMiner : MonoBehaviour
                     lineageId = currentGenerationChromosome.lineageID,
                     id = currentGenerationChromosome.ID,
                     hash = currentGenerationChromosome.GetHashCode(),
-                    fitness = currentGenerationChromosome.Fitness ?? 0.0,
+                    fitness = (double) (currentGenerationChromosome.Fitness == null || currentGenerationChromosome.Fitness <= Mathf.Epsilon ? 0.0 : currentGenerationChromosome.Fitness),
                     gameObject = currentGenerationChromosome.GetGene(0).Value.ToString(),
                     component = currentGenerationChromosome.GetGene(1).Value.ToString(),
                     componentField = currentGenerationChromosome.GetGene(2).Value.ToString(),
