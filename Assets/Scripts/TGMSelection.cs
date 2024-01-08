@@ -10,7 +10,7 @@ public class TGMSelection : RouletteWheelSelection
     protected override IList<IChromosome> PerformSelectChromosomes(int number, Generation generation)
     {
         // number = population.MinSize
-        int numberOfElites = (int) Math.Round(generation.Chromosomes.Count * 0.1);
+        int numberOfElites = (int) Math.Round(generation.Chromosomes.Count * 0.02);
         int numberOfNewChromosomes = (int) Math.Round(generation.Chromosomes.Count * 0.1);
 
         IList<IChromosome> chromosomesSortedByFitness =
