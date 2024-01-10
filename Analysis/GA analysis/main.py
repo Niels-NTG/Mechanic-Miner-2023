@@ -10,7 +10,7 @@ def getTableFilesInFolder(path: str, category: str) -> pd.DataFrame:
     files = glob.glob(f'{path}GA log *.csv')
     frames = pd.concat([pd.read_csv(f) for f in files], ignore_index=True)
     frames['category'] = category
-    return frames.where(frames['fitness'] > 1.401298e-45)
+    return frames.where(frames['fitness'] > 1.e-10)
 
 
 def runAnalysis(tables: pd.DataFrame):
@@ -19,18 +19,21 @@ def runAnalysis(tables: pd.DataFrame):
     fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(40, 20))
 
     for name, group in groupedData[groupedData['level'] == 3].groupby('category'):
-        group.plot(kind='line', y=['mean'], x='generation', ax=axes[0], label=[name])
+        plot = group.plot(kind='line', y=['mean'], x='generation', ax=axes[0], label=[name], stroke=2)
+        plot.fill_between(group['generation'], group['mean'] - group['std'], group['mean'] + group['std'], alpha=0.2)
     axes[0].set_title('Level 3')
     axes[0].set_ylim(0, 1)
     axes[0].set_xlim(1, 15)
     for name, group in groupedData[groupedData['level'] == 4].groupby('category'):
-        group.plot(kind='line', y=['mean'], x='generation', ax=axes[1], label=[name])
+        plot = group.plot(kind='line', y=['mean'], x='generation', ax=axes[1], label=[name])
+        plot.fill_between(group['generation'], group['mean'] - group['std'], group['mean'] + group['std'], alpha=0.2)
     axes[1].set_title('Level 4')
     axes[1].set_ylim(0, 1)
     axes[1].set_xlim(1, 15)
     axes[1].get_legend().remove()
     for name, group in groupedData[groupedData['level'] == 5].groupby('category'):
-        group.plot(kind='line', y=['mean'], x='generation', ax=axes[2], label=[name])
+        plot = group.plot(kind='line', y=['mean'], x='generation', ax=axes[2], label=[name])
+        plot.fill_between(group['generation'], group['mean'] - group['std'], group['mean'] + group['std'], alpha=0.2)
     axes[2].set_title('Level 5')
     axes[2].set_ylim(0, 1)
     axes[2].set_xlim(1, 15)
