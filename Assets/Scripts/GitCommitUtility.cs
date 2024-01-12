@@ -1,7 +1,5 @@
-using System.IO;
 using System;
 using System.Diagnostics;
-using UnityEditor;
 using Debug = UnityEngine.Debug;
 
 // Adapted from gist by Raphaël Daumas https://gist.github.com/Marsgames/219afc01a1b6af1ed20c241ff449e574
@@ -62,19 +60,7 @@ public static class GitCommitUtility
         string result = RunGitCommand("rev-parse --short --verify HEAD");
         // Clean up whitespace around hash. (seems to just be the way this command returns :/ )
         result = string.Join("", result.Split(default(string[]), StringSplitOptions.RemoveEmptyEntries));
-        Debug.Log("Current Commit: " + result);
         return result;
     }
 
-    [MenuItem("Tools/LogCommit")]
-    public static void LogCommit()
-    {
-        var version = RetrieveCurrentCommitShortHash();
-        Debug.Log(version);
-
-        // Save hash into a file to get read it in project
-        var path = $"{Directory.GetCurrentDirectory()}\\Assets\\Resources\\";
-        File.WriteAllText($"{path}version.txt", version);
-        Debug.Log("File created");
-    }
 }
