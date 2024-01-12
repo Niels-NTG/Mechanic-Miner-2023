@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Threading;
+using System.Linq;
+using System.Threading.Tasks;
 using GeneticSharp.Domain;
 using GeneticSharp.Domain.Mutations;
 using GeneticSharp.Domain.Selections;
@@ -14,9 +16,8 @@ using CsvHelper;
 public class MechanicMiner : MonoBehaviour
 {
 
-    public bool debugLevelMode;
 
-    [Range(0, 7)] public int levelIndex;
+    public bool debugLevelMode;
 
     public int populationSize = 100;
     public int maxGenerationCount = 15;
@@ -27,28 +28,34 @@ public class MechanicMiner : MonoBehaviour
     [Header("Seed to generate Toggleable Game Mechanics (TGM) with. Set to 0 to use random seed")]
     public int tgmGeneratorSeed;
 
-    private Thread evolutionThread;
+    public List<int> levelIndexList = new List<int> {3, 4, 5};
     private GeneticAlgorithm ga;
 
     private void Start()
     {
+        if (levelIndexList.Count == 0)
+        {
+            Debug.LogError("No levels where selected. Stopping…");
+            Application.Quit();
+            return;
+        }
+
         if (debugLevelMode)
         {
             String debugID = Guid.NewGuid().ToString();
-            SimulationInstance simulationInstance = new SimulationInstance(debugID, levelIndex, levelGeneratorSeed, tgmGeneratorSeed);
+            SimulationInstance simulationInstance = new SimulationInstance(debugID, levelIndexList.First(), levelGeneratorSeed, tgmGeneratorSeed);
             simulationInstance.tgm.GenerateNew();
             simulationInstance.ApplyTGM();
             GoExplore goExplore = new GoExplore(simulationInstance);
-            Thread debugThread = new Thread(() =>
+            Task.Run(() =>
             {
                 Debug.Log(simulationInstance.tgm);
                 goExplore.Run();
             });
-            debugThread.Start();
         }
         else
         {
-            RunEvolution();
+            RunEvolution(levelIndexList);
         }
     }
 
@@ -57,13 +64,21 @@ public class MechanicMiner : MonoBehaviour
         if (ga != null)
         {
             ga.Stop();
-            evolutionThread.Abort();
         }
     }
 
-    private void RunEvolution()
+    private async void RunEvolution(List<int> _levelList)
     {
-        StreamWriter writer = new StreamWriter($"Logs/GA log {DateTime.Now:yyyy-MM-dd-T-HH-mm-ss} - {GitCommitUtility.RetrieveCurrentCommitShortHash()} - level {levelIndex} - population {populationSize}.csv");
+        if (_levelList.Count == 0)
+        {
+            return;
+        }
+        int levelIndex = _levelList.First();
+        _levelList.RemoveAt(0);
+
+        Debug.Log($"START genetic algorithm for level {levelIndex}, with a population of {populationSize}");
+
+        StreamWriter writer = new StreamWriter($"Logs/GA log {DateTime.Now:yyyy-MM-dd-T-HH-mm-ss} - {GitCommitUtility.RetrieveCurrentCommitShortHash()} - level {levelIndex} - population {populationSize} (2 % elite selection).csv");
         CsvWriter csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
         csvWriter.WriteHeader<GeneticAlgorithmLogRow>();
         csvWriter.NextRecord();
@@ -127,20 +142,19 @@ public class MechanicMiner : MonoBehaviour
             }
             csvWriter.Flush();
         };
-        evolutionThread = new Thread(() =>
+
+        await Task.Run(() =>
         {
             ga.Start();
 
             TGMChromosome bestChromosome = (TGMChromosome) ga.BestChromosome;
-            Debug.Log($"END genetic algorithm after {ga.GenerationsNumber} - BEST GENE {bestChromosome}");
             Debug.Log($"Termination: {ga.Termination}");
-            if (!ga.IsRunning)
-            {
-                evolutionThread.Abort();
-            }
+            Debug.Log($"END genetic algorithm after {ga.GenerationsNumber} - BEST GENE {bestChromosome}");
+
             csvWriter.Flush();
         });
-        evolutionThread.Start();
+
+        RunEvolution(_levelList);
     }
 
 }

@@ -150,11 +150,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugLevelMode: 0
-  levelIndex: 7
   populationSize: 100
   maxGenerationCount: 15
   levelGeneratorSeed: 0
   tgmGeneratorSeed: 0
+  levelIndexList: 030000000400000005000000
 --- !u!4 &27798706
 Transform:
   m_ObjectHideFlags: 0
