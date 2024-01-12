@@ -93,6 +93,15 @@ public class SimulationInstance
         ResetPlayer();
     }
 
+    public void ApplyTGM(String gameObjectName, String componentName, String componentFieldName, String modifierName)
+    {
+        tgm.SelectGameObject(gameObjectName);
+        tgm.SelectComponent(componentName);
+        tgm.SelectComponentProperty(componentFieldName);
+        tgm.SelectModifier(modifierName);
+        ApplyTGM();
+    }
+
     public async Task UnloadScene()
     {
         Debug.Log($"{ID} SimulationInstance: unloading scene");

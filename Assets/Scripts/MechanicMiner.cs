@@ -17,7 +17,16 @@ public class MechanicMiner : MonoBehaviour
 {
 
 
+    [Header("In debug mode does only 1 simulation at the time")]
     public bool debugLevelMode;
+
+    [Header("Set TGM manually, debug mode only")]
+    public String gameObjectName;
+    public String componentName;
+    public String componentFieldName;
+    public String modifierName;
+
+    [Space(16)]
 
     public int populationSize = 100;
     public int maxGenerationCount = 15;
@@ -44,8 +53,15 @@ public class MechanicMiner : MonoBehaviour
         {
             String debugID = Guid.NewGuid().ToString();
             SimulationInstance simulationInstance = new SimulationInstance(debugID, levelIndexList.First(), levelGeneratorSeed, tgmGeneratorSeed);
-            simulationInstance.tgm.GenerateNew();
-            simulationInstance.ApplyTGM();
+            if (gameObjectName != null && componentName != null && componentFieldName != null && modifierName != null)
+            {
+                simulationInstance.ApplyTGM(gameObjectName, componentName, componentFieldName, modifierName);
+            }
+            else
+            {
+                simulationInstance.tgm.GenerateNew();
+                simulationInstance.ApplyTGM();
+            }
             GoExplore goExplore = new GoExplore(simulationInstance);
             Task.Run(() =>
             {
