@@ -135,6 +135,14 @@ public class ToggleableGameMechanic
                             value.position - value.size / 4,
                             value.size * 2 - value.size / 2
                         );
+                    case RigidbodyConstraints2D value:
+                        return value == RigidbodyConstraints2D.FreezePosition
+                            ? RigidbodyConstraints2D.FreezeRotation
+                            : RigidbodyConstraints2D.FreezePosition;
+                    case RigidbodyType2D value:
+                        return value == RigidbodyType2D.Dynamic ?
+                            RigidbodyType2D.Kinematic :
+                            RigidbodyType2D.Dynamic;
                 }
                 break;
             case "half":
@@ -190,6 +198,14 @@ public class ToggleableGameMechanic
                             value.position + value.size / 4,
                             value.size / 2
                         );
+                    case RigidbodyConstraints2D value:
+                        return value == RigidbodyConstraints2D.FreezePosition
+                            ? RigidbodyConstraints2D.FreezeRotation
+                            : RigidbodyConstraints2D.FreezePosition;
+                    case RigidbodyType2D value:
+                        return value == RigidbodyType2D.Dynamic ?
+                            RigidbodyType2D.Kinematic :
+                            RigidbodyType2D.Dynamic;
                 }
                 break;
             case "invert":
@@ -235,6 +251,14 @@ public class ToggleableGameMechanic
                     case BoundsInt value:
                         value.SetMinMax(value.max, value.min);
                         return value;
+                    case RigidbodyConstraints2D value:
+                        return value == RigidbodyConstraints2D.FreezePosition
+                            ? RigidbodyConstraints2D.FreezeRotation
+                            : RigidbodyConstraints2D.FreezePosition;
+                    case RigidbodyType2D value:
+                        return value == RigidbodyType2D.Dynamic ?
+                            RigidbodyType2D.Kinematic :
+                            RigidbodyType2D.Dynamic;
                 }
                 break;
         }
@@ -438,7 +462,7 @@ public class ToggleableGameMechanic
 
     private static bool IsBoolean(object v)
     {
-        return v is bool;
+        return v is bool || v is RigidbodyConstraints2D || v is RigidbodyType2D;
     }
 
     private String GetGameObjectName()
