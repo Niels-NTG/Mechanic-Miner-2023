@@ -111,6 +111,36 @@ public class ToggleableGameMechanic
                         return value * 2;
                     case Vector3Int value:
                         return value * 2;
+                    case Vector2[] value:
+                        for (int i = 0; i < value.Length; i++)
+                        {
+                            value[i] *= 2f;
+                        }
+                        return value;
+                    case Vector3[] value:
+                        for (int i = 0; i < value.Length; i++)
+                        {
+                            value[i] *= 2f;
+                        }
+                        return value;
+                    case Vector4[] value:
+                        for (int i = 0; i < value.Length; i++)
+                        {
+                            value[i] *= 2f;
+                        }
+                        return value;
+                    case Vector2Int[] value:
+                        for (int i = 0; i < value.Length; i++)
+                        {
+                            value[i] *= 2;
+                        }
+                        return value;
+                    case Vector3Int[] value:
+                        for (int i = 0; i < value.Length; i++)
+                        {
+                            value[i] *= 2;
+                        }
+                        return value;
                     case Quaternion value:
                         return value * new Vector3(2, 2, 2);
                     case Matrix4x4 value:
@@ -174,6 +204,36 @@ public class ToggleableGameMechanic
                         return value / 2;
                     case Vector3Int value:
                         return value / 2;
+                    case Vector2[] value:
+                        for (int i = 0; i < value.Length; i++)
+                        {
+                            value[i] /= 2f;
+                        }
+                        return value;
+                    case Vector3[] value:
+                        for (int i = 0; i < value.Length; i++)
+                        {
+                            value[i] /= 2f;
+                        }
+                        return value;
+                    case Vector4[] value:
+                        for (int i = 0; i < value.Length; i++)
+                        {
+                            value[i] /= 2f;
+                        }
+                        return value;
+                    case Vector2Int[] value:
+                        for (int i = 0; i < value.Length; i++)
+                        {
+                            value[i] /= 2;
+                        }
+                        return value;
+                    case Vector3Int[] value:
+                        for (int i = 0; i < value.Length; i++)
+                        {
+                            value[i] /= 2;
+                        }
+                        return value;
                     case Quaternion value:
                         return value * new Vector3(0.5f, 0.5f, 0.5f);
                     case Matrix4x4 value:
@@ -237,6 +297,36 @@ public class ToggleableGameMechanic
                         return value * -1;
                     case Vector3Int value:
                         return value * -1;
+                    case Vector2[] value:
+                        for (int i = 0; i < value.Length; i++)
+                        {
+                            value[i] *= -1f;
+                        }
+                        return value;
+                    case Vector3[] value:
+                        for (int i = 0; i < value.Length; i++)
+                        {
+                            value[i] *= -1f;
+                        }
+                        return value;
+                    case Vector4[] value:
+                        for (int i = 0; i < value.Length; i++)
+                        {
+                            value[i] *= -1f;
+                        }
+                        return value;
+                    case Vector2Int[] value:
+                        for (int i = 0; i < value.Length; i++)
+                        {
+                            value[i] *= -1;
+                        }
+                        return value;
+                    case Vector3Int[] value:
+                        for (int i = 0; i < value.Length; i++)
+                        {
+                            value[i] *= -1;
+                        }
+                        return value;
                     case Quaternion value:
                         return Quaternion.Inverse(value);
                     case Matrix4x4 value:
@@ -442,7 +532,17 @@ public class ToggleableGameMechanic
 
     private static bool IsVector(object v)
     {
-        return v is Vector2 || v is Vector3 || v is Vector4 || v is Vector2Int || v is Vector3Int || v is Color;
+        return v is Vector2 ||
+               v is Vector3 ||
+               v is Vector4 ||
+               v is Vector2Int ||
+               v is Vector3Int ||
+               v is Color ||
+               v is Vector2[] ||
+               v is Vector3[] ||
+               v is Vector4[] ||
+               v is Vector2Int[] ||
+               v is Vector3Int[];
     }
 
     private static bool IsQuaternion(object v)
