@@ -475,7 +475,7 @@ public class ToggleableGameMechanic
         return selectedComponent.GetType().Name;
     }
 
-    public String GetComponentFieldName()
+    private String GetComponentFieldName()
     {
         return selectedComponentProperty.Name;
     }
@@ -485,7 +485,7 @@ public class ToggleableGameMechanic
         return selectedModifier;
     }
 
-    public Type GetComponentType()
+    private Type GetComponentType()
     {
         return selectedComponent.GetType();
     }
