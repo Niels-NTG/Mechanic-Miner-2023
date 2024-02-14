@@ -19,7 +19,7 @@ public class ToggleableGameMechanic
     private object initialPropertyValue;
 
     private String selectedModifier;
-    private static readonly String[] modifierTypes = { "double", "half", "invert" };
+    private static readonly String[] modifierTypes = { "double", "half", "invert", "add", "subtract" };
 
     private bool isActive;
 
@@ -74,6 +74,12 @@ public class ToggleableGameMechanic
         } else if (selectedModifier == "half" && isActive == false)
         {
             modifierToApply = "double";
+        } else if (selectedModifier == "add" && isActive == false)
+        {
+            modifierToApply = "subtract";
+        } else if (selectedModifier == "subtract" && isActive == false)
+        {
+            modifierToApply = "add";
         }
         SetValue(ApplyModifier(GetValue(), modifierToApply));
     }
@@ -340,6 +346,161 @@ public class ToggleableGameMechanic
                         return new BoundsInt(value.min - value.position, value.size);
                 }
                 break;
+            case "add":
+                switch (inputValue)
+                {
+                    case bool value:
+                        return !value;
+                    case float value:
+                        return value + 1f;
+                    case int value:
+                        return value + 1;
+                    case sbyte value:
+                        return value + 1;
+                    case short value:
+                        return value + 1;
+                    case long value:
+                        return value + 1;
+                    case double value:
+                        return value + 1d;
+                    case decimal value:
+                        return value + 1m;
+                    case Vector2 value:
+                        return value + Vector2.one;
+                    case Vector3 value:
+                        return value + Vector3.one;
+                    case Vector4 value:
+                        return value + Vector4.one;
+                    case Vector2Int value:
+                        return value + Vector2Int.one;
+                    case Vector3Int value:
+                        return value + Vector3Int.one;
+                    case Vector2[] value:
+                        Vector2[] newVector2Values = (Vector2[]) value.Clone();
+                        for (int i = 0; i < newVector2Values.Length; i++)
+                        {
+                            newVector2Values[i] += Vector2.one;
+                        }
+                        return newVector2Values;
+                    case Vector3[] value:
+                        Vector3[] newVector3Values = (Vector3[]) value.Clone();
+                        for (int i = 0; i < newVector3Values.Length; i++)
+                        {
+                            newVector3Values[i] += Vector3.one;
+                        }
+                        return newVector3Values;
+                    case Vector4[] value:
+                        Vector4[] newVector4Values = (Vector4[]) value.Clone();
+                        for (int i = 0; i < newVector4Values.Length; i++)
+                        {
+                            newVector4Values[i] += Vector4.one;
+                        }
+                        return newVector4Values;
+                    case Vector2Int[] value:
+                        Vector2Int[] newVector2IntValues = (Vector2Int[]) value.Clone();
+                        for (int i = 0; i < newVector2IntValues.Length; i++)
+                        {
+                            newVector2IntValues[i] += Vector2Int.one;
+                        }
+                        return newVector2IntValues;
+                    case Vector3Int[] value:
+                        Vector3Int[] newVector3IntValues = (Vector3Int[]) value.Clone();
+                        for (int i = 0; i < newVector3IntValues.Length; i++)
+                        {
+                            newVector3IntValues[i] += Vector3Int.one;
+                        }
+                        return newVector3IntValues;
+                    case Quaternion value:
+                        return Quaternion.Euler(value.eulerAngles + Vector3.one);
+                    case Matrix4x4 value:
+                        return Matrix4x4.Translate(value.GetPosition() + Vector3.one);
+                    case Rect value:
+                        return new Rect(value.position + Vector2.one, value.size + Vector2.one);
+                    case RectInt value:
+                        return new RectInt(value.position + Vector2Int.one, value.size + Vector2Int.one);
+                    case Bounds value:
+                        return new Bounds(value.center + Vector3.one, value.size + Vector3.one);
+                    case BoundsInt value:
+                        return new Bounds(value.center + Vector3Int.one, value.size + Vector3Int.one);
+                break;
+            case "subtract":
+                switch (inputValue)
+                {
+                    case bool value:
+                        return !value;
+                    case float value:
+                        return value - 1f;
+                    case int value:
+                        return value - 1;
+                    case sbyte value:
+                        return value - 1;
+                    case short value:
+                        return value - 1;
+                    case long value:
+                        return value - 1;
+                    case double value:
+                        return value - 1d;
+                    case decimal value:
+                        return value - 1m;
+                    case Vector2 value:
+                        return value - Vector2.one;
+                    case Vector3 value:
+                        return value - Vector3.one;
+                    case Vector4 value:
+                        return value - Vector4.one;
+                    case Vector2Int value:
+                        return value - Vector2Int.one;
+                    case Vector3Int value:
+                        return value - Vector3Int.one;
+                    case Vector2[] value:
+                        Vector2[] newVector2Values = (Vector2[]) value.Clone();
+                        for (int i = 0; i < newVector2Values.Length; i++)
+                        {
+                            newVector2Values[i] -= Vector2.one;
+                        }
+                        return newVector2Values;
+                    case Vector3[] value:
+                        Vector3[] newVector3Values = (Vector3[]) value.Clone();
+                        for (int i = 0; i < newVector3Values.Length; i++)
+                        {
+                            newVector3Values[i] -= Vector3.one;
+                        }
+                        return newVector3Values;
+                    case Vector4[] value:
+                        Vector4[] newVector4Values = (Vector4[]) value.Clone();
+                        for (int i = 0; i < newVector4Values.Length; i++)
+                        {
+                            newVector4Values[i] -= Vector4.one;
+                        }
+                        return newVector4Values;
+                    case Vector2Int[] value:
+                        Vector2Int[] newVector2IntValues = (Vector2Int[]) value.Clone();
+                        for (int i = 0; i < newVector2IntValues.Length; i++)
+                        {
+                            newVector2IntValues[i] -= Vector2Int.one;
+                        }
+                        return newVector2IntValues;
+                    case Vector3Int[] value:
+                        Vector3Int[] newVector3IntValues = (Vector3Int[]) value.Clone();
+                        for (int i = 0; i < newVector3IntValues.Length; i++)
+                        {
+                            newVector3IntValues[i] -= Vector3Int.one;
+                        }
+                        return newVector3IntValues;
+                    case Quaternion value:
+                        return Quaternion.Euler(value.eulerAngles - Vector3.one);
+                    case Matrix4x4 value:
+                        return Matrix4x4.Translate(value.GetPosition() - Vector3.one);
+                    case Rect value:
+                        return new Rect(value.position - Vector2.one, value.size - Vector2.one);
+                    case RectInt value:
+                        return new RectInt(value.position - Vector2Int.one, value.size - Vector2Int.one);
+                    case Bounds value:
+                        return new Bounds(value.center - Vector3.one, value.size - Vector3.one);
+                    case BoundsInt value:
+                        return new Bounds(value.center - Vector3Int.one, value.size - Vector3Int.one);
+                }
+                break;
         }
         return inputValue;
     }
@@ -439,7 +600,9 @@ public class ToggleableGameMechanic
                     isEditableMechanic &&
                     outputValue.Equals(ApplyModifier(outputValue, "double")) &&
                     outputValue.Equals(ApplyModifier(outputValue, "half")) &&
-                    outputValue.Equals(ApplyModifier(outputValue, "invert"))
+                    outputValue.Equals(ApplyModifier(outputValue, "invert")) &&
+                    outputValue.Equals(ApplyModifier(outputValue, "add")) &&
+                    outputValue.Equals(ApplyModifier(outputValue, "subtract"))
                 )
                 {
                     continue;
