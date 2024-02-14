@@ -436,11 +436,10 @@ public class ToggleableGameMechanic
                 // Check if applying a modifier to this value results in a different value. If it results in the same
                 // value, skip this property.
                 if (
-                    isEditableMechanic && (
-                        outputValue.Equals(ApplyModifier(outputValue, "double"))  ||
-                        outputValue.Equals(ApplyModifier(outputValue, "half")) ||
-                        outputValue.Equals(ApplyModifier(outputValue, "invert"))
-                    )
+                    isEditableMechanic &&
+                    outputValue.Equals(ApplyModifier(outputValue, "double")) &&
+                    outputValue.Equals(ApplyModifier(outputValue, "half")) &&
+                    outputValue.Equals(ApplyModifier(outputValue, "invert"))
                 )
                 {
                     continue;
@@ -503,20 +502,32 @@ public class ToggleableGameMechanic
 
     private static String SelectModifier(object v, Random rng)
     {
+        String[] validCandidateModifiers = GetValidModifiersForType(v);
+        return validCandidateModifiers[rng.Next(validCandidateModifiers.Length)];
+    }
+
+    private static String[] GetValidModifiersForType(object v)
+    {
         if (IsNumeric(v) || IsVector(v) || IsQuaternion(v) || IsMatrix(v) || IsRect(v))
         {
-            return modifierTypes[rng.Next(modifierTypes.Length)];
+            return modifierTypes;
         }
         if (IsBoolean(v))
         {
-            return "invert";
+            return new[] {"invert"};
         }
-        return "invert";
+        return new[] {"invert"};
     }
 
     private static bool IsNumeric(object v)
     {
-        return v is float || v is int || v is sbyte || v is short || v is long || v is double || v is decimal;
+        return v is float ||
+               v is int ||
+               v is sbyte ||
+               v is short ||
+               v is long ||
+               v is double ||
+               v is decimal;
     }
 
     private static bool IsVector(object v)
