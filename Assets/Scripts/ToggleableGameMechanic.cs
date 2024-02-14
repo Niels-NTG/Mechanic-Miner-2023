@@ -112,35 +112,40 @@ public class ToggleableGameMechanic
                     case Vector3Int value:
                         return value * 2;
                     case Vector2[] value:
-                        for (int i = 0; i < value.Length; i++)
+                        Vector2[] newVector2Values = (Vector2[]) value.Clone();
+                        for (int i = 0; i < newVector2Values.Length; i++)
                         {
-                            value[i] *= 2f;
+                            newVector2Values[i] *= 2f;
                         }
-                        return value;
+                        return newVector2Values;
                     case Vector3[] value:
-                        for (int i = 0; i < value.Length; i++)
+                        Vector3[] newVector3Values = (Vector3[]) value.Clone();
+                        for (int i = 0; i < newVector3Values.Length; i++)
                         {
-                            value[i] *= 2f;
+                            newVector3Values[i] *= 2f;
                         }
-                        return value;
+                        return newVector3Values;
                     case Vector4[] value:
-                        for (int i = 0; i < value.Length; i++)
+                        Vector4[] newVector4Values = (Vector4[]) value.Clone();
+                        for (int i = 0; i < newVector4Values.Length; i++)
                         {
-                            value[i] *= 2f;
+                            newVector4Values[i] *= 2f;
                         }
-                        return value;
+                        return newVector4Values;
                     case Vector2Int[] value:
-                        for (int i = 0; i < value.Length; i++)
+                        Vector2Int[] newVector2IntValues = (Vector2Int[]) value.Clone();
+                        for (int i = 0; i < newVector2IntValues.Length; i++)
                         {
-                            value[i] *= 2;
+                            newVector2IntValues[i] *= 2;
                         }
-                        return value;
+                        return newVector2IntValues;
                     case Vector3Int[] value:
-                        for (int i = 0; i < value.Length; i++)
+                        Vector3Int[] newVector3IntValues = (Vector3Int[]) value.Clone();
+                        for (int i = 0; i < newVector3IntValues.Length; i++)
                         {
-                            value[i] *= 2;
+                            newVector3IntValues[i] *= 2;
                         }
-                        return value;
+                        return newVector3IntValues;
                     case Quaternion value:
                         return value * new Vector3(2, 2, 2);
                     case Matrix4x4 value:
@@ -205,35 +210,40 @@ public class ToggleableGameMechanic
                     case Vector3Int value:
                         return value / 2;
                     case Vector2[] value:
-                        for (int i = 0; i < value.Length; i++)
+                        Vector2[] newVector2Values = (Vector2[]) value.Clone();
+                        for (int i = 0; i < newVector2Values.Length; i++)
                         {
-                            value[i] /= 2f;
+                            newVector2Values[i] /= 2f;
                         }
-                        return value;
+                        return newVector2Values;
                     case Vector3[] value:
-                        for (int i = 0; i < value.Length; i++)
+                        Vector3[] newVector3Values = (Vector3[]) value.Clone();
+                        for (int i = 0; i < newVector3Values.Length; i++)
                         {
-                            value[i] /= 2f;
+                            newVector3Values[i] /= 2f;
                         }
-                        return value;
+                        return newVector3Values;
                     case Vector4[] value:
-                        for (int i = 0; i < value.Length; i++)
+                        Vector4[] newVector4Values = (Vector4[]) value.Clone();
+                        for (int i = 0; i < newVector4Values.Length; i++)
                         {
-                            value[i] /= 2f;
+                            newVector4Values[i] /= 2f;
                         }
-                        return value;
+                        return newVector4Values;
                     case Vector2Int[] value:
-                        for (int i = 0; i < value.Length; i++)
+                        Vector2Int[] newVector2IntValues = (Vector2Int[]) value.Clone();
+                        for (int i = 0; i < newVector2IntValues.Length; i++)
                         {
-                            value[i] /= 2;
+                            newVector2IntValues[i] /= 2;
                         }
-                        return value;
+                        return newVector2IntValues;
                     case Vector3Int[] value:
-                        for (int i = 0; i < value.Length; i++)
+                        Vector3Int[] newVector3IntValues = (Vector3Int[]) value.Clone();
+                        for (int i = 0; i < newVector3IntValues.Length; i++)
                         {
-                            value[i] /= 2;
+                            newVector3IntValues[i] /= 2;
                         }
-                        return value;
+                        return newVector3IntValues;
                     case Quaternion value:
                         return value * new Vector3(0.5f, 0.5f, 0.5f);
                     case Matrix4x4 value:
@@ -298,35 +308,40 @@ public class ToggleableGameMechanic
                     case Vector3Int value:
                         return value * -1;
                     case Vector2[] value:
-                        for (int i = 0; i < value.Length; i++)
+                        Vector2[] newVector2Values = (Vector2[]) value.Clone();
+                        for (int i = 0; i < newVector2Values.Length; i++)
                         {
-                            value[i] *= -1f;
+                            newVector2Values[i] *= -1f;
                         }
-                        return value;
+                        return newVector2Values;
                     case Vector3[] value:
-                        for (int i = 0; i < value.Length; i++)
+                        Vector3[] newVector3Values = (Vector3[]) value.Clone();
+                        for (int i = 0; i < newVector3Values.Length; i++)
                         {
-                            value[i] *= -1f;
+                            newVector3Values[i] *= -1f;
                         }
-                        return value;
+                        return newVector3Values;
                     case Vector4[] value:
-                        for (int i = 0; i < value.Length; i++)
+                        Vector4[] newVector4Values = (Vector4[]) value.Clone();
+                        for (int i = 0; i < newVector4Values.Length; i++)
                         {
-                            value[i] *= -1f;
+                            newVector4Values[i] *= -1f;
                         }
-                        return value;
+                        return newVector4Values;
                     case Vector2Int[] value:
-                        for (int i = 0; i < value.Length; i++)
+                        Vector2Int[] newVector2IntValues = (Vector2Int[]) value.Clone();
+                        for (int i = 0; i < newVector2IntValues.Length; i++)
                         {
-                            value[i] *= -1;
+                            newVector2IntValues[i] *= -1;
                         }
-                        return value;
+                        return newVector2IntValues;
                     case Vector3Int[] value:
-                        for (int i = 0; i < value.Length; i++)
+                        Vector3Int[] newVector3IntValues = (Vector3Int[]) value.Clone();
+                        for (int i = 0; i < newVector3IntValues.Length; i++)
                         {
-                            value[i] *= -1;
+                            newVector3IntValues[i] *= -1;
                         }
-                        return value;
+                        return newVector3IntValues;
                     case Quaternion value:
                         return Quaternion.Inverse(value);
                     case Matrix4x4 value:
