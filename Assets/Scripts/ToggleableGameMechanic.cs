@@ -147,7 +147,7 @@ public class ToggleableGameMechanic
                         }
                         return newVector3IntValues;
                     case Quaternion value:
-                        return value * new Vector3(2, 2, 2);
+                        return Quaternion.Euler(value.eulerAngles * 2f);
                     case Matrix4x4 value:
                         return value * Matrix4x4.Scale(new Vector3(2, 2, 2));
                     case Rect value:
@@ -245,7 +245,7 @@ public class ToggleableGameMechanic
                         }
                         return newVector3IntValues;
                     case Quaternion value:
-                        return value * new Vector3(0.5f, 0.5f, 0.5f);
+                        return Quaternion.Euler(value.eulerAngles * 0.5f);
                     case Matrix4x4 value:
                         return value * Matrix4x4.Scale(new Vector3(0.5f, 0.5f, 0.5f));
                     case Rect value:
