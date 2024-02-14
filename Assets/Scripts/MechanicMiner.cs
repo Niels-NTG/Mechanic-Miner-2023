@@ -44,7 +44,7 @@ public class MechanicMiner : MonoBehaviour
     {
         if (levelIndexList.Count == 0)
         {
-            Debug.LogError("No levels where selected. Stopping…");
+            Debug.LogError("No levels were selected. Stopping…");
             Application.Quit();
             return;
         }
