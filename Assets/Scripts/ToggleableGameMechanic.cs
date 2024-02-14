@@ -422,6 +422,11 @@ public class ToggleableGameMechanic
                         return new Bounds(value.center + Vector3.one, value.size + Vector3.one);
                     case BoundsInt value:
                         return new Bounds(value.center + Vector3Int.one, value.size + Vector3Int.one);
+                    case Enum value:
+                        Array enumValues = Enum.GetValues(value.GetType());
+                        int indexOfEnum = Array.IndexOf(enumValues, value);
+                        return enumValues.GetValue(Math.Abs(indexOfEnum + 1) % enumValues.Length);
+                }
                 break;
             case "subtract":
                 switch (inputValue)
@@ -499,6 +504,10 @@ public class ToggleableGameMechanic
                         return new Bounds(value.center - Vector3.one, value.size - Vector3.one);
                     case BoundsInt value:
                         return new Bounds(value.center - Vector3Int.one, value.size - Vector3Int.one);
+                    case Enum value:
+                        Array enumValues = Enum.GetValues(value.GetType());
+                        int indexOfEnum = Array.IndexOf(enumValues, value);
+                        return enumValues.GetValue(Math.Abs(indexOfEnum - 1) % enumValues.Length);
                 }
                 break;
         }
@@ -591,7 +600,8 @@ public class ToggleableGameMechanic
                         IsVector(outputValue) ||
                         IsQuaternion(outputValue) ||
                         IsMatrix(outputValue) ||
-                        IsRect(outputValue)
+                        IsRect(outputValue) ||
+                        IsEnum(outputValue)
                     );
 
                 // Check if applying a modifier to this value results in a different value. If it results in the same
@@ -675,6 +685,10 @@ public class ToggleableGameMechanic
         {
             return modifierTypes;
         }
+        if (IsEnum(v))
+        {
+            return new[] {"add", "subtract"};
+        }
         if (IsBoolean(v))
         {
             return new[] {"invert"};
@@ -721,6 +735,11 @@ public class ToggleableGameMechanic
     private static bool IsRect(object v)
     {
         return v is Rect || v is RectInt || v is Bounds || v is BoundsInt;
+    }
+
+    private static bool IsEnum(object v)
+    {
+        return v != null && v.GetType().IsEnum;
     }
 
     private static bool IsBoolean(object v)
