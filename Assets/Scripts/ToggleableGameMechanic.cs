@@ -335,11 +335,9 @@ public class ToggleableGameMechanic
                     case RectInt value:
                         return new RectInt(value.min, value.size * -1);
                     case Bounds value:
-                        value.SetMinMax(value.max, value.min);
-                        return value;
+                        return new Bounds(value.min - value.center, value.size);
                     case BoundsInt value:
-                        value.SetMinMax(value.max, value.min);
-                        return value;
+                        return new BoundsInt(value.min - value.position, value.size);
                 }
                 break;
         }
