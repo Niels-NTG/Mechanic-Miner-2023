@@ -3,8 +3,6 @@ import glob
 import pandas as pd
 import matplotlib.pyplot as plt
 
-POPULATION_SIZE = 100
-
 
 def getTableFilesInFolder(path: str, category: str) -> pd.DataFrame:
     files = glob.glob(f'{path}GA log *.csv')
@@ -19,7 +17,7 @@ def runAnalysis(tables: pd.DataFrame):
     fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(40, 20))
 
     for name, group in groupedData[groupedData['level'] == 3].groupby('category'):
-        plot = group.plot(kind='line', y=['mean'], x='generation', ax=axes[0], label=[name], stroke=2)
+        plot = group.plot(kind='line', y=['mean'], x='generation', ax=axes[0], label=[name])
         plot.fill_between(group['generation'], group['mean'] - group['std'], group['mean'] + group['std'], alpha=0.2)
     axes[0].set_title('Level 3')
     axes[0].set_ylim(0, 1)
