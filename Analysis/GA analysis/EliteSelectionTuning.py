@@ -8,13 +8,13 @@ def getTableFilesInFolder(path: str, category: str) -> pd.DataFrame:
     files = glob.glob(f'{path}GA log *.csv')
     frames = pd.concat([pd.read_csv(f) for f in files], ignore_index=True)
     frames['category'] = category
-    return frames.where(frames['fitness'] > 1.e-10)
+    return frames.where(frames['fitness'] > 0)
 
 
 def runAnalysis(tables: pd.DataFrame):
     groupedData = tables.groupby(['category', 'level', 'generation'])['fitness'].agg(['mean', 'std']).reset_index()
 
-    fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(40, 20))
+    fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(12, 3))
 
     for name, group in groupedData[groupedData['level'] == 3].groupby('category'):
         plot = group.plot(kind='line', y=['mean'], x='generation', ax=axes[0], label=[name])
@@ -39,10 +39,10 @@ def runAnalysis(tables: pd.DataFrame):
 
 
 eliteSelectionComparisonTables = pd.concat([
-    getTableFilesInFolder('./data/0p elite/', '0% elite selection'),
-    getTableFilesInFolder('./data/2p elite/', '2% elite selection'),
-    getTableFilesInFolder('./data/10p elite/', '10% elite selection'),
-    getTableFilesInFolder('./data/25p elite/', '25% elite selection'),
+    getTableFilesInFolder('./data/bb27b9d 0p elite/', '0% elite selection'),
+    getTableFilesInFolder('./data/bb27b9d 2p elite/', '2% elite selection'),
+    getTableFilesInFolder('./data/bb27b9d 10p elite/', '10% elite selection'),
+    getTableFilesInFolder('./data/bb27b9d 25p elite/', '25% elite selection'),
 ], ignore_index=True)
 runAnalysis(eliteSelectionComparisonTables)
 

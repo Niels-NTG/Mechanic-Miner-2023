@@ -94,7 +94,7 @@ public class MechanicMiner : MonoBehaviour
 
         Debug.Log($"START genetic algorithm for level {levelIndex}, with a population of {populationSize}");
 
-        StreamWriter writer = new StreamWriter($"Logs/GA log {DateTime.Now:yyyy-MM-dd-T-HH-mm-ss} - {GitCommitUtility.RetrieveCurrentCommitShortHash()} - level {levelIndex} - population {populationSize} (2 % elite selection).csv");
+        StreamWriter writer = new StreamWriter($"Logs/GA log {DateTime.Now:yyyy-MM-dd-T-HH-mm-ss} - {GitCommitUtility.RetrieveCurrentCommitShortHash()} - level {levelIndex} - population {populationSize} (10 % elite selection).csv");
         CsvWriter csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
         csvWriter.WriteHeader<GeneticAlgorithmLogRow>();
         csvWriter.NextRecord();
