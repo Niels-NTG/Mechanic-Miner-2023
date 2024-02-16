@@ -158,7 +158,7 @@ MonoBehaviour:
   maxGenerationCount: 15
   levelGeneratorSeed: 0
   tgmGeneratorSeed: 0
-  levelIndexList: 030000000400000005000000
+  levelIndexList: 030000000400000005000000030000000400000005000000030000000400000005000000
 --- !u!4 &27798706
 Transform:
   m_ObjectHideFlags: 0
