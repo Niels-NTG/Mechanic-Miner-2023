@@ -103,6 +103,8 @@ public class ToggleableGameMechanic
                         return value * 2;
                     case short value:
                         return value * 2;
+                    case ushort value:
+                        return value * 2;
                     case long value:
                         return value * 2;
                     case double value:
@@ -194,6 +196,8 @@ public class ToggleableGameMechanic
                     case sbyte value:
                         return value / 2;
                     case short value:
+                        return value / 2;
+                    case ushort value:
                         return value / 2;
                     case long value:
                         return value / 2;
@@ -287,6 +291,8 @@ public class ToggleableGameMechanic
                         return value * -1;
                     case short value:
                         return value * -1;
+                    case ushort value:
+                        return value * -1;
                     case long value:
                         return value * -1;
                     case double value:
@@ -366,6 +372,8 @@ public class ToggleableGameMechanic
                     case sbyte value:
                         return value + 1;
                     case short value:
+                        return value + 1;
+                    case ushort value:
                         return value + 1;
                     case long value:
                         return value + 1;
@@ -450,6 +458,8 @@ public class ToggleableGameMechanic
                     case sbyte value:
                         return value - 1;
                     case short value:
+                        return value - 1;
+                    case ushort value:
                         return value - 1;
                     case long value:
                         return value - 1;
@@ -713,6 +723,7 @@ public class ToggleableGameMechanic
                v is uint ||
                v is sbyte ||
                v is short ||
+               v is ushort ||
                v is long ||
                v is double ||
                v is decimal;
