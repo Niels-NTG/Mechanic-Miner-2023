@@ -97,6 +97,8 @@ public class ToggleableGameMechanic
                         return value * 2f;
                     case int value:
                         return value * 2;
+                    case uint value:
+                        return value * 2;
                     case sbyte value:
                         return value * 2;
                     case short value:
@@ -186,6 +188,8 @@ public class ToggleableGameMechanic
                     case float value:
                         return value / 2f;
                     case int value:
+                        return value / 2;
+                    case uint value:
                         return value / 2;
                     case sbyte value:
                         return value / 2;
@@ -277,6 +281,8 @@ public class ToggleableGameMechanic
                         return value * -1f;
                     case int value:
                         return value * -1;
+                    case uint value:
+                        return value * -1;
                     case sbyte value:
                         return value * -1;
                     case short value:
@@ -354,6 +360,8 @@ public class ToggleableGameMechanic
                     case float value:
                         return value + 1f;
                     case int value:
+                        return value + 1;
+                    case uint value:
                         return value + 1;
                     case sbyte value:
                         return value + 1;
@@ -436,6 +444,8 @@ public class ToggleableGameMechanic
                     case float value:
                         return value - 1f;
                     case int value:
+                        return value - 1;
+                    case uint value:
                         return value - 1;
                     case sbyte value:
                         return value - 1;
@@ -700,6 +710,7 @@ public class ToggleableGameMechanic
     {
         return v is float ||
                v is int ||
+               v is uint ||
                v is sbyte ||
                v is short ||
                v is long ||
