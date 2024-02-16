@@ -99,6 +99,8 @@ public class ToggleableGameMechanic
                         return value * 2;
                     case uint value:
                         return value * 2;
+                    case byte value:
+                        return value * 2;
                     case sbyte value:
                         return value * 2;
                     case short value:
@@ -106,6 +108,8 @@ public class ToggleableGameMechanic
                     case ushort value:
                         return value * 2;
                     case long value:
+                        return value * 2;
+                    case ulong value:
                         return value * 2;
                     case double value:
                         return value * 2d;
@@ -193,6 +197,8 @@ public class ToggleableGameMechanic
                         return value / 2;
                     case uint value:
                         return value / 2;
+                    case byte value:
+                        return value / 2;
                     case sbyte value:
                         return value / 2;
                     case short value:
@@ -200,6 +206,8 @@ public class ToggleableGameMechanic
                     case ushort value:
                         return value / 2;
                     case long value:
+                        return value / 2;
+                    case ulong value:
                         return value / 2;
                     case double value:
                         return value / 2d;
@@ -285,13 +293,9 @@ public class ToggleableGameMechanic
                         return value * -1f;
                     case int value:
                         return value * -1;
-                    case uint value:
-                        return value * -1;
                     case sbyte value:
                         return value * -1;
                     case short value:
-                        return value * -1;
-                    case ushort value:
                         return value * -1;
                     case long value:
                         return value * -1;
@@ -369,6 +373,8 @@ public class ToggleableGameMechanic
                         return value + 1;
                     case uint value:
                         return value + 1;
+                    case byte value:
+                        return value + 1;
                     case sbyte value:
                         return value + 1;
                     case short value:
@@ -376,6 +382,8 @@ public class ToggleableGameMechanic
                     case ushort value:
                         return value + 1;
                     case long value:
+                        return value + 1;
+                    case ulong value:
                         return value + 1;
                     case double value:
                         return value + 1d;
@@ -455,6 +463,8 @@ public class ToggleableGameMechanic
                         return value - 1;
                     case uint value:
                         return value - 1;
+                    case byte value:
+                        return value - 1;
                     case sbyte value:
                         return value - 1;
                     case short value:
@@ -462,6 +472,8 @@ public class ToggleableGameMechanic
                     case ushort value:
                         return value - 1;
                     case long value:
+                        return value - 1;
+                    case ulong value:
                         return value - 1;
                     case double value:
                         return value - 1d;
@@ -613,16 +625,7 @@ public class ToggleableGameMechanic
             try
             {
                 object outputValue = candidateProperty.GetValue(selectedComponent);
-                isEditableMechanic =
-                    candidateProperty.SetMethod != null && (
-                        IsNumeric(outputValue) ||
-                        IsBoolean(outputValue) ||
-                        IsVector(outputValue) ||
-                        IsQuaternion(outputValue) ||
-                        IsMatrix(outputValue) ||
-                        IsRect(outputValue) ||
-                        IsEnum(outputValue)
-                    );
+                isEditableMechanic = candidateProperty.SetMethod != null && IsTGMCompatibleType(outputValue);
 
                 // Check if applying a modifier to this value results in a different value. If it results in the same
                 // value, skip this property.
@@ -699,11 +702,27 @@ public class ToggleableGameMechanic
         return validCandidateModifiers[rng.Next(validCandidateModifiers.Length)];
     }
 
+    private static bool IsTGMCompatibleType(object v)
+    {
+        return IsNumeric(v) ||
+               IsBoolean(v) ||
+               IsVector(v) ||
+               IsQuaternion(v) ||
+               IsMatrix(v) ||
+               IsRect(v) ||
+               IsEnum(v) ||
+               IsUnsignedNumeric(v);
+    }
+
     private static String[] GetValidModifiersForType(object v)
     {
         if (IsNumeric(v) || IsVector(v) || IsQuaternion(v) || IsMatrix(v) || IsRect(v))
         {
             return modifierTypes;
+        }
+        if (IsUnsignedNumeric(v))
+        {
+            return new[] {"double", "half", "add", "subtract"};
         }
         if (IsEnum(v))
         {
@@ -720,13 +739,19 @@ public class ToggleableGameMechanic
     {
         return v is float ||
                v is int ||
-               v is uint ||
                v is sbyte ||
                v is short ||
-               v is ushort ||
                v is long ||
                v is double ||
                v is decimal;
+    }
+
+    private static bool IsUnsignedNumeric(object v)
+    {
+        return v is byte ||
+               v is ushort ||
+               v is uint ||
+               v is ulong;
     }
 
     private static bool IsVector(object v)
