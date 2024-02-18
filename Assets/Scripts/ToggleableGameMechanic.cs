@@ -692,7 +692,12 @@ public class ToggleableGameMechanic
         {
             Debug.LogError($"Invalid modifier name {modifierName} !");
         }
-        selectedModifier = IsBoolean(initialPropertyValue) ? "invert" : modifierName;
+        String[] validCandidateModifiers = GetValidModifiersForType(initialPropertyValue);
+        if (validCandidateModifiers.Contains(modifierName)) {
+            selectedModifier = modifierName;
+        } else if (selectedModifier == null) {
+            selectedModifier = validCandidateModifiers[rng.Next(validCandidateModifiers.Length)];
+        }
         return GetModifier();
     }
 
