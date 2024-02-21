@@ -79,16 +79,14 @@ def runAnalysis(tables: pd.DataFrame):
         })
         populationDiversityTable = pd.concat([populationDiversityTable, newRow.to_frame().T], ignore_index=True)
 
-    # TODO put mean population into different graph.
-    # TODO express mean population count as %
-    fig, axes = plt.subplots(nrows=3, ncols=4, figsize=(18, 16))
-    makePlot(3, populationDiversityTable, 0, axes)
-    makePlot(4, populationDiversityTable, 1, axes)
-    makePlot(5, populationDiversityTable, 2, axes)
-    makePlot(6, populationDiversityTable, 3, axes)
+    fig, axes = plt.subplots(nrows=3, ncols=4, figsize=(18, 14))
+    makePlot(3, 'Wall', populationDiversityTable, 0, axes)
+    makePlot(4, 'Wall + Elevation', populationDiversityTable, 1, axes)
+    makePlot(5, 'Ceiling', populationDiversityTable, 2, axes)
+    makePlot(6, 'Chasm', populationDiversityTable, 3, axes)
 
 
-def makePlot(level: int, table: pd.DataFrame, x: int, axes):
+def makePlot(level: int, levelName: str, table: pd.DataFrame, x: int, axes):
     table = table[table['level'] == level]
     plot = table.plot(
         kind='line',
@@ -111,9 +109,10 @@ def makePlot(level: int, table: pd.DataFrame, x: int, axes):
         alpha=0.4,
         color='g',
     )
-    plot.set_title(f'Level {level}')
+    plot.set_title(levelName)
     plot.set_xlim(1, 15)
     plot.set_ylim(1, 16)
+    plot.set_xlabel('')
     if x != 0:
         plot.get_legend().remove()
 
@@ -133,6 +132,7 @@ def makePlot(level: int, table: pd.DataFrame, x: int, axes):
     )
     plot2.set_xlim(1, 15)
     plot2.set_ylim(0, 1)
+    plot2.set_xlabel('')
     if x != 0:
         plot2.get_legend().remove()
 
