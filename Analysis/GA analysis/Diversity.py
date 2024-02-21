@@ -163,7 +163,7 @@ def makePlot(level: int, levelName: str, table: pd.DataFrame, x: int, axes):
         plot3.get_legend().remove()
 
 
-diversityTables = getTableFilesInFolder('./data/8368d49/')
+diversityTables = getTableFilesInFolder('./data/f65acba/')
 runAnalysis(diversityTables)
 
 plt.tight_layout()
