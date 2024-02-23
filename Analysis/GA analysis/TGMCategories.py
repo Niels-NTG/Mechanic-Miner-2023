@@ -87,6 +87,7 @@ def runAnalysis(tables: pd.DataFrame):
 def makePlot(level: int, levelName: str, table: pd.DataFrame, tgmTypes: list, x: int, y: int, axes):
     table = table[table['level'] == level]
     table[tgmTypes] = table[tgmTypes].divide(table[tgmTypes].sum(axis=1), axis=0)
+    table.to_csv('./data/TGM types level {0} f65acba 40.csv'.format(level), index=False)
     plot = table.plot(
         kind='area',
         x='generation',
