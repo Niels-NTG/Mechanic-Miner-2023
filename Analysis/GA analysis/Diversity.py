@@ -79,11 +79,13 @@ def runAnalysis(tables: pd.DataFrame):
         })
         populationDiversityTable = pd.concat([populationDiversityTable, newRow.to_frame().T], ignore_index=True)
 
-    fig, axes = plt.subplots(nrows=3, ncols=4, figsize=(18, 14))
+    fig, axes = plt.subplots(nrows=3, ncols=6, figsize=(30, 14))
     makePlot(3, 'Wall', populationDiversityTable, 0, axes)
     makePlot(4, 'Wall + Elevation', populationDiversityTable, 1, axes)
     makePlot(5, 'Ceiling', populationDiversityTable, 2, axes)
-    makePlot(6, 'Chasm', populationDiversityTable, 3, axes)
+    makePlot(6, 'Deadly River', populationDiversityTable, 3, axes)
+    makePlot(8, 'Ravine', populationDiversityTable, 4, axes)
+    makePlot(9, 'Ravine + Spikes', populationDiversityTable, 5, axes)
 
 
 def makePlot(level: int, levelName: str, table: pd.DataFrame, x: int, axes):
