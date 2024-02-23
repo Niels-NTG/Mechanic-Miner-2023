@@ -40,7 +40,7 @@ def runAnalysis(tables: pd.DataFrame):
             'population size 75%',
             'population size 95%',
             # 'totalUniqueGenes',
-            'fitness mean',
+            'fitness median',
             'fitness 5%',
             'fitness 25%',
             'fitness 75%',
@@ -59,7 +59,10 @@ def runAnalysis(tables: pd.DataFrame):
             percentiles=[0.05, 0.25, 0.75, 0.95]
         )
         populationCountMedian = populationCount.agg(['median'])
-        meanFitness = group['fitness'].agg(['mean', 'std'])
+        fitnessMedian = group['fitness'].agg(['median'])
+        fitnessPercentiles = group['fitness'].describe(
+            percentiles=[0.05, 0.25, 0.75, 0.95]
+        )
         newRow = pd.Series({
             'level': name[0],
             'generation': name[1],
@@ -74,18 +77,21 @@ def runAnalysis(tables: pd.DataFrame):
             'population size 75%': populationCountPercentiles['count']['75%'],
             'population size 95%': populationCountPercentiles['count']['95%'],
             # 'totalUniqueGenes': totalUniqueGeneCount,
-            'fitness mean': meanFitness['mean'],
-            'fitness std': meanFitness['std'],
+            'fitness median': fitnessMedian['median'],
+            'fitness 5%': fitnessPercentiles['5%'],
+            'fitness 25%': fitnessPercentiles['25%'],
+            'fitness 75%': fitnessPercentiles['75%'],
+            'fitness 95%': fitnessPercentiles['95%'],
         })
         populationDiversityTable = pd.concat([populationDiversityTable, newRow.to_frame().T], ignore_index=True)
 
-    fig1, meanFitnessAxes = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
-    makeMeanFitnessPlot(3, 'Wall', populationDiversityTable, 0, 0, meanFitnessAxes)
-    makeMeanFitnessPlot(4, 'Wall + Elevation', populationDiversityTable, 1, 0, meanFitnessAxes)
-    makeMeanFitnessPlot(5, 'Ceiling', populationDiversityTable, 2, 0, meanFitnessAxes)
-    makeMeanFitnessPlot(6, 'Deadly River', populationDiversityTable, 0, 1, meanFitnessAxes)
-    makeMeanFitnessPlot(8, 'Ravine', populationDiversityTable, 1, 1, meanFitnessAxes)
-    makeMeanFitnessPlot(9, 'Ravine + Spikes', populationDiversityTable, 2, 1, meanFitnessAxes)
+    fig1, medianFitnessAxes = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
+    makeMedianFitnessPlot(3, 'Wall', populationDiversityTable, 0, 0, medianFitnessAxes)
+    makeMedianFitnessPlot(4, 'Wall + Elevation', populationDiversityTable, 1, 0, medianFitnessAxes)
+    makeMedianFitnessPlot(5, 'Ceiling', populationDiversityTable, 2, 0, medianFitnessAxes)
+    makeMedianFitnessPlot(6, 'Deadly River', populationDiversityTable, 0, 1, medianFitnessAxes)
+    makeMedianFitnessPlot(8, 'Ravine', populationDiversityTable, 1, 1, medianFitnessAxes)
+    makeMedianFitnessPlot(9, 'Ravine + Spikes', populationDiversityTable, 2, 1, medianFitnessAxes)
     plt.tight_layout()
     plt.show()
 
@@ -110,21 +116,29 @@ def runAnalysis(tables: pd.DataFrame):
     plt.show()
 
 
-def makeMeanFitnessPlot(level: int, levelName: str, table: pd.DataFrame, x: int, y: int, axes):
+
+def makeMedianFitnessPlot(level: int, levelName: str, table: pd.DataFrame, x: int, y: int, axes):
     table = table[table['level'] == level]
     plot = table.plot(
         kind='line',
-        y=['fitness mean'],
+        y=['fitness median'],
         x='generation',
         ax=axes[y, x],
-        color='orange',
+        color='darkorange',
     )
     plot.fill_between(
         table['generation'],
-        table['fitness mean'] - table['fitness std'],
-        table['fitness mean'] + table['fitness std'],
+        table['fitness 5%'],
+        table['fitness 95%'],
         alpha=0.2,
-        color='orange',
+        color='darkorange',
+    )
+    plot.fill_between(
+        table['generation'],
+        table['fitness 25%'],
+        table['fitness 75%'],
+        alpha=0.4,
+        color='darkorange',
     )
     plot.set_title(levelName)
     plot.set_xlim(1, 15)
