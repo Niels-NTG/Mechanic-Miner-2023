@@ -94,6 +94,7 @@ def makePlot(level: int, levelName: str, table: pd.DataFrame, tgmTypes: list, x:
         y=tgmTypes,
         ax=axes[y, x],
         colormap='tab20b',
+        linewidth=0,
     )
     plot.set_title(levelName)
     plot.set_xlim(1, 15)
