@@ -115,6 +115,7 @@ def runAnalysis(tables: pd.DataFrame):
     plt.tight_layout()
     plt.show()
 
+    return groupedData.value_counts(subset=['TGM'])
 
 
 def makeMedianFitnessPlot(level: int, levelName: str, table: pd.DataFrame, x: int, y: int, axes):
@@ -222,4 +223,5 @@ def makeMedianNonZeroFitnessPopulationCount(level: int, levelName: str, table: p
 
 
 diversityTables = getTableFilesInFolder('./data/f65acba/')
-runAnalysis(diversityTables)
+TGMcountTable = runAnalysis(diversityTables)
+TGMcountTable.to_csv('./data/TGM value counts f65acba 40.csv')
