@@ -79,22 +79,72 @@ def runAnalysis(tables: pd.DataFrame):
         })
         populationDiversityTable = pd.concat([populationDiversityTable, newRow.to_frame().T], ignore_index=True)
 
-    fig, axes = plt.subplots(nrows=3, ncols=6, figsize=(30, 14))
-    makePlot(3, 'Wall', populationDiversityTable, 0, axes)
-    makePlot(4, 'Wall + Elevation', populationDiversityTable, 1, axes)
-    makePlot(5, 'Ceiling', populationDiversityTable, 2, axes)
-    makePlot(6, 'Deadly River', populationDiversityTable, 3, axes)
-    makePlot(8, 'Ravine', populationDiversityTable, 4, axes)
-    makePlot(9, 'Ravine + Spikes', populationDiversityTable, 5, axes)
+    fig1, meanFitnessAxes = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
+    makeMeanFitnessPlot(3, 'Wall', populationDiversityTable, 0, 0, meanFitnessAxes)
+    makeMeanFitnessPlot(4, 'Wall + Elevation', populationDiversityTable, 1, 0, meanFitnessAxes)
+    makeMeanFitnessPlot(5, 'Ceiling', populationDiversityTable, 2, 0, meanFitnessAxes)
+    makeMeanFitnessPlot(6, 'Deadly River', populationDiversityTable, 0, 1, meanFitnessAxes)
+    makeMeanFitnessPlot(8, 'Ravine', populationDiversityTable, 1, 1, meanFitnessAxes)
+    makeMeanFitnessPlot(9, 'Ravine + Spikes', populationDiversityTable, 2, 1, meanFitnessAxes)
+    plt.tight_layout()
+    plt.show()
+
+    fig2, medianUniqueGeneCountAxes = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
+    makeMedianUniqueGeneCountPlot(3, 'Wall', populationDiversityTable, 0, 0, medianUniqueGeneCountAxes)
+    makeMedianUniqueGeneCountPlot(4, 'Wall + Elevation', populationDiversityTable, 1, 0, medianUniqueGeneCountAxes)
+    makeMedianUniqueGeneCountPlot(5, 'Ceiling', populationDiversityTable, 2, 0, medianUniqueGeneCountAxes)
+    makeMedianUniqueGeneCountPlot(6, 'Deadly River', populationDiversityTable, 0, 1, medianUniqueGeneCountAxes)
+    makeMedianUniqueGeneCountPlot(8, 'Ravine', populationDiversityTable, 1, 1, medianUniqueGeneCountAxes)
+    makeMedianUniqueGeneCountPlot(9, 'Ravine + Spikes', populationDiversityTable, 2, 1, medianUniqueGeneCountAxes)
+    plt.tight_layout()
+    plt.show()
+
+    fig3, medianNonZeroFitnessPopulationCountAxes = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
+    makeMedianNonZeroFitnessPopulationCount(3, 'Wall', populationDiversityTable, 0, 0, medianNonZeroFitnessPopulationCountAxes)
+    makeMedianNonZeroFitnessPopulationCount(4, 'Wall + Elevation', populationDiversityTable, 1, 0, medianNonZeroFitnessPopulationCountAxes)
+    makeMedianNonZeroFitnessPopulationCount(5, 'Ceiling', populationDiversityTable, 2, 0, medianNonZeroFitnessPopulationCountAxes)
+    makeMedianNonZeroFitnessPopulationCount(6, 'Deadly River', populationDiversityTable, 0, 1, medianNonZeroFitnessPopulationCountAxes)
+    makeMedianNonZeroFitnessPopulationCount(8, 'Ravine', populationDiversityTable, 1, 1, medianNonZeroFitnessPopulationCountAxes)
+    makeMedianNonZeroFitnessPopulationCount(9, 'Ravine + Spikes', populationDiversityTable, 2, 1, medianNonZeroFitnessPopulationCountAxes)
+    plt.tight_layout()
+    plt.show()
 
 
-def makePlot(level: int, levelName: str, table: pd.DataFrame, x: int, axes):
+def makeMeanFitnessPlot(level: int, levelName: str, table: pd.DataFrame, x: int, y: int, axes):
+    table = table[table['level'] == level]
+    plot = table.plot(
+        kind='line',
+        y=['fitness mean'],
+        x='generation',
+        ax=axes[y, x],
+        color='orange',
+    )
+    plot.fill_between(
+        table['generation'],
+        table['fitness mean'] - table['fitness std'],
+        table['fitness mean'] + table['fitness std'],
+        alpha=0.2,
+        color='orange',
+    )
+    plot.set_title(levelName)
+    plot.set_xlim(1, 15)
+    plot.set_ylim(0, 1)
+    plot.set_xlabel('')
+    if x != 0 or y != 0:
+        plot.get_legend().remove()
+    if y == 1:
+        plot.set_xlabel('generation')
+    else:
+        plot.set_xlabel('')
+
+
+def makeMedianUniqueGeneCountPlot(level: int, levelName: str, table: pd.DataFrame, x: int, y: int, axes):
     table = table[table['level'] == level]
     plot = table.plot(
         kind='line',
         y=['median unique genes count'],
         x='generation',
-        ax=axes[0, x],
+        ax=axes[y, x],
         color='g',
     )
     plot.fill_between(
@@ -113,60 +163,49 @@ def makePlot(level: int, levelName: str, table: pd.DataFrame, x: int, axes):
     )
     plot.set_title(levelName)
     plot.set_xlim(1, 15)
-    plot.set_ylim(1, 16)
+    plot.set_ylim(0, 14)
     plot.set_xlabel('')
-    if x != 0:
+    if x != 0 or y != 0:
         plot.get_legend().remove()
+    if y == 1:
+        plot.set_xlabel('generation')
+    else:
+        plot.set_xlabel('')
 
-    plot2 = table.plot(
-        kind='line',
-        y=['fitness mean'],
-        x='generation',
-        ax=axes[1, x],
-        color='orange',
-    )
-    plot2.fill_between(
-        table['generation'],
-        table['fitness mean'] - table['fitness std'],
-        table['fitness mean'] + table['fitness std'],
-        alpha=0.2,
-        color='orange',
-    )
-    plot2.set_xlim(1, 15)
-    plot2.set_ylim(0, 1)
-    plot2.set_xlabel('')
-    if x != 0:
-        plot2.get_legend().remove()
 
-    plot3 = table.plot(
+def makeMedianNonZeroFitnessPopulationCount(level: int, levelName: str, table: pd.DataFrame, x: int, y: int, axes):
+    table = table[table['level'] == level]
+    plot = table.plot(
         kind='line',
         y=['median non-zero fitness population size'],
         x='generation',
-        ax=axes[2, x],
+        ax=axes[y, x],
         color='purple',
     )
-    plot3.fill_between(
+    plot.fill_between(
         table['generation'],
         table['population size 5%'],
         table['population size 95%'],
         alpha=0.2,
         color='purple',
     )
-    plot3.fill_between(
+    plot.fill_between(
         table['generation'],
         table['population size 25%'],
         table['population size 75%'],
         alpha=0.4,
         color='purple',
     )
-    plot3.set_xlim(1, 15)
-    plot3.set_ylim(0, 100)
-    if x != 0:
-        plot3.get_legend().remove()
+    plot.set_title(levelName)
+    plot.set_xlim(1, 15)
+    plot.set_ylim(0, 100)
+    if x != 0 or y != 0:
+        plot.get_legend().remove()
+    if y == 1:
+        plot.set_xlabel('generation')
+    else:
+        plot.set_xlabel('')
 
 
 diversityTables = getTableFilesInFolder('./data/f65acba/')
 runAnalysis(diversityTables)
-
-plt.tight_layout()
-plt.show()
