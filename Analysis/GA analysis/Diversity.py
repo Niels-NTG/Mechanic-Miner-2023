@@ -4,6 +4,27 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
+# gameObject:
+# - player = PlayerAgent
+# - level = everything else
+# component:
+# - BoxCollider2D, CompositeCollider2D, EdgeCollider2D, TilemapCollider2D
+# - Grid
+# - PlayerController
+# - RigidBody2D
+# - Transform
+def getComponentType(component: str):
+    if 'Collider' in component:
+        return 'collider'
+    if 'Rigidbody' in component:
+        return 'rigidbody'
+    if 'Transform' in component:
+        return 'transform'
+    if 'Grid' in component:
+        return 'grid'
+    return 'other'
+
+
 def getTableFilesInFolder(path: str) -> pd.DataFrame:
     files = glob.glob(f'{path}GA log *.csv')
     frames: list[pd.DataFrame] = []
@@ -18,6 +39,14 @@ def getTableFilesInFolder(path: str) -> pd.DataFrame:
             frame['componentField'].astype(str) + ',' +
             frame['modifier'].astype(str)
         )
+        frame['gameObjectType'] = [
+            'player' if gameObject.startswith('Player') else 'level' for gameObject in frame['gameObject'].astype(str)
+        ]
+        frame['componentType'] = [
+            getComponentType(component) for component in frame['component'].astype(str)
+        ]
+        frame['TGMgroup'] = frame['gameObjectType'].astype(str) + '-' + frame['componentType'].astype(str)
+
         frames.append(frame)
     mergedFrames = pd.concat(frames, ignore_index=True)
     return mergedFrames
@@ -25,6 +54,8 @@ def getTableFilesInFolder(path: str) -> pd.DataFrame:
 
 def runAnalysis(tables: pd.DataFrame):
     groupedData = tables.groupby(['level', 'generation'])
+    tgmGroups = tables.dropna().drop_duplicates(subset=['TGMgroup'])['TGMgroup'].to_list()
+    tgmGroups.sort()
     populationDiversityTable = pd.DataFrame(
         columns=[
             'level',
@@ -47,6 +78,36 @@ def runAnalysis(tables: pd.DataFrame):
             'fitness 95%',
         ]
     )
+    medianTGMCountTable = pd.DataFrame(
+        columns=[
+            'level',
+            'generation',
+            'median',
+            '%',
+            '5%',
+            '25%',
+            '75%',
+            '95%',
+            'min',
+            'max',
+        ]
+    )
+
+    medianTGMGroupCountTable = pd.DataFrame(
+        columns=[
+            'level',
+            'generation',
+            'median',
+            '%',
+            '5%',
+            '25%',
+            '75%',
+            '95%',
+            'min',
+            'max',
+        ]
+    )
+
     for name, group in groupedData:
         # totalUniqueGeneCount = group['TGM'].agg(['nunique'])['nunique']
         uniqueGeneCount = group.groupby(['filename'])['TGM'].agg(['nunique'])
@@ -89,6 +150,37 @@ def runAnalysis(tables: pd.DataFrame):
         })
         populationDiversityTable = pd.concat([populationDiversityTable, newRow.to_frame().T], ignore_index=True)
 
+        medianTGMCountSubTable = group.groupby(['TGM'])['filename'].value_counts().groupby(['TGM']).agg([
+            'median',
+            ('5%', lambda x: x.quantile(0.05)),
+            ('25%', lambda x: x.quantile(0.25)),
+            ('75%', lambda x: x.quantile(0.75)),
+            ('95%', lambda x: x.quantile(0.95)),
+            'min',
+            'max',
+        ])
+        medianTGMCountSubTable['%'] = medianTGMCountSubTable['median'].divide(medianTGMCountSubTable['median'].sum())
+        medianTGMCountSubTable['level'] = name[0]
+        medianTGMCountSubTable['generation'] = name[1]
+        medianTGMCountTable = pd.concat([medianTGMCountTable, medianTGMCountSubTable])
+
+        medianTGMGroupCountSubTable = group.groupby(['TGMgroup'])['filename'].value_counts().groupby(['TGMgroup']).agg([
+            'median',
+            ('5%', lambda x: x.quantile(0.05)),
+            ('25%', lambda x: x.quantile(0.25)),
+            ('75%', lambda x: x.quantile(0.75)),
+            ('95%', lambda x: x.quantile(0.95)),
+            'min',
+            'max',
+        ])
+        medianTGMGroupCountSubTable['%'] = medianTGMGroupCountSubTable['median'].divide(medianTGMGroupCountSubTable['median'].sum())
+        medianTGMGroupCountSubTable['level'] = name[0]
+        medianTGMGroupCountSubTable['generation'] = name[1]
+        medianTGMGroupCountTable = pd.concat([medianTGMGroupCountTable, medianTGMGroupCountSubTable])
+
+    medianTGMCountTable.to_csv('./data/TGM median types f65acba 40.csv')
+    medianTGMGroupCountTable.to_csv('./data/TGM median group types f65acba 40.csv')
+
     fig1, medianFitnessAxes = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
     makeMedianFitnessPlot(3, 'Wall', populationDiversityTable, 0, 0, medianFitnessAxes)
     makeMedianFitnessPlot(4, 'Wall + Elevation', populationDiversityTable, 1, 0, medianFitnessAxes)
@@ -119,7 +211,15 @@ def runAnalysis(tables: pd.DataFrame):
     plt.tight_layout()
     plt.show()
 
-    return groupedData.value_counts(subset=['TGM'])
+    fig4, tgmCategoriesAxes = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
+    makeTGMCategoriesPlot(3, 'Wall', medianTGMGroupCountTable, tgmGroups, 0, 0, tgmCategoriesAxes)
+    makeTGMCategoriesPlot(4, 'Wall + Elevation', medianTGMGroupCountTable, tgmGroups, 1, 0, tgmCategoriesAxes)
+    makeTGMCategoriesPlot(5, 'Ceiling', medianTGMGroupCountTable, tgmGroups, 2, 0, tgmCategoriesAxes)
+    makeTGMCategoriesPlot(6, 'Deadly River', medianTGMGroupCountTable, tgmGroups, 0, 1, tgmCategoriesAxes)
+    makeTGMCategoriesPlot(8, 'Ravine', medianTGMGroupCountTable, tgmGroups, 1, 1, tgmCategoriesAxes)
+    makeTGMCategoriesPlot(9, 'Ravine + Spikes', medianTGMGroupCountTable, tgmGroups, 2, 1, tgmCategoriesAxes)
+    plt.tight_layout()
+    plt.show()
 
 
 def makeMedianFitnessPlot(level: int, levelName: str, table: pd.DataFrame, x: int, y: int, axes):
@@ -226,6 +326,31 @@ def makeMedianNonZeroFitnessPopulationCount(level: int, levelName: str, table: p
         plot.set_xlabel('')
 
 
+def makeTGMCategoriesPlot(level: int, levelName: str, table: pd.DataFrame, tgmTypes: list, x: int, y: int, axes):
+    table = table[table['level'] == level][['generation', '%']].pivot(columns=['generation']).transpose().droplevel(0)
+    table2 = pd.DataFrame(
+        columns=tgmTypes
+    )
+    table2 = pd.concat([table2, table])
+    table2.to_csv('./data/median TGM types level {0} f65acba 40.csv'.format(level), index=False)
+    plot = table2.plot(
+        kind='area',
+        y=tgmTypes,
+        ax=axes[y, x],
+        colormap='tab20b',
+        linewidth=0,
+    )
+    plot.set_title(levelName)
+    plot.set_xlim(1, 15)
+    if y == 1:
+        plot.set_xlabel('generation')
+    else:
+        plot.set_xlabel('')
+    if x != 2 or y != 0:
+        plot.get_legend().remove()
+    else:
+        axes[y, x].legend(loc='upper left', bbox_to_anchor=(1.01, 1))
+
+
 diversityTables = getTableFilesInFolder('./data/f65acba/')
-TGMcountTable = runAnalysis(diversityTables)
-TGMcountTable.to_csv('./data/TGM value counts f65acba 40.csv')
+runAnalysis(diversityTables)
