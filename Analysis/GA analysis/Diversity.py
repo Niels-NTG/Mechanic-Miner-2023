@@ -54,15 +54,19 @@ def runAnalysis(tables: pd.DataFrame):
             percentiles=[0.05, 0.25, 0.75, 0.95]
         )
         uniqueGeneCountMedian = uniqueGeneCount.agg(['median'])
+
         populationCount = group.groupby(['filename'])['TGM'].agg(['count'])
         populationCountPercentiles = populationCount.describe(
             percentiles=[0.05, 0.25, 0.75, 0.95]
         )
         populationCountMedian = populationCount.agg(['median'])
-        fitnessMedian = group['fitness'].agg(['median'])
-        fitnessPercentiles = group['fitness'].describe(
+
+        fitnessMedians = group.groupby(['filename'])['fitness'].agg(['median'])
+        fitnessPercentiles = fitnessMedians.describe(
             percentiles=[0.05, 0.25, 0.75, 0.95]
         )
+        fitnessMedian = fitnessMedians.agg(['median'])
+
         newRow = pd.Series({
             'level': name[0],
             'generation': name[1],
@@ -77,11 +81,11 @@ def runAnalysis(tables: pd.DataFrame):
             'population size 75%': populationCountPercentiles['count']['75%'],
             'population size 95%': populationCountPercentiles['count']['95%'],
             # 'totalUniqueGenes': totalUniqueGeneCount,
-            'fitness median': fitnessMedian['median'],
-            'fitness 5%': fitnessPercentiles['5%'],
-            'fitness 25%': fitnessPercentiles['25%'],
-            'fitness 75%': fitnessPercentiles['75%'],
-            'fitness 95%': fitnessPercentiles['95%'],
+            'fitness median': fitnessMedian['median']['median'],
+            'fitness 5%': fitnessPercentiles['median']['5%'],
+            'fitness 25%': fitnessPercentiles['median']['25%'],
+            'fitness 75%': fitnessPercentiles['median']['75%'],
+            'fitness 95%': fitnessPercentiles['median']['95%'],
         })
         populationDiversityTable = pd.concat([populationDiversityTable, newRow.to_frame().T], ignore_index=True)
 
