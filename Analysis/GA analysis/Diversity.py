@@ -4,6 +4,16 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
+levels: dict[int, str] = {
+    3: '(A) "Wall"',
+    4: '(B) "Wall + Elevation"',
+    5: '(C) "Ceiling"',
+    6: '(D) "Deadly River"',
+    8: '(E) "Ravine"',
+    9: '(F) "Ravine + Spikes"',
+}
+
+
 # gameObject:
 # - player = PlayerAgent
 # - level = everything else
@@ -182,47 +192,47 @@ def runAnalysis(tables: pd.DataFrame):
     medianTGMGroupCountTable.to_csv('./data/TGM median group types f65acba 40.csv')
 
     fig1, medianFitnessAxes = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
-    makeMedianFitnessPlot(3, 'Wall', populationDiversityTable, 0, 0, medianFitnessAxes)
-    makeMedianFitnessPlot(4, 'Wall + Elevation', populationDiversityTable, 1, 0, medianFitnessAxes)
-    makeMedianFitnessPlot(5, 'Ceiling', populationDiversityTable, 2, 0, medianFitnessAxes)
-    makeMedianFitnessPlot(6, 'Deadly River', populationDiversityTable, 0, 1, medianFitnessAxes)
-    makeMedianFitnessPlot(8, 'Ravine', populationDiversityTable, 1, 1, medianFitnessAxes)
-    makeMedianFitnessPlot(9, 'Ravine + Spikes', populationDiversityTable, 2, 1, medianFitnessAxes)
+    makeMedianFitnessPlot(3, populationDiversityTable, 0, 0, medianFitnessAxes)
+    makeMedianFitnessPlot(4, populationDiversityTable, 1, 0, medianFitnessAxes)
+    makeMedianFitnessPlot(5, populationDiversityTable, 2, 0, medianFitnessAxes)
+    makeMedianFitnessPlot(6, populationDiversityTable, 0, 1, medianFitnessAxes)
+    makeMedianFitnessPlot(8, populationDiversityTable, 1, 1, medianFitnessAxes)
+    makeMedianFitnessPlot(9, populationDiversityTable, 2, 1, medianFitnessAxes)
     plt.tight_layout()
     plt.show()
 
     fig2, medianUniqueGeneCountAxes = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
-    makeMedianUniqueGeneCountPlot(3, 'Wall', populationDiversityTable, 0, 0, medianUniqueGeneCountAxes)
-    makeMedianUniqueGeneCountPlot(4, 'Wall + Elevation', populationDiversityTable, 1, 0, medianUniqueGeneCountAxes)
-    makeMedianUniqueGeneCountPlot(5, 'Ceiling', populationDiversityTable, 2, 0, medianUniqueGeneCountAxes)
-    makeMedianUniqueGeneCountPlot(6, 'Deadly River', populationDiversityTable, 0, 1, medianUniqueGeneCountAxes)
-    makeMedianUniqueGeneCountPlot(8, 'Ravine', populationDiversityTable, 1, 1, medianUniqueGeneCountAxes)
-    makeMedianUniqueGeneCountPlot(9, 'Ravine + Spikes', populationDiversityTable, 2, 1, medianUniqueGeneCountAxes)
+    makeMedianUniqueGeneCountPlot(3, populationDiversityTable, 0, 0, medianUniqueGeneCountAxes)
+    makeMedianUniqueGeneCountPlot(4, populationDiversityTable, 1, 0, medianUniqueGeneCountAxes)
+    makeMedianUniqueGeneCountPlot(5, populationDiversityTable, 2, 0, medianUniqueGeneCountAxes)
+    makeMedianUniqueGeneCountPlot(6, populationDiversityTable, 0, 1, medianUniqueGeneCountAxes)
+    makeMedianUniqueGeneCountPlot(8, populationDiversityTable, 1, 1, medianUniqueGeneCountAxes)
+    makeMedianUniqueGeneCountPlot(9, populationDiversityTable, 2, 1, medianUniqueGeneCountAxes)
     plt.tight_layout()
     plt.show()
 
     fig3, medianNonZeroFitnessPopulationCountAxes = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
-    makeMedianNonZeroFitnessPopulationCount(3, 'Wall', populationDiversityTable, 0, 0, medianNonZeroFitnessPopulationCountAxes)
-    makeMedianNonZeroFitnessPopulationCount(4, 'Wall + Elevation', populationDiversityTable, 1, 0, medianNonZeroFitnessPopulationCountAxes)
-    makeMedianNonZeroFitnessPopulationCount(5, 'Ceiling', populationDiversityTable, 2, 0, medianNonZeroFitnessPopulationCountAxes)
-    makeMedianNonZeroFitnessPopulationCount(6, 'Deadly River', populationDiversityTable, 0, 1, medianNonZeroFitnessPopulationCountAxes)
-    makeMedianNonZeroFitnessPopulationCount(8, 'Ravine', populationDiversityTable, 1, 1, medianNonZeroFitnessPopulationCountAxes)
-    makeMedianNonZeroFitnessPopulationCount(9, 'Ravine + Spikes', populationDiversityTable, 2, 1, medianNonZeroFitnessPopulationCountAxes)
+    makeMedianNonZeroFitnessPopulationCount(3, populationDiversityTable, 0, 0, medianNonZeroFitnessPopulationCountAxes)
+    makeMedianNonZeroFitnessPopulationCount(4, populationDiversityTable, 1, 0, medianNonZeroFitnessPopulationCountAxes)
+    makeMedianNonZeroFitnessPopulationCount(5, populationDiversityTable, 2, 0, medianNonZeroFitnessPopulationCountAxes)
+    makeMedianNonZeroFitnessPopulationCount(6, populationDiversityTable, 0, 1, medianNonZeroFitnessPopulationCountAxes)
+    makeMedianNonZeroFitnessPopulationCount(8, populationDiversityTable, 1, 1, medianNonZeroFitnessPopulationCountAxes)
+    makeMedianNonZeroFitnessPopulationCount(9, populationDiversityTable, 2, 1, medianNonZeroFitnessPopulationCountAxes)
     plt.tight_layout()
     plt.show()
 
     fig4, tgmCategoriesAxes = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
-    makeTGMCategoriesPlot(3, 'Wall', medianTGMGroupCountTable, tgmGroups, 0, 0, tgmCategoriesAxes)
-    makeTGMCategoriesPlot(4, 'Wall + Elevation', medianTGMGroupCountTable, tgmGroups, 1, 0, tgmCategoriesAxes)
-    makeTGMCategoriesPlot(5, 'Ceiling', medianTGMGroupCountTable, tgmGroups, 2, 0, tgmCategoriesAxes)
-    makeTGMCategoriesPlot(6, 'Deadly River', medianTGMGroupCountTable, tgmGroups, 0, 1, tgmCategoriesAxes)
-    makeTGMCategoriesPlot(8, 'Ravine', medianTGMGroupCountTable, tgmGroups, 1, 1, tgmCategoriesAxes)
-    makeTGMCategoriesPlot(9, 'Ravine + Spikes', medianTGMGroupCountTable, tgmGroups, 2, 1, tgmCategoriesAxes)
+    makeTGMCategoriesPlot(3, medianTGMGroupCountTable, tgmGroups, 0, 0, tgmCategoriesAxes)
+    makeTGMCategoriesPlot(4, medianTGMGroupCountTable, tgmGroups, 1, 0, tgmCategoriesAxes)
+    makeTGMCategoriesPlot(5, medianTGMGroupCountTable, tgmGroups, 2, 0, tgmCategoriesAxes)
+    makeTGMCategoriesPlot(6, medianTGMGroupCountTable, tgmGroups, 0, 1, tgmCategoriesAxes)
+    makeTGMCategoriesPlot(8, medianTGMGroupCountTable, tgmGroups, 1, 1, tgmCategoriesAxes)
+    makeTGMCategoriesPlot(9, medianTGMGroupCountTable, tgmGroups, 2, 1, tgmCategoriesAxes)
     plt.tight_layout()
     plt.show()
 
 
-def makeMedianFitnessPlot(level: int, levelName: str, table: pd.DataFrame, x: int, y: int, axes):
+def makeMedianFitnessPlot(level: int, table: pd.DataFrame, x: int, y: int, axes):
     table = table[table['level'] == level]
     plot = table.plot(
         kind='line',
@@ -245,7 +255,7 @@ def makeMedianFitnessPlot(level: int, levelName: str, table: pd.DataFrame, x: in
         alpha=0.4,
         color='darkorange',
     )
-    plot.set_title(levelName)
+    plot.set_title(levels.get(level))
     plot.set_xlim(1, 15)
     plot.set_ylim(0, 1)
     plot.set_xlabel('')
@@ -257,7 +267,7 @@ def makeMedianFitnessPlot(level: int, levelName: str, table: pd.DataFrame, x: in
         plot.set_xlabel('')
 
 
-def makeMedianUniqueGeneCountPlot(level: int, levelName: str, table: pd.DataFrame, x: int, y: int, axes):
+def makeMedianUniqueGeneCountPlot(level: int, table: pd.DataFrame, x: int, y: int, axes):
     table = table[table['level'] == level]
     plot = table.plot(
         kind='line',
@@ -280,7 +290,7 @@ def makeMedianUniqueGeneCountPlot(level: int, levelName: str, table: pd.DataFram
         alpha=0.4,
         color='g',
     )
-    plot.set_title(levelName)
+    plot.set_title(levels.get(level))
     plot.set_xlim(1, 15)
     plot.set_ylim(0, 14)
     plot.set_xlabel('')
@@ -292,7 +302,7 @@ def makeMedianUniqueGeneCountPlot(level: int, levelName: str, table: pd.DataFram
         plot.set_xlabel('')
 
 
-def makeMedianNonZeroFitnessPopulationCount(level: int, levelName: str, table: pd.DataFrame, x: int, y: int, axes):
+def makeMedianNonZeroFitnessPopulationCount(level: int, table: pd.DataFrame, x: int, y: int, axes):
     table = table[table['level'] == level]
     plot = table.plot(
         kind='line',
@@ -315,7 +325,7 @@ def makeMedianNonZeroFitnessPopulationCount(level: int, levelName: str, table: p
         alpha=0.4,
         color='purple',
     )
-    plot.set_title(levelName)
+    plot.set_title(levels.get(level))
     plot.set_xlim(1, 15)
     plot.set_ylim(0, 100)
     if x != 0 or y != 0:
@@ -326,7 +336,7 @@ def makeMedianNonZeroFitnessPopulationCount(level: int, levelName: str, table: p
         plot.set_xlabel('')
 
 
-def makeTGMCategoriesPlot(level: int, levelName: str, table: pd.DataFrame, tgmTypes: list, x: int, y: int, axes):
+def makeTGMCategoriesPlot(level: int, table: pd.DataFrame, tgmTypes: list, x: int, y: int, axes):
     table = table[table['level'] == level][['generation', '%']].pivot(columns=['generation']).transpose().droplevel(0)
     table2 = pd.DataFrame(
         columns=tgmTypes
@@ -340,7 +350,7 @@ def makeTGMCategoriesPlot(level: int, levelName: str, table: pd.DataFrame, tgmTy
         colormap='tab20b',
         linewidth=0,
     )
-    plot.set_title(levelName)
+    plot.set_title(levels.get(level))
     plot.set_xlim(1, 15)
     if y == 1:
         plot.set_xlabel('generation')
