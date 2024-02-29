@@ -231,6 +231,16 @@ def runAnalysis(tables: pd.DataFrame):
     plt.tight_layout()
     plt.show()
 
+    fig5, tgmCategoriesAxes2 = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
+    makeTGMCategoriesAbsolutePlot(3, medianTGMGroupCountTable, tgmGroups, 0, 0, tgmCategoriesAxes2)
+    makeTGMCategoriesAbsolutePlot(4, medianTGMGroupCountTable, tgmGroups, 1, 0, tgmCategoriesAxes2)
+    makeTGMCategoriesAbsolutePlot(5, medianTGMGroupCountTable, tgmGroups, 2, 0, tgmCategoriesAxes2)
+    makeTGMCategoriesAbsolutePlot(6, medianTGMGroupCountTable, tgmGroups, 0, 1, tgmCategoriesAxes2)
+    makeTGMCategoriesAbsolutePlot(8, medianTGMGroupCountTable, tgmGroups, 1, 1, tgmCategoriesAxes2)
+    makeTGMCategoriesAbsolutePlot(9, medianTGMGroupCountTable, tgmGroups, 2, 1, tgmCategoriesAxes2)
+    plt.tight_layout()
+    plt.show()
+
 
 def makeMedianFitnessPlot(level: int, table: pd.DataFrame, x: int, y: int, axes):
     table = table[table['level'] == level]
@@ -352,6 +362,34 @@ def makeTGMCategoriesPlot(level: int, table: pd.DataFrame, tgmTypes: list, x: in
     )
     plot.set_title(levels.get(level))
     plot.set_xlim(1, 15)
+    if y == 1:
+        plot.set_xlabel('generation')
+    else:
+        plot.set_xlabel('')
+    if x != 2 or y != 0:
+        plot.get_legend().remove()
+    else:
+        axes[y, x].legend(loc='upper left', bbox_to_anchor=(1.01, 1))
+
+
+def makeTGMCategoriesAbsolutePlot(level: int, table: pd.DataFrame, tgmTypes: list, x: int, y: int, axes):
+    table = table[table['level'] == level]
+    medianTable1 = table[['generation', 'median']].pivot(columns=['generation']).transpose().droplevel(0)
+    medianTable2 = pd.DataFrame(
+        columns=tgmTypes
+    )
+    medianTable2 = pd.concat([medianTable2, medianTable1])
+    plot = medianTable2.plot(
+        kind='line',
+        y=tgmTypes,
+        ax=axes[y, x],
+        colormap='tab20b',
+        linewidth=2,
+    )
+
+    plot.set_title(levels.get(level))
+    plot.set_xlim(1, 15)
+    plot.set_ylim(1, 60)
     if y == 1:
         plot.set_xlabel('generation')
     else:
