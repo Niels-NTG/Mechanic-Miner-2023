@@ -399,5 +399,6 @@ def makeTGMCategoriesAbsolutePlot(level: int, table: pd.DataFrame, tgmTypes: lis
         axes[y, x].legend(loc='upper left', bbox_to_anchor=(1.01, 1))
 
 
-diversityTables = getTableFilesInFolder('./data/f65acba/')
-runAnalysis(diversityTables)
+if __name__ == "__main__":
+    diversityTables = getTableFilesInFolder('./data/f65acba/')
+    runAnalysis(diversityTables)
