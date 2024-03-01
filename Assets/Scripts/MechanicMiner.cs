@@ -51,23 +51,7 @@ public class MechanicMiner : MonoBehaviour
 
         if (debugLevelMode)
         {
-            String debugID = Guid.NewGuid().ToString();
-            SimulationInstance simulationInstance = new SimulationInstance(debugID, levelIndexList.First(), levelGeneratorSeed, tgmGeneratorSeed);
-            if (gameObjectName != null && componentName != null && componentFieldName != null && modifierName != null)
-            {
-                simulationInstance.ApplyTGM(gameObjectName, componentName, componentFieldName, modifierName);
-            }
-            else
-            {
-                simulationInstance.tgm.GenerateNew();
-                simulationInstance.ApplyTGM();
-            }
-            GoExplore goExplore = new GoExplore(simulationInstance);
-            Task.Run(() =>
-            {
-                Debug.Log(simulationInstance.tgm);
-                goExplore.Run();
-            });
+            RunDebug(levelIndexList);
         }
         else
         {
@@ -81,6 +65,34 @@ public class MechanicMiner : MonoBehaviour
         {
             ga.Stop();
         }
+    }
+
+    private async void RunDebug(List<int> _levelList)
+    {
+        if (_levelList.Count == 0)
+        {
+            return;
+        }
+        int levelIndex = _levelList.First();
+        _levelList.RemoveAt(0);
+        String debugID = Guid.NewGuid().ToString();
+        SimulationInstance simulationInstance = new SimulationInstance(debugID, levelIndex, levelGeneratorSeed, tgmGeneratorSeed);
+        if (gameObjectName != null && componentName != null && componentFieldName != null && modifierName != null)
+        {
+            simulationInstance.ApplyTGM(gameObjectName, componentName, componentFieldName, modifierName);
+        }
+        else
+        {
+            simulationInstance.tgm.GenerateNew();
+            simulationInstance.ApplyTGM();
+        }
+        GoExplore goExplore = new GoExplore(simulationInstance);
+        await Task.Run(() =>
+        {
+            Debug.Log(simulationInstance.tgm);
+            goExplore.Run();
+        });
+        RunDebug(_levelList);
     }
 
     private async void RunEvolution(List<int> _levelList)
