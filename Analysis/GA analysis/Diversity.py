@@ -380,16 +380,15 @@ def makeTGMCategoriesAbsolutePlot(level: int, table: pd.DataFrame, tgmTypes: lis
     )
     medianTable2 = pd.concat([medianTable2, medianTable1])
     plot = medianTable2.plot(
-        kind='line',
+        kind='area',
         y=tgmTypes,
         ax=axes[y, x],
         colormap='tab20b',
-        linewidth=2,
+        linewidth=0,
     )
 
     plot.set_title(levels.get(level))
     plot.set_xlim(1, 15)
-    plot.set_ylim(1, 60)
     if y == 1:
         plot.set_xlabel('generation')
     else:
