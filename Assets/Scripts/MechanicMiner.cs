@@ -92,6 +92,7 @@ public class MechanicMiner : MonoBehaviour
             Debug.Log(simulationInstance.tgm);
             goExplore.Run();
         });
+        await simulationInstance.UnloadScene();
         RunDebug(_levelList);
     }
 
