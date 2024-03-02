@@ -19,7 +19,7 @@ public class SimulationInstance
     private readonly Vector2Int exitLocation;
 
     // Player
-    private readonly PlayerController playerController;
+    public readonly PlayerController playerController;
 
     // NOTE: you may need to change this value when you use a different value for
     // physicsTileScale (SimulationInstanceController). 10 is optimised for a

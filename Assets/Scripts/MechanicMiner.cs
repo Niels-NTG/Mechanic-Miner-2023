@@ -13,12 +13,18 @@ using GeneticSharp.Infrastructure.Framework.Threading;
 using UnityEngine;
 using CsvHelper;
 
+public enum Mode
+{
+    RunEvolution,
+    TestGamePlayingAgent,
+    ManualMode
+}
+
 public class MechanicMiner : MonoBehaviour
 {
 
 
-    [Header("In debug mode does only 1 simulation at the time")]
-    public bool debugLevelMode;
+    public Mode playMode = Mode.RunEvolution;
 
     [Header("Set TGM manually, debug mode only")]
     public String gameObjectName;
@@ -26,8 +32,7 @@ public class MechanicMiner : MonoBehaviour
     public String componentFieldName;
     public String modifierName;
 
-    [Space(16)]
-
+    [Header("Evolution settings")]
     public int populationSize = 100;
     public int maxGenerationCount = 15;
 
@@ -49,13 +54,16 @@ public class MechanicMiner : MonoBehaviour
             return;
         }
 
-        if (debugLevelMode)
+        if (playMode == Mode.TestGamePlayingAgent)
         {
             RunDebug(levelIndexList);
         }
-        else
+        else if (playMode == Mode.RunEvolution)
         {
             RunEvolution(levelIndexList);
+        } else if (playMode == Mode.ManualMode)
+        {
+            RunManual();
         }
     }
 
@@ -65,6 +73,22 @@ public class MechanicMiner : MonoBehaviour
         {
             ga.Stop();
         }
+    }
+
+    private void RunManual()
+    {
+        String debugID = Guid.NewGuid().ToString();
+        SimulationInstance simulationInstance = new SimulationInstance(debugID, levelIndexList.First(), levelGeneratorSeed, tgmGeneratorSeed);
+        if (gameObjectName != null && componentName != null && componentFieldName != null && modifierName != null)
+        {
+            simulationInstance.ApplyTGM(gameObjectName, componentName, componentFieldName, modifierName);
+        }
+        else
+        {
+            simulationInstance.tgm.GenerateNew();
+            simulationInstance.ApplyTGM();
+        }
+        simulationInstance.playerController.allowHumanInput = true;
     }
 
     private async void RunDebug(List<int> _levelList)

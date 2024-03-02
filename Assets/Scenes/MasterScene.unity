@@ -149,16 +149,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c7860f0ca705293cbef67c8095c3774, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugLevelMode: 0
-  gameObjectName: CustomLevel8
-  componentName: Grid
-  componentFieldName: cellSize
-  modifierName: half
+  playMode: 0
+  gameObjectName: PlayerAgent
+  componentName: Transform
+  componentFieldName: position
+  modifierName: double
   populationSize: 100
   maxGenerationCount: 15
   levelGeneratorSeed: 0
   tgmGeneratorSeed: 0
-  levelIndexList: 08000000080000000800000008000000080000000800000008000000080000000800000008000000080000000800000008000000080000000800000008000000080000000800000008000000080000000800000008000000080000000800000008000000080000000800000008000000080000000800000008000000080000000800000008000000080000000800000008000000080000000800000008000000
+  levelIndexList: 030000000400000005000000060000000800000009000000
 --- !u!4 &27798706
 Transform:
   m_ObjectHideFlags: 0
