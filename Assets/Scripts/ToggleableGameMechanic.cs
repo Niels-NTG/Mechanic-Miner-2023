@@ -539,7 +539,7 @@ public class ToggleableGameMechanic
                     case Enum value:
                         Array enumValues = Enum.GetValues(value.GetType());
                         int indexOfEnum = Array.IndexOf(enumValues, value);
-                        return enumValues.GetValue(Math.Abs(indexOfEnum - 1) % enumValues.Length);
+                        return enumValues.GetValue(indexOfEnum - 1 < 0 ? enumValues.Length - 1 : indexOfEnum - 1);
                 }
                 break;
         }
