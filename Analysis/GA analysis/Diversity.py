@@ -59,12 +59,12 @@ def getTableFilesInFolder(path: str) -> pd.DataFrame:
 
         frames.append(frame)
     mergedFrames = pd.concat(frames, ignore_index=True)
-    return mergedFrames
+    return mergedFrames.dropna(subset=['fitness'])
 
 
 def runAnalysis(tables: pd.DataFrame):
     groupedData = tables.groupby(['level', 'generation'])
-    tgmGroups = tables.dropna().drop_duplicates(subset=['TGMgroup'])['TGMgroup'].to_list()
+    tgmGroups = tables.drop_duplicates(subset=['TGMgroup'])['TGMgroup'].to_list()
     tgmGroups.sort()
     populationDiversityTable = pd.DataFrame(
         columns=[
@@ -347,12 +347,13 @@ def makeMedianNonZeroFitnessPopulationCount(level: int, table: pd.DataFrame, x: 
 
 
 def makeTGMCategoriesPlot(level: int, table: pd.DataFrame, tgmTypes: list, x: int, y: int, axes):
-    table = table[table['level'] == level][['generation', '%']].pivot(columns=['generation']).transpose().droplevel(0)
+    table = table[table['level'] == level]
+    table1 = table[['generation', '%']].pivot(columns=['generation']).transpose().droplevel(0)
     table2 = pd.DataFrame(
         columns=tgmTypes
     )
-    table2 = pd.concat([table2, table])
     table2.to_csv('./data/median TGM types level {0} f65acba 40.csv'.format(level), index=False)
+    table2 = pd.concat([table2, table1])
     plot = table2.plot(
         kind='area',
         y=tgmTypes,
