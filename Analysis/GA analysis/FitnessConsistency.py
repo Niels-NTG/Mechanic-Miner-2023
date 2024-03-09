@@ -18,7 +18,7 @@ def runAnalysis(table: pd.DataFrame):
 
 
 def makePlot(level: int, table: pd.DataFrame):
-    fig1, axe = plt.subplots(figsize=(30, 8))
+    fig1, axe = plt.subplots(figsize=(30, 10))
 
     table = table[table['level'] == level]
     table.plot.box(
@@ -32,8 +32,9 @@ def makePlot(level: int, table: pd.DataFrame):
     axe.set_xlabel('Fitness per TGM')
     plt.tight_layout()
     plt.show()
+    fig1.savefig(f'./plots/FitnessConsistency level {level} f9f6c53 40.png')
 
 
 if __name__ == '__main__':
-    inputTables = Diversity.getTableFilesInFolder('./data/f65acba/')
+    inputTables = Diversity.getTableFilesInFolder('./data/f9f6c53/')
     outputTable = runAnalysis(inputTables)
