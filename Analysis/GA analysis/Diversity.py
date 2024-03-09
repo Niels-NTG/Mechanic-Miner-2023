@@ -188,8 +188,8 @@ def runAnalysis(tables: pd.DataFrame):
         medianTGMGroupCountSubTable['generation'] = name[1]
         medianTGMGroupCountTable = pd.concat([medianTGMGroupCountTable, medianTGMGroupCountSubTable])
 
-    medianTGMCountTable.to_csv('./data/TGM median types f65acba 40.csv')
-    medianTGMGroupCountTable.to_csv('./data/TGM median group types f65acba 40.csv')
+    medianTGMCountTable.to_csv('./data/TGM median f9f6c53 40.csv')
+    medianTGMGroupCountTable.to_csv('./data/TGM median group types f9f6c53 40.csv')
 
     fig1, medianFitnessAxes = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
     makeMedianFitnessPlot(3, populationDiversityTable, 0, 0, medianFitnessAxes)
@@ -200,6 +200,7 @@ def runAnalysis(tables: pd.DataFrame):
     makeMedianFitnessPlot(9, populationDiversityTable, 2, 1, medianFitnessAxes)
     plt.tight_layout()
     plt.show()
+    fig1.savefig('./plots/median fitness level 3-4-5-6-8-9 f9f6c53 40.png')
 
     fig2, medianUniqueGeneCountAxes = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
     makeMedianUniqueGeneCountPlot(3, populationDiversityTable, 0, 0, medianUniqueGeneCountAxes)
@@ -210,6 +211,7 @@ def runAnalysis(tables: pd.DataFrame):
     makeMedianUniqueGeneCountPlot(9, populationDiversityTable, 2, 1, medianUniqueGeneCountAxes)
     plt.tight_layout()
     plt.show()
+    fig2.savefig('./plots/median unique gens count level 3-4-5-6-8-9 f9f6c53 40.png')
 
     fig3, medianNonZeroFitnessPopulationCountAxes = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
     makeMedianNonZeroFitnessPopulationCount(3, populationDiversityTable, 0, 0, medianNonZeroFitnessPopulationCountAxes)
@@ -220,6 +222,7 @@ def runAnalysis(tables: pd.DataFrame):
     makeMedianNonZeroFitnessPopulationCount(9, populationDiversityTable, 2, 1, medianNonZeroFitnessPopulationCountAxes)
     plt.tight_layout()
     plt.show()
+    fig3.savefig('./plots/median non-zero fitness population count level 3-4-5-6-8-9 f9f6c53 40.png')
 
     fig4, tgmCategoriesAxes = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
     makeTGMCategoriesPlot(3, medianTGMGroupCountTable, tgmGroups, 0, 0, tgmCategoriesAxes)
@@ -230,6 +233,7 @@ def runAnalysis(tables: pd.DataFrame):
     makeTGMCategoriesPlot(9, medianTGMGroupCountTable, tgmGroups, 2, 1, tgmCategoriesAxes)
     plt.tight_layout()
     plt.show()
+    fig4.savefig('./plots/TGM groups level 3-4-5-6-8-9 f9f6c53 40.png')
 
     fig5, tgmCategoriesAxes2 = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
     makeTGMCategoriesAbsolutePlot(3, medianTGMGroupCountTable, tgmGroups, 0, 0, tgmCategoriesAxes2)
@@ -240,6 +244,7 @@ def runAnalysis(tables: pd.DataFrame):
     makeTGMCategoriesAbsolutePlot(9, medianTGMGroupCountTable, tgmGroups, 2, 1, tgmCategoriesAxes2)
     plt.tight_layout()
     plt.show()
+    fig5.savefig('./plots/TGM groups absolute level 3-4-5-6-8-9 f9f6c53 40.png')
 
 
 def makeMedianFitnessPlot(level: int, table: pd.DataFrame, x: int, y: int, axes):
@@ -352,13 +357,13 @@ def makeTGMCategoriesPlot(level: int, table: pd.DataFrame, tgmTypes: list, x: in
     table2 = pd.DataFrame(
         columns=tgmTypes
     )
-    table2.to_csv('./data/median TGM types level {0} f65acba 40.csv'.format(level), index=False)
     table2 = pd.concat([table2, table1])
+    table2.to_csv('./data/median TGM types level {0} f9f6c53 40.csv'.format(level), index=False)
     plot = table2.plot(
         kind='area',
         y=tgmTypes,
         ax=axes[y, x],
-        colormap='tab20b',
+        colormap='tab10',
         linewidth=0,
     )
     plot.set_title(levels.get(level))
@@ -384,10 +389,9 @@ def makeTGMCategoriesAbsolutePlot(level: int, table: pd.DataFrame, tgmTypes: lis
         kind='area',
         y=tgmTypes,
         ax=axes[y, x],
-        colormap='tab20b',
+        colormap='tab10',
         linewidth=0,
     )
-
     plot.set_title(levels.get(level))
     plot.set_xlim(1, 15)
     if y == 1:
@@ -401,5 +405,5 @@ def makeTGMCategoriesAbsolutePlot(level: int, table: pd.DataFrame, tgmTypes: lis
 
 
 if __name__ == "__main__":
-    diversityTables = getTableFilesInFolder('./data/f65acba/')
+    diversityTables = getTableFilesInFolder('./data/f9f6c53/')
     runAnalysis(diversityTables)
