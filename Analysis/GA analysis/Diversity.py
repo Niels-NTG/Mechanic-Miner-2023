@@ -211,15 +211,15 @@ def runAnalysis(tables: pd.DataFrame):
     makeMedianUniqueGeneCountPlot(9, populationDiversityTable, 2, 1, medianUniqueGeneCountAxes)
     plt.tight_layout()
     plt.show()
-    fig2.savefig('./plots/median unique gens count level 3-4-5-6-8-9 f9f6c53 40.png')
+    fig2.savefig('./plots/median unique genes count level 3-4-5-6-8-9 f9f6c53 40.png')
 
     fig3, medianNonZeroFitnessPopulationCountAxes = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
-    makeMedianNonZeroFitnessPopulationCount(3, populationDiversityTable, 0, 0, medianNonZeroFitnessPopulationCountAxes)
-    makeMedianNonZeroFitnessPopulationCount(4, populationDiversityTable, 1, 0, medianNonZeroFitnessPopulationCountAxes)
-    makeMedianNonZeroFitnessPopulationCount(5, populationDiversityTable, 2, 0, medianNonZeroFitnessPopulationCountAxes)
-    makeMedianNonZeroFitnessPopulationCount(6, populationDiversityTable, 0, 1, medianNonZeroFitnessPopulationCountAxes)
-    makeMedianNonZeroFitnessPopulationCount(8, populationDiversityTable, 1, 1, medianNonZeroFitnessPopulationCountAxes)
-    makeMedianNonZeroFitnessPopulationCount(9, populationDiversityTable, 2, 1, medianNonZeroFitnessPopulationCountAxes)
+    makeMedianNonZeroFitnessPopulationCountPlot(3, populationDiversityTable, 0, 0, medianNonZeroFitnessPopulationCountAxes)
+    makeMedianNonZeroFitnessPopulationCountPlot(4, populationDiversityTable, 1, 0, medianNonZeroFitnessPopulationCountAxes)
+    makeMedianNonZeroFitnessPopulationCountPlot(5, populationDiversityTable, 2, 0, medianNonZeroFitnessPopulationCountAxes)
+    makeMedianNonZeroFitnessPopulationCountPlot(6, populationDiversityTable, 0, 1, medianNonZeroFitnessPopulationCountAxes)
+    makeMedianNonZeroFitnessPopulationCountPlot(8, populationDiversityTable, 1, 1, medianNonZeroFitnessPopulationCountAxes)
+    makeMedianNonZeroFitnessPopulationCountPlot(9, populationDiversityTable, 2, 1, medianNonZeroFitnessPopulationCountAxes)
     plt.tight_layout()
     plt.show()
     fig3.savefig('./plots/median non-zero fitness population count level 3-4-5-6-8-9 f9f6c53 40.png')
@@ -307,7 +307,7 @@ def makeMedianUniqueGeneCountPlot(level: int, table: pd.DataFrame, x: int, y: in
     )
     plot.set_title(levels.get(level))
     plot.set_xlim(1, 15)
-    plot.set_ylim(0, 14)
+    plot.set_ylim(1, 14)
     plot.set_xlabel('')
     if x != 0 or y != 0:
         plot.get_legend().remove()
@@ -317,7 +317,7 @@ def makeMedianUniqueGeneCountPlot(level: int, table: pd.DataFrame, x: int, y: in
         plot.set_xlabel('')
 
 
-def makeMedianNonZeroFitnessPopulationCount(level: int, table: pd.DataFrame, x: int, y: int, axes):
+def makeMedianNonZeroFitnessPopulationCountPlot(level: int, table: pd.DataFrame, x: int, y: int, axes):
     table = table[table['level'] == level]
     plot = table.plot(
         kind='line',
