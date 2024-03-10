@@ -35,13 +35,14 @@ def getComponentType(component: str):
     return 'other'
 
 
-def getTableFilesInFolder(path: str) -> pd.DataFrame:
+def getTableFilesInFolder(path: str, includeZeroFitness: bool = False) -> pd.DataFrame:
     files = glob.glob(f'{path}GA log *.csv')
     frames: list[pd.DataFrame] = []
     for file in files:
         frame = pd.read_csv(file)
         # where filter causes filtered rows to be replaced with NaN
-        frame = frame.where(frame['fitness'] > 0)
+        if not includeZeroFitness:
+            frame = frame.where(frame['fitness'] > 0)
         frame['filename'] = file.split('/')[-1]
         frame['TGM'] = (
             frame['gameObject'].astype(str) + ',' +
@@ -190,6 +191,7 @@ def runAnalysis(tables: pd.DataFrame):
 
     medianTGMCountTable.to_csv('./data/TGM median f9f6c53 40.csv')
     medianTGMGroupCountTable.to_csv('./data/TGM median group types f9f6c53 40.csv')
+    populationDiversityTable.to_csv('./data/TGM diversity f9f6c53 40.csv')
 
     fig1, medianFitnessAxes = plt.subplots(nrows=2, ncols=3, figsize=(18, 8))
     makeMedianFitnessPlot(3, populationDiversityTable, 0, 0, medianFitnessAxes)
@@ -405,5 +407,5 @@ def makeTGMCategoriesAbsolutePlot(level: int, table: pd.DataFrame, tgmTypes: lis
 
 
 if __name__ == "__main__":
-    diversityTables = getTableFilesInFolder('./data/f9f6c53/')
+    diversityTables = getTableFilesInFolder('./data/f9f6c53/', False)
     runAnalysis(diversityTables)

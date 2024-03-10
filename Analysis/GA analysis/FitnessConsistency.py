@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -18,9 +19,14 @@ def runAnalysis(table: pd.DataFrame):
 
 
 def makePlot(level: int, table: pd.DataFrame):
-    fig1, axe = plt.subplots(figsize=(30, 10))
-
     table = table[table['level'] == level]
+    groupedData = table.groupby(['TGM'])
+    for name, group in groupedData:
+        if len(group[group['fitness'] == 0]) == len(group):
+            table = table.drop(group.index)
+
+    fig1, axe = plt.subplots(figsize=(10, np.ceil(0.2 * len(table['TGM'].unique()))))
+
     table.plot.box(
         column='fitness',
         by='TGM',
@@ -36,5 +42,5 @@ def makePlot(level: int, table: pd.DataFrame):
 
 
 if __name__ == '__main__':
-    inputTables = Diversity.getTableFilesInFolder('./data/f9f6c53/')
+    inputTables = Diversity.getTableFilesInFolder('./data/f9f6c53/', True)
     outputTable = runAnalysis(inputTables)
