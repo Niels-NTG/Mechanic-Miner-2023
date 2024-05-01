@@ -91,8 +91,6 @@ public class ToggleableGameMechanic
             case "double":
                 switch (inputValue)
                 {
-                    case bool value:
-                        return !value;
                     case float value:
                         return value * 2f;
                     case int value:
@@ -189,8 +187,6 @@ public class ToggleableGameMechanic
             case "half":
                 switch (inputValue)
                 {
-                    case bool value:
-                        return !value;
                     case float value:
                         return value / 2f;
                     case int value:
@@ -365,8 +361,6 @@ public class ToggleableGameMechanic
             case "add":
                 switch (inputValue)
                 {
-                    case bool value:
-                        return !value;
                     case float value:
                         return value + 1f;
                     case int value:
@@ -455,8 +449,6 @@ public class ToggleableGameMechanic
             case "subtract":
                 switch (inputValue)
                 {
-                    case bool value:
-                        return !value;
                     case float value:
                         return value - 1f;
                     case int value:
@@ -721,6 +713,10 @@ public class ToggleableGameMechanic
 
     private static String[] GetValidModifiersForType(object v)
     {
+        if (IsBoolean(v))
+        {
+            return new[] {"invert"};
+        }
         if (IsNumeric(v) || IsVector(v) || IsQuaternion(v) || IsMatrix(v) || IsRect(v))
         {
             return modifierTypes;
@@ -732,10 +728,6 @@ public class ToggleableGameMechanic
         if (IsEnum(v))
         {
             return new[] {"add", "subtract"};
-        }
-        if (IsBoolean(v))
-        {
-            return new[] {"invert"};
         }
         return new[] {"invert"};
     }
