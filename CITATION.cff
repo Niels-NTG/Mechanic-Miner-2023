@@ -1,0 +1,42 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Mechanic Miner 2023
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Niels
+    family-names: Poldervaart
+    email: n.t.g.poldervaart@umail.leidenuniv.nl
+    affiliation: Leiden University
+    orcid: 'https://orcid.org/0009-0008-0766-7592'
+repository-code: 'https://github.com/Niels-NTG/Mechanic-Miner-2023'
+abstract: >-
+  We introduce Mechanic Miner 2023, a co-creative game
+  design tool that suggests game design ideas by exploring
+  the source code of the game itself instead of relying on
+  pre-defined domain knowledge. Exploration is driven by an
+  genetic algorithm which generates, evaluates and evolves
+  simple two-state game mechanics that use code reflection
+  to manipulate a property of the game's source code during
+  gameplay. Evaluation is performed by an automated
+  game-playing agent driven by Go-Explore, a
+  state-of-the-art algorithm for automated game-playing. We
+  demonstrate how Mechanic Miner 2023 can generate a diverse
+  set of often novel solutions for a simple 2D puzzle
+  platformer within a timeframe that suits iterative
+  creative work.
+keywords:
+  - automated game design
+  - game mechanics
+  - computation creativity
+  - genetic algorithm
+  - game design
+  - computational co-creativity
+  - procedural content generation
+  - evolutionary algorithm
+  - game development
+license: MIT
