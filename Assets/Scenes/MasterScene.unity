@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playMode: 0
-  gameObjectName: CustomLevel9
+  gameObjectName: CustomLevel3
   componentName: Grid
   componentFieldName: cellSize
   modifierName: invert
