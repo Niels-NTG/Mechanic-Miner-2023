@@ -1,11 +1,11 @@
 # Mechanic Miner 2023
 
-Mechanic Miner 2023 (MM23) is a co-creative game design tool that suggests game design ideas by exploring the source code of the game itself. It creates game mechanics from the game's source code using code reflection and evaluates these automatically using a game-playing algorithm driven by Go-Explore[^A. Ecoffet, J. Huizinga, J. Lehman, K. O. Stanley, and J. Clune, “First return, then explore,” Nature, vol. 590, no. 7847, p. 580–586, Feb. 2021. DOI: https://doi.org/10.1038/s41586-020-03157-9].
+Mechanic Miner 2023 (MM23) is a co-creative game design tool that suggests game design ideas by exploring the source code of the game itself. It creates game mechanics from the game's source code using code reflection and evaluates these automatically using a game-playing algorithm driven by Go-Explore[^1].
 
 This repository contains the MM23 system as part of a Unity project applied to a simple 2D platformer. It demonstrates how MM23 can generate a diverse set of often novel solutions for this game within a time frame that suits iterative creative work.
 
 This work is part of a master thesis paper titled *Mechanic Miner 2023: Reflection-Driven Game
-Mechanic Discovery Powered by Go-Explore*[^To be published soon] authored by Niels NTG Poldervaart, Rob Saunders and Michael Cook. MM23 re-implements parts of the system described in a 2013 paper by Mike Cook, Simon Colton, Azalea Raad and Jeremy Gow titled *Mechanic Miner: Reflection-Driven Game Mechanic Discovery and Level Design*[^https://doi.org/10.1007/978-3-642-37192-9_29] (MM13) with a number of enhancements. Firstly, MM23 does not implement the procedural level generator which co-evolves levels with discovered game mechanics. Secondly, it’s implemented in Unity, a popular and robust game development environment, as opposed to Flixel. Thirdly, the number of supported data types and modifiers for TGMs has been expanded compared to MM13. Finally, the game-playing subsystem is driven by the state-of-the-art Go-Explore method.
+Mechanic Discovery Powered by Go-Explore*[^2] authored by Niels NTG Poldervaart, Rob Saunders and Michael Cook. MM23 re-implements parts of the system described in a 2013 paper by Mike Cook, Simon Colton, Azalea Raad and Jeremy Gow titled *Mechanic Miner: Reflection-Driven Game Mechanic Discovery and Level Design*[^3] (MM13) with a number of enhancements. Firstly, MM23 does not implement the procedural level generator which co-evolves levels with discovered game mechanics. Secondly, it’s implemented in Unity, a popular and robust game development environment, as opposed to Flixel. Thirdly, the number of supported data types and modifiers for TGMs has been expanded compared to MM13. Finally, the game-playing subsystem is driven by the state-of-the-art Go-Explore method.
 
 ## Prerequisites
 
@@ -37,3 +37,8 @@ The project contains to scenes:
 
 - All sprite graphics are from the "[1-Bit Platformer Pack](https://kenney.nl/assets/1-bit-platformer-pack)", created and distributed by [Kenney]((www.kenney.nl)) under a Creative Commons Zero license.
 - Evolutionary algorithm is implemented using [Genetic Sharp](https://github.com/giacomelli/GeneticSharp) version 2.6.0 by [Diego Giacomelli](https://github.com/giacomelli).
+
+[^1]: A. Ecoffet, J. Huizinga, J. Lehman, K. O. Stanley, and J. Clune, “First return, then explore,” Nature, vol. 590, no. 7847, p. 580–586, Feb. 2021. DOI: https://doi.org/10.1038/s41586-020-03157-9
+[^2]: M. Cook, S. Colton, A. Raad, and J. Gow, “Mechanic miner: Reflection-driven game mechanic discovery and level design,” in Applications of Evolutionary Computation, ser. EvoApplications 2013. Springer, 2013, pp. 284–293. DOI: https://doi.org/10.1007/978-3-642-37192-9_29
+[^3]: Publication TBA
+
