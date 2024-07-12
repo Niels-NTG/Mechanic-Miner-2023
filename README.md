@@ -11,7 +11,7 @@ Below are two demonstrations of MM23 running on simple 2D platformer levels that
 
 For a more detailled explanation of the system and a breakdown of the results, please read the [paper](./docs/Mechanic%20Miner%202023%20Reflection-Driven%20Game%20Mechanic%20Discovery%20Powered%20by%20Go-Explore%20-%20Niels%20Poldervaart%20(2024).pdf)!
 
-<video src="./docs/level_3_demo.mp4"></video>
+https://github.com/user-attachments/assets/acfab74c-d4f7-4346-958e-784acf966dba
 
 ⚠ `WARNING: VIDEO CONTAINS FLASHING IMAGES!` ⚠
 Video of MM23 running in real time in a level with a solid wall separating the level start from the level exit. You can see a large diversity in the ways MM23 finds solutions around this obstacle, such as:
