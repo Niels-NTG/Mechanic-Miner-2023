@@ -11,10 +11,11 @@ Below are two demonstrations of MM23 running on simple 2D platformer levels that
 
 For a more detailled explanation of the system and a breakdown of the results, please read the [paper](./docs/Mechanic%20Miner%202023%20Reflection-Driven%20Game%20Mechanic%20Discovery%20Powered%20by%20Go-Explore%20-%20Niels%20Poldervaart%20(2024).pdf)!
 
+⚠ `WARNING: VIDEO CONTAINS FLASHING IMAGES!` ⚠
+
 https://github.com/user-attachments/assets/acfab74c-d4f7-4346-958e-784acf966dba
 
-⚠ `WARNING: VIDEO CONTAINS FLASHING IMAGES!` ⚠
-Video of MM23 running in real time in a level with a solid wall separating the level start from the level exit. You can see a large diversity in the ways MM23 finds solutions around this obstacle, such as:
+MM23 running in real time in a level with a solid wall separating the level start from the level exit. You can see a large diversity in the ways MM23 finds solutions around this obstacle, such as:
 
 - At `0:01`: Size of the level's grid is halved, meaning all tiles are packed close together in a space half the level's original size. In this state the player can touch the level exit if it moves just a few steps to the right from its starting position.
 - At `0:50`: Agent teleports to the other side by doubling the value of its current position.
