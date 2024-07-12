@@ -5,14 +5,29 @@ Mechanic Miner 2023 is a co-creative game design tool for game developers that s
 This work is part of a master thesis paper titled *[Mechanic Miner 2023: Reflection-Driven Game
 Mechanic Discovery Powered by Go-Explore](./docs/Mechanic%20Miner%202023%20Reflection-Driven%20Game%20Mechanic%20Discovery%20Powered%20by%20Go-Explore%20-%20Niels%20Poldervaart%20(2024).pdf)* by Niels NTG Poldervaart, supervised by Rob Saunders and Michael Cook. Mechanic Miner 2023 (MM23) re-implements parts of the system described in a 2013 paper by Michael Cook, Simon Colton, Azalea Raad and Jeremy Gow titled *Mechanic Miner: Reflection-Driven Game Mechanic Discovery and Level Design*[^2] (MM13) with a number of enhancements. Firstly, MM23 does not implement the procedural level generator which co-evolves levels with discovered game mechanics. Secondly, it’s implemented in Unity, a popular and robust game development environment, as opposed to Flixel. Thirdly, the number of supported data types and modifiers for TGMs has been expanded compared to MM13. Finally, the game-playing subsystem is driven by the state-of-the-art Go-Explore method.
 
+## Demonstration
+
+Below are two demonstrations of MM23 running on simple 2D platformer levels that's impossible to solve the "normal" way (move left, move right, jump). MM23 creates game mechanics that help the player agent solve the level by applying modifiers (add, subtract, double, half, invert) to values of the properties in the components attached to the player and level game objects. It does this for a population of 100 genotypes, which each get evaluated by running a game-playing agent in an independent simulation, all running in parallel. If it cannot reach the level exit before a set maximum number of actions, the genotype gets removed from the population.
+
+For a more detailled explanation of the system and a breakdown of the results, please read the [paper](./docs/Mechanic%20Miner%202023%20Reflection-Driven%20Game%20Mechanic%20Discovery%20Powered%20by%20Go-Explore%20-%20Niels%20Poldervaart%20(2024).pdf)!
+
+<video src="./docs/level_3_demo.mp4"></video>
+⚠ `WARNING: VIDEO CONTAINS FLASHING IMAGES!` ⚠
+Video of MM23 running in real time in a level with a solid wall separating the level start from the level exit. You can see a large diversity in the ways MM23 finds solutions around this obstacle, such as:
+
+- At `0:50`: Agent teleports to the other side by doubling the value of its current position.
+- At `0:54`: Agent disables collision on dividing wall, enabling the agent to just walk to the level exit as if the wall isn't there.
+- At `1:20`: Agent translates the dividing wall up by 1 unit, enabling the agent to walk to level exit through a small opening.
+- At `1:50`: Size of the level's grid is halved, meaning all tiles are packed close together in a space half the level's original size. In this state the player can touch the level exit if it moves just a few steps to the right from its starting position.
+
 ![level6demo](./docs/Screenshot%20from%202024-02-21%2021-29-37.png)
-Demonstration of MM23 running on a level that's impossible to solve the "normal" way (move left, move right, jump). With a population of 100 it explores the properties of various components associated with the player and level objects and applies modifiers to the values of these properties to create new game mechanics in an attempt to reach the level exit. In this image you can see examples where the agents use mechanics to invert or disable gravity or teleport across the pit.
-
-## Prerequisites
-
-- Unity version 2023.1, which can be obtained with the [Unity Hub](https://unity.com/unity-hub) (recommended) or the [Unity downloads archive](https://unity.com/releases/editor/archive).
+Demonstration of MM23 running on a level with a deadly pit that's too wide to jump over. Some members of the population discover the ability to invert gravity, disable gravity or teleport across the pit.
 
 ## Usage
+
+### Prerequisites
+
+- Unity version 2023.1, which can be obtained with the [Unity Hub](https://unity.com/unity-hub) (recommended) or the [Unity downloads archive](https://unity.com/releases/editor/archive).
 
 ### Project structure
 
